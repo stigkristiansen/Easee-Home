@@ -21,11 +21,13 @@ declare(strict_types=1);
 		{
 			//Never delete this line!
 			parent::ApplyChanges();
+
+			$this->SetReceiveDataFilter('.*"ChildId":"'. (string)$this->InstanceID .'".*');
 		}
 
 		public function Send()
 		{
-			$data = ['ChildId'=>'123456','Function'=>'GetEqualizerState','EqualizerId'=>'QH041442'];
+			$data = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetEqualizerState','EqualizerId'=>'QH041442'];
 			$this->SendDataToParent(json_encode(['DataID' => '{B62C0F65-7B59-0CD8-8C92-5DA32FBBD317}', 'Buffer' => $data]));
 		}
 
