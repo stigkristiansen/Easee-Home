@@ -25,7 +25,8 @@ declare(strict_types=1);
 
 		public function Send()
 		{
-			$this->SendDataToParent(json_encode(['DataID' => '{B62C0F65-7B59-0CD8-8C92-5DA32FBBD317}']));
+			$data = ['ChildId'=>'123456','Function'=>'GetEqualizerState','EqualizerId'=>'QH041442'];
+			$this->SendDataToParent(json_encode(['DataID' => '{B62C0F65-7B59-0CD8-8C92-5DA32FBBD317}', 'Buffer' => $data]));
 		}
 
 		public function ReceiveData($JSONString)

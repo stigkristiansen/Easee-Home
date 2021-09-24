@@ -105,7 +105,7 @@ class EaseeHomeGateway extends IPSModule
 		
 		// To do
 		// Format $products to only include products and neccessary properties from $result
-		$products = json_encode($result);
+		$products = $result;
 
 		$this->SendDataToChildren(json_encode(["DataID" => "{47508B62-3B4E-67BE-0F29-0B82A2C62B58}", "ChildId" => $ChildId, "Buffer" => $products]));
 	}
@@ -120,7 +120,7 @@ class EaseeHomeGateway extends IPSModule
 
 		// To do
 		// Format $product to only include neccessary properties
-		$product = json_encode($result);
+		$product = $result;
 
 		$this->SendDataToChildren(json_encode(["DataID" => "{47508B62-3B4E-67BE-0F29-0B82A2C62B58}", "ChildId" => $ChildId, "Buffer" => $product]));
 	}
@@ -135,7 +135,7 @@ class EaseeHomeGateway extends IPSModule
 
 		// To do
 		// Format $product to only include neccessary properties
-		$product = json_encode($result);
+		$product = $result;
 
 		$this->SendDataToChildren(json_encode(["DataID" => "{47508B62-3B4E-67BE-0F29-0B82A2C62B58}", "ChildId" => $ChildId, "Buffer" => $product]));
 	}
