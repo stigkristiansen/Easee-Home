@@ -27,6 +27,17 @@ class EaseeHomeGateway extends IPSModule
 		parent::ApplyChanges();
 	}
 
+	public function ForwardData($JSONString) {
+		$data = json_decode($JSONString);
+
+		$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Received data from a child. The data was "%s"', $JSONString), 0);
+	
+		IPS_RunScriptText('IPS_RequestAction('. (string)$this->InstanceID.', 'Async', ' . json_encode(data->Buffer));
+
+		return true;
+	
+	}
+
 	public function RequestAction($Ident, $Value) {
 		try {
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('ReqestAction called for Ident "%s" with Value %s', $Ident, $Value), 0);
@@ -83,31 +94,48 @@ class EaseeHomeGateway extends IPSModule
 		}
 	}
 
-	private function GetEqualizerState(string $ChildId, string $EqualizerId, string $Username, string $Password) {
-		$easee = new Easee($Username, $Password);
-		$easee->DisableSSLCheck();
-		
-		$products = $easee->GetEqualizerState($EqualizerId);
-		
-		$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Easee REST API returned "%s" for GetEqualizerState()', json_encode($products)), 0);
-	}
-
 	private function GetProducts(string $ChildId, string $Username, string $Password) {
 		$easee = new Easee($Username, $Password);
 		$easee->DisableSSLCheck();
 		
-		$products = $easee->GetProducts();
+		$result = $easee->GetProducts();
+				
+		$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Easee REST API returned "%s" for GetProducts()', json_encode($result)), 0);
 		
-		$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Easee REST API returned "%s" for GetProducts()', json_encode($products)), 0);
+		// To do
+		// Format $products to only include products and neccessary properties from $result
+		$products = json_encode($result);
+
+		$this->SendDataToChildren(json_encode(["DataID"=>"{47508B62-3B4E-67BE-0F29-0B82A2C62B58}", "ChildId"=>$ChildId, "Buffer"=>$products]));
+	}
+
+	private function GetEqualizerState(string $ChildId, string $EqualizerId, string $Username, string $Password) {
+		$easee = new Easee($Username, $Password);
+		$easee->DisableSSLCheck();
+		
+		$result = $easee->GetEqualizerState($EqualizerId);
+		
+		$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Easee REST API returned "%s" for GetEqualizerState()', json_encode($result|)), 0);
+
+		// To do
+		// Format $product to only include neccessary properties
+		$product = json_encode($result);
+
+		$this->SendDataToChildren(json_encode(["DataID"=>"{47508B62-3B4E-67BE-0F29-0B82A2C62B58}", "ChildId"=>$ChildId, "Buffer"=>$product]));
 	}
 
 	private function GetCharger(string $ChildId, $ChargerId, string $Username, string $Password) {
 		$easee = new Easee($Username, $Password);
 		$easee->DisableSSLCheck();
 		
-		$products = $easee->GetCharger($ChargerId);
+		$result = $easee->GetCharger($ChargerId);
 		
-		$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Easee REST API returned "%s" for GetCharger()', json_encode($products)), 0);
+		$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Easee REST API returned "%s" for GetCharger()', json_encode($result)), 0);
 
+		// To do
+		// Format $product to only include neccessary properties
+		$product = json_encode($result);
+
+		$this->SendDataToChildren(json_encode(["DataID"=>"{47508B62-3B4E-67BE-0F29-0B82A2C62B58}", "ChildId"=>$ChildId, "Buffer"=>$product]));
 	}
 }
