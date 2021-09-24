@@ -33,10 +33,8 @@ declare(strict_types=1);
 
 		public function ReceiveData($JSONString)
 		{
-			IPS_LogMessage('Device RECV', $JSONString);
-			
 			$data = json_decode($JSONString);
 			
-			IPS_LogMessage('Device RECV', json_encode($data->Buffer));
+			IPS_LogMessage('Charger recieved', json_encode($data->Buffer));
 		}
 	}
