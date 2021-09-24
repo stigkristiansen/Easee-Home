@@ -26,11 +26,11 @@ class Easee {
         $this->DisableSSL = false;
     }
 
-    public function EnableSSL() {
+    public function EnableSSLCheck() {
         $this->disableSSL = false;
     }
 
-    public function DisableSSL() {
+    public function DisableSSLCheck() {
         $this->disableSSL = true;
     }
 
