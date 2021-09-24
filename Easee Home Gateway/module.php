@@ -57,7 +57,7 @@ class EaseeHomeGateway extends IPSModule
 		$password = $this->ReadPropertyString('Password');
 
 		if(strlen($username)==0) {
-			throw new Exception('HandleAsyncRequest: Missing "Username" in module "Easee Home Gateway"');
+			throw new Exception(sprintf('HandleAsyncRequest: Missing "Username" in module "%s"', IPS_GetName($this->InstanceID)));
 		}
 		
 		switch($function) {
