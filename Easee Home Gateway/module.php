@@ -10,6 +10,9 @@ class EaseeHomeGateway extends IPSModule
 	{
 		//Never delete this line!
 		parent::Create();
+
+		$this->RegisterPropertyString (string 'Username', '');
+		$this->RegisterPropertyString (string 'Password', '');
 	}
 
 	public function Destroy()
@@ -50,8 +53,12 @@ class EaseeHomeGateway extends IPSModule
 		$function = strtolower($request->Function);
 		$childId =  strtolower($request->ChildId);
 
-		$username = $this->ReadPropertyString('Username') ;
-		$password = $this->ReadPropertyString('Password') ;
+		$username = $this->ReadPropertyString('Username');
+		$password = $this->ReadPropertyString('Password');
+
+		if(strlen($username)==0) {
+			throw new Exception('HandleAsyncRequest: Missing "Username" in module "Easee Home Gateway"');
+		}
 		
 		switch($function) {
 			case 'getproducts':
