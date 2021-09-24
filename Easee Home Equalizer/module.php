@@ -35,6 +35,6 @@ declare(strict_types=1);
 		{
 			$data = json_decode($JSONString);
 			
-			IPS_LogMessage('Equaliser recieved', json_encode($data->Buffer));
+			IPS_LogMessage('Equalizer recieved', json_encode($data->Buffer));
 		}
 	}
