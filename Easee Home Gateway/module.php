@@ -116,7 +116,7 @@ class EaseeHomeGateway extends IPSModule
 		
 		$result = $easee->GetEqualizerState($EqualizerId);
 		
-		$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Easee REST API returned "%s" for GetEqualizerState()', json_encode($result|)), 0);
+		$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Easee REST API returned "%s" for GetEqualizerState()', json_encode($result)), 0);
 
 		// To do
 		// Format $product to only include neccessary properties
