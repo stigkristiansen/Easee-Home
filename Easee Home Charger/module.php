@@ -31,7 +31,10 @@ declare(strict_types=1);
 
 		public function ReceiveData($JSONString)
 		{
+			IPS_LogMessage('Device RECV', $JSONString);
+			
 			$data = json_decode($JSONString);
-			IPS_LogMessage('Device RECV', utf8_decode($data->Buffer));
+			
+			IPS_LogMessage('Device RECV', $data->Buffer);
 		}
 	}
