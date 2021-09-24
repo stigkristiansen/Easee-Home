@@ -8,7 +8,7 @@ declare(strict_types=1);
 			//Never delete this line!
 			parent::Create();
 
-			$this->RequireParent('{55B60EF1-A0FE-F43C-5CD2-1782E17ED9C6}');
+			$this->ConnectParent('{55B60EF1-A0FE-F43C-5CD2-1782E17ED9C6}');
 		}
 
 		public function Destroy()
@@ -21,16 +21,22 @@ declare(strict_types=1);
 		{
 			//Never delete this line!
 			parent::ApplyChanges();
+
+			$this->SetReceiveDataFilter('.*"ChildId":"'. (string)$this->InstanceID .'".*');
 		}
 
 		public function Send()
 		{
-			$this->SendDataToParent(json_encode(['DataID' => '{B62C0F65-7B59-0CD8-8C92-5DA32FBBD317}']));
+			$data = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetEqualizerState','EqualizerId'=>'QH041442'];
+			$this->SendDataToParent(json_encode(['DataID' => '{B62C0F65-7B59-0CD8-8C92-5DA32FBBD317}', 'Buffer' => $data]));
 		}
 
 		public function ReceiveData($JSONString)
 		{
+			IPS_LogMessage('Device RECV', $JSONString);
+			
 			$data = json_decode($JSONString);
-			IPS_LogMessage('Device RECV', utf8_decode($data->Buffer));
+			
+			IPS_LogMessage('Device RECV', json_encode($data->Buffer));
 		}
 	}

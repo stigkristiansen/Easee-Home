@@ -8,7 +8,7 @@ declare(strict_types=1);
 			//Never delete this line!
 			parent::Create();
 
-			$this->RequireParent('{55B60EF1-A0FE-F43C-5CD2-1782E17ED9C6}');
+			$this->ConnectParent('{55B60EF1-A0FE-F43C-5CD2-1782E17ED9C6}');
 		}
 
 		public function Destroy()
@@ -27,7 +27,7 @@ declare(strict_types=1);
 
 		public function Send()
 		{
-			$data = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetEqualizerState','EqualizerId'=>'QH041442'];
+			$data = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetCharger','ChargerId'=>'EHTWHEX7'];
 			$this->SendDataToParent(json_encode(['DataID' => '{B62C0F65-7B59-0CD8-8C92-5DA32FBBD317}', 'Buffer' => $data]));
 		}
 
