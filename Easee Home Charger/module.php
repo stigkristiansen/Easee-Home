@@ -35,6 +35,6 @@ declare(strict_types=1);
 			
 			$data = json_decode($JSONString);
 			
-			IPS_LogMessage('Device RECV', $data->Buffer);
+			IPS_LogMessage('Device RECV', json_encode($data->Buffer));
 		}
 	}
