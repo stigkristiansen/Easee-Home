@@ -32,7 +32,7 @@ class EaseeHomeGateway extends IPSModule
 
 		$data = json_decode($JSONString);
 		$instructions = json_encode($data->Buffer, JSON_HEX_QUOT);
-		$script = 'IPS_RequestAction(' . (string)$this->InstanceID . ', "Async", "' . $instructions . '");';
+		$script = "IPS_RequestAction(" . (string)$this->InstanceID . ", 'Async', '" . $instructions . "');";
 
 		$this->LogMessage('Calling IPS_RunScriptText: '.$script, KL_MESSAGE);
 		
