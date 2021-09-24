@@ -83,7 +83,7 @@ class EaseeHomeGateway extends IPSModule
 		}
 	}
 
-	private function GetEqualizerState(string $EqualizerId, string $Username, string $Password) {
+	private function GetEqualizerState(string $ChildId, string $EqualizerId, string $Username, string $Password) {
 		$easee = new Easee($Username, $Password);
 		$easee->DisableSSLCheck();
 		
