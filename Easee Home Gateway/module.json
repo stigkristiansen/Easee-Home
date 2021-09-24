@@ -1,0 +1,16 @@
+{
+    "id": "{55B60EF1-A0FE-F43C-5CD2-1782E17ED9C6}",
+    "name": "Easee Home Gateway",
+    "type": 2,
+    "vendor": "Easee",
+    "aliases": [],
+    "parentRequirements": [],
+    "childRequirements": [
+        "{47508B62-3B4E-67BE-0F29-0B82A2C62B58}"
+    ],
+    "implemented": [
+        "{B62C0F65-7B59-0CD8-8C92-5DA32FBBD317}"
+    ],
+    "prefix": "EHGW",
+    "url": ""
+}
