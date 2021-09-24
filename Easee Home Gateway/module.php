@@ -32,7 +32,7 @@ class EaseeHomeGateway extends IPSModule
 
 		$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Received data from a child. The data was "%s"', $JSONString), 0);
 	
-		IPS_RunScriptText('IPS_RequestAction('. (string)$this->InstanceID.', 'Async', ' . json_encode(data->Buffer));
+		IPS_RunScriptText('IPS_RequestAction(' . (string)$this->InstanceID.', 'Async', ' . json_encode(data->Buffer.')');
 
 		return true;
 	
@@ -106,7 +106,7 @@ class EaseeHomeGateway extends IPSModule
 		// Format $products to only include products and neccessary properties from $result
 		$products = json_encode($result);
 
-		$this->SendDataToChildren(json_encode(["DataID"=>"{47508B62-3B4E-67BE-0F29-0B82A2C62B58}", "ChildId"=>$ChildId, "Buffer"=>$products]));
+		$this->SendDataToChildren(json_encode(["DataID" => "{47508B62-3B4E-67BE-0F29-0B82A2C62B58}", "ChildId" => $ChildId, "Buffer" => $products]));
 	}
 
 	private function GetEqualizerState(string $ChildId, string $EqualizerId, string $Username, string $Password) {
@@ -121,7 +121,7 @@ class EaseeHomeGateway extends IPSModule
 		// Format $product to only include neccessary properties
 		$product = json_encode($result);
 
-		$this->SendDataToChildren(json_encode(["DataID"=>"{47508B62-3B4E-67BE-0F29-0B82A2C62B58}", "ChildId"=>$ChildId, "Buffer"=>$product]));
+		$this->SendDataToChildren(json_encode(["DataID" => "{47508B62-3B4E-67BE-0F29-0B82A2C62B58}", "ChildId" => $ChildId, "Buffer" => $product]));
 	}
 
 	private function GetCharger(string $ChildId, $ChargerId, string $Username, string $Password) {
@@ -136,6 +136,6 @@ class EaseeHomeGateway extends IPSModule
 		// Format $product to only include neccessary properties
 		$product = json_encode($result);
 
-		$this->SendDataToChildren(json_encode(["DataID"=>"{47508B62-3B4E-67BE-0F29-0B82A2C62B58}", "ChildId"=>$ChildId, "Buffer"=>$product]));
+		$this->SendDataToChildren(json_encode(["DataID" => "{47508B62-3B4E-67BE-0F29-0B82A2C62B58}", "ChildId" => $ChildId, "Buffer" => $product]));
 	}
 }
