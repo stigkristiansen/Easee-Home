@@ -11,8 +11,8 @@ class EaseeHomeGateway extends IPSModule
 		//Never delete this line!
 		parent::Create();
 
-		$this->RegisterPropertyString (string 'Username', '');
-		$this->RegisterPropertyString (string 'Password', '');
+		$this->RegisterPropertyString ('Username', '');
+		$this->RegisterPropertyString ('Password', '');
 	}
 
 	public function Destroy()
