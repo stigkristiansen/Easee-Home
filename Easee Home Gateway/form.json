@@ -8,6 +8,9 @@
             "type" :  "Label" ,  "caption" :  "Logon information for Easee Cloud API"
         },
         {
+            "type" :  "Label" ,  "caption" :  "GATEWAY"
+        },
+        {
               "type" :  "ValidationTextBox" ,  "name" :  "Username" ,  "caption" :  "Username"
         },
         {
