@@ -83,7 +83,7 @@ class EaseeHomeGateway extends IPSModule
 		$username = $this->ReadPropertyString('Username');
 		$password = $this->ReadPropertyString('Password');
 
-		$this->easee = new Easee($Username, $Password);
+		$this->easee = new Easee($username, $password);
 		$this->$easee->DisableSSLCheck();
 	}
 
