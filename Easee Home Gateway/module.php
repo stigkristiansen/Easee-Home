@@ -6,7 +6,7 @@ include 'easee.php';
 
 class EaseeHomeGateway extends IPSModule
 {
-	private easee;
+	private $easee;
 
 	public function Create()
 	{
