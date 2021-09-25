@@ -22,8 +22,8 @@ class Easee {
             $this->expires = new DateTime('now');
         else
             $this->expires = $Expires;
-        $userProfile = null;
-        $this->DisableSSL = false;
+        $this->userProfile = null;
+        $this->disableSSL = false;
     }
 
     public function EnableSSLCheck() {

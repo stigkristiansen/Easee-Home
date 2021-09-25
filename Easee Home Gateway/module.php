@@ -6,6 +6,8 @@ include 'easee.php';
 
 class EaseeHomeGateway extends IPSModule
 {
+	private easee;
+
 	public function Create()
 	{
 		//Never delete this line!
@@ -13,6 +15,8 @@ class EaseeHomeGateway extends IPSModule
 
 		$this->RegisterPropertyString ('Username', '');
 		$this->RegisterPropertyString ('Password', '');
+
+		$this->RegisterMessage(0, IPS_KERNELMESSAGE);
 	}
 
 	public function Destroy()
@@ -27,6 +31,21 @@ class EaseeHomeGateway extends IPSModule
 		parent::ApplyChanges();
 	}
 
+	public function MessageSink($TimeStamp, $SenderID, $Message, $Data) {
+        parent::MessageSink($TimeStamp, $SenderID, $Message, $Data);
+
+        if ($Message == IPS_KERNELMESSAGE && $Data[0] == KR_READY) {
+			$this->SendDebug(IPS_GetName($this->InstanceID), 'Initializing Easee Class...', 0);
+
+			$username = $this->ReadPropertyString('Username');
+			$password = $this->ReadPropertyString('Password');
+
+			$this->easee = new Easee($Username, $Password);
+			$this->$easee->DisableSSLCheck();
+		}
+            
+    }
+
 	public function ForwardData($JSONString) {
 		$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Received data from a child. The data was "%s"', $JSONString), 0);
 
@@ -34,8 +53,8 @@ class EaseeHomeGateway extends IPSModule
 		$instructions = json_encode($data->Buffer, JSON_HEX_QUOT);
 		$script = "IPS_RequestAction(" . (string)$this->InstanceID . ", 'Async', '" . $instructions . "');";
 
-		$this->LogMessage('Calling IPS_RunScriptText: '.$script, KL_MESSAGE);
-		
+		$this->SendDebug(IPS_GetName($this->InstanceID), 'Calling IPS_RunScriptText...', 0);
+				
 		// Call RequestAction in another thread
 		IPS_RunScriptText($script);
 
@@ -100,10 +119,12 @@ class EaseeHomeGateway extends IPSModule
 	}
 
 	private function GetProducts(string $ChildId, string $Username, string $Password) {
-		$easee = new Easee($Username, $Password);
-		$easee->DisableSSLCheck();
+		//$easee = new Easee($Username, $Password);
+		//$easee->DisableSSLCheck();
 		
-		$result = $easee->GetProducts();
+		//$result = $easee->GetProducts();
+
+		$result = $this->easee->GetProducts();
 				
 		$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Easee REST API returned "%s" for GetProducts()', json_encode($result)), 0);
 		
@@ -115,10 +136,10 @@ class EaseeHomeGateway extends IPSModule
 	}
 
 	private function GetEqualizerState(string $ChildId, string $EqualizerId, string $Username, string $Password) {
-		$easee = new Easee($Username, $Password);
-		$easee->DisableSSLCheck();
+		//$easee = new Easee($Username, $Password);
+		//$easee->DisableSSLCheck();
 		
-		$result = $easee->GetEqualizerState($EqualizerId);
+		$result = $this->easee->GetEqualizerState($EqualizerId);
 		
 		$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Easee REST API returned "%s" for GetEqualizerState()', json_encode($result)), 0);
 
@@ -130,10 +151,10 @@ class EaseeHomeGateway extends IPSModule
 	}
 
 	private function GetCharger(string $ChildId, $ChargerId, string $Username, string $Password) {
-		$easee = new Easee($Username, $Password);
-		$easee->DisableSSLCheck();
+		//$easee = new Easee($Username, $Password);
+		//$easee->DisableSSLCheck();
 		
-		$result = $easee->GetCharger($ChargerId);
+		$result = $this->easee->GetCharger($ChargerId);
 		
 		$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Easee REST API returned "%s" for GetCharger()', json_encode($result)), 0);
 
