@@ -143,7 +143,7 @@ class EaseeHomeGateway extends IPSModule
 	private function GetProducts(string $ChildId, string $Username, string $Password) {
 		$JSONToken = $this->GetBuffer('Token');
 		if(strlen($JSONToken)>0) {
-			$token = json_decode($$JSONToken);
+			$token = json_decode($JSONToken);
 			$easee = new Easee($Username, $Password, $token->AccessToken, $token->RefreshToken, $token->Expires);
 		} else {
 			$easee = new Easee($Username, $Password);
@@ -165,7 +165,7 @@ class EaseeHomeGateway extends IPSModule
 	private function GetEqualizerState(string $ChildId, string $EqualizerId, string $Username, string $Password) {
 		$JSONToken = $this->GetBuffer('Token');
 		if(strlen($JSONToken)>0) {
-			$token = json_decode($$JSONToken);
+			$token = json_decode($JSONToken);
 			$easee = new Easee($Username, $Password, $token->AccessToken, $token->RefreshToken, $token->Expires);
 		} else {
 			$easee = new Easee($Username, $Password);
@@ -187,7 +187,7 @@ class EaseeHomeGateway extends IPSModule
 	private function GetCharger(string $ChildId, $ChargerId, string $Username, string $Password) {
 		$JSONToken = $this->GetBuffer('Token');
 		if(strlen($JSONToken)>0) {
-			$token = json_decode($$JSONToken);
+			$token = json_decode($JSONToken);
 			$easee = new Easee($Username, $Password, $token->AccessToken, $token->RefreshToken, $token->Expires);
 		} else {
 			$easee = new Easee($Username, $Password);
