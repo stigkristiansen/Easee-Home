@@ -29,19 +29,17 @@ class EaseeHomeGateway extends IPSModule
 	{
 		//Never delete this line!
 		parent::ApplyChanges();
+
+		if (IPS_GetKernelRunlevel() == KR_READY) {
+            $this->InitEasse();
+        }
 	}
 
 	public function MessageSink($TimeStamp, $SenderID, $Message, $Data) {
         parent::MessageSink($TimeStamp, $SenderID, $Message, $Data);
 
         if ($Message == IPS_KERNELMESSAGE && $Data[0] == KR_READY) {
-			$this->SendDebug(IPS_GetName($this->InstanceID), 'Initializing Easee Class...', 0);
-
-			$username = $this->ReadPropertyString('Username');
-			$password = $this->ReadPropertyString('Password');
-
-			$this->easee = new Easee($Username, $Password);
-			$this->$easee->DisableSSLCheck();
+			$this->InitEasse();
 		}
             
     }
@@ -77,6 +75,16 @@ class EaseeHomeGateway extends IPSModule
 			$this->LogMessage(sprintf('RequestAction failed. The error was "%s"',  $e->getMessage()), KL_ERROR);
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('RequestAction failed. The error was "%s"', $e->getMessage()), 0);
 		}
+	}
+
+	private function InitEasse() {
+		$this->SendDebug(IPS_GetName($this->InstanceID), 'Initializing Easee Class...', 0);
+
+		$username = $this->ReadPropertyString('Username');
+		$password = $this->ReadPropertyString('Password');
+
+		$this->easee = new Easee($Username, $Password);
+		$this->$easee->DisableSSLCheck();
 	}
 
 	private function HandleAsyncRequest(string $Request) {
