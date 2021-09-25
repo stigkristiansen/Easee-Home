@@ -145,7 +145,8 @@ class EaseeHomeGateway extends IPSModule
 		if(strlen($JSONToken)>0) {
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Token fetch from buffer is "%s"', $JSONToken), 0);
 			$token = json_decode($JSONToken);
-			$easee = new Easee($Username, $Password, $token->AccessToken, $token->RefreshToken, $token->Expires);
+			$date = new DateTime($token->Expires->date, new DateTimeZone($token->Expires->timezone));
+			$easee = new Easee($Username, $Password, $token->AccessToken, $token->RefreshToken, $date);
 		} else {
 			$easee = new Easee($Username, $Password);
 		}
@@ -168,7 +169,8 @@ class EaseeHomeGateway extends IPSModule
 		if(strlen($JSONToken)>0) {
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Token fetch from buffer is "%s"', $JSONToken), 0);
 			$token = json_decode($JSONToken);
-			$easee = new Easee($Username, $Password, $token->AccessToken, $token->RefreshToken, $token->Expires);
+			$date = new DateTime($token->Expires->date, new DateTimeZone($token->Expires->timezone));
+			$easee = new Easee($Username, $Password, $token->AccessToken, $token->RefreshToken, $date);
 		} else {
 			$easee = new Easee($Username, $Password);
 		}
@@ -191,7 +193,8 @@ class EaseeHomeGateway extends IPSModule
 		if(strlen($JSONToken)>0) {
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Token fetch from buffer is "%s"', $JSONToken), 0);
 			$token = json_decode($JSONToken);
-			$easee = new Easee($Username, $Password, $token->AccessToken, $token->RefreshToken, $token->Expires);
+			$date = new DateTime($token->Expires->date, new DateTimeZone($token->Expires->timezone));
+			$easee = new Easee($Username, $Password, $token->AccessToken, $token->RefreshToken, $date);
 		} else {
 			$easee = new Easee($Username, $Password);
 		}
