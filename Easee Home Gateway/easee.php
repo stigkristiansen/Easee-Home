@@ -99,6 +99,9 @@ class Easee {
                 $this->refreshToken = $result->result->refreshToken; 
                 $this->expires = $now; //new DateTime('now');
                 $this->expires->add(new DateInterval('PT'.(string)$result->result->expiresIn.'S')); // adds expiresIn to "now"
+
+                IPS_LogMessage('Connect','AccessToken: '.$this->accessToken);
+                IPS_LogMessage('Connect','RefreshToken: '.$this->refreshToken);
             }    
         } catch(Exception $e) {
 			// report error
