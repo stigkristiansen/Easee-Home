@@ -42,17 +42,17 @@ class Easee {
     }
 
     public function GetToken(){
-        $token = array('accessToken' => $this->accessToken);
-        $token['refreshToken'] = $this->refreshToken;
-        $token['expires'] = $this->expires;
+        $token = array('AccessToken' => $this->accessToken);
+        $token['RefreshToken'] = $this->refreshToken;
+        $token['Expires'] = $this->expires;
 
         return (object)$token;
     }
     
-    private function Connect() {
+    public function Connect() {
         if (strlen($this->accessToken) == 0) {
             if(strlen($this->username)>0 && strlen($this->password)>0) {
-                //var_dump('Get new token');
+                var_dump('Get new token');
                 $url = self::ENDPOINT . '/api/accounts/token';
                 $body = array('username' => $this->username); 
                 $body['password'] = $this->password;
@@ -61,7 +61,7 @@ class Easee {
             }
         } else {
             if($this->expires < new DateTime('now')) {
-                //var_dump('Token expired. Get new token');
+                var_dump('Token expired. Get new token');
                 if(strlen($this->username)>0 && strlen($this->password)>0) {
                     $url = self::ENDPOINT . '/api/accounts/token';
                     $body = array('username' => $this->username); 
@@ -70,7 +70,7 @@ class Easee {
                     throw new Exception('Error: Expirered access token and missing username and/or password');
                 }
             } else {
-                //var_dump('Refresh token');
+                var_dump('Refresh token');
                 if(strlen($this->refreshToken)>0) {
                     $url = self::ENDPOINT . '/api/accounts/refresh_token';
                     $body = array('accessToken' => $this->accessToken); 
