@@ -155,7 +155,7 @@ class EaseeHomeGateway extends IPSModule
 
 			$token = json_decode($JSONToken);
 			$date = new DateTime($token->Expires->date, new DateTimeZone($token->Expires->timezone));
-			$easee = new Easee($Username, $Password, $token->AccessToken, $token->RefreshToken, $date);
+			$easee = new Easee($username, $password, $token->AccessToken, $token->RefreshToken, $date);
 		}
 
 		try {
@@ -194,7 +194,7 @@ class EaseeHomeGateway extends IPSModule
 
 			$token = json_decode($JSONToken);
 			$expire = new DateTime($token->Expires->date, new DateTimeZone($token->Expires->timezone));
-			$easee = new Easee($Username, $Password, $token->AccessToken, $token->RefreshToken, $expire);
+			$easee = new Easee($username, $password, $token->AccessToken, $token->RefreshToken, $expire);
 		}
 
 		try {
@@ -233,7 +233,7 @@ class EaseeHomeGateway extends IPSModule
 
 			$token = json_decode($JSONToken);
 			$date = new DateTime($token->Expires->date, new DateTimeZone($token->Expires->timezone));
-			$easee = new Easee($Username, $Password, $token->AccessToken, $token->RefreshToken, $date);
+			$easee = new Easee($username, $password, $token->AccessToken, $token->RefreshToken, $date);
 		}
 
 		try{
