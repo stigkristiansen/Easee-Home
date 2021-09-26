@@ -143,7 +143,7 @@ class EaseeHomeGateway extends IPSModule
 		}
 	}
 
-	private function GetProducts(string $ChildId, string $Username, string $Password) {
+	private function GetProducts(string $ChildId) {
 		$easee = null;
 		
 		$JSONToken = $this->GetTokenFromBuffer();
@@ -154,8 +154,12 @@ class EaseeHomeGateway extends IPSModule
 			$date = new DateTime($token->Expires->date, new DateTimeZone($token->Expires->timezone));
 			$easee = new Easee($Username, $Password, $token->AccessToken, $token->RefreshToken, $date);
 		}
-		
+
 		try {
+			if($easee==null) {
+				throw new Exception('Unable to initialize the Easee class');
+			}
+
 			if($this->ReadPropertyBoolean('SkipSSLCheck')) {
 				$easee->DisableSSLCheck();
 			}
@@ -188,10 +192,14 @@ class EaseeHomeGateway extends IPSModule
 		}
 
 		try {
+			if($easee==null) {
+				throw new Exception('Unable to initialize the Easee class');
+			}
+
 			if($this->ReadPropertyBoolean('SkipSSLCheck')) {
 				$easee->DisableSSLCheck();
 			}
-	
+
 			$result = $easee->GetEqualizerState($EqualizerId);
 			
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Easee REST API returned "%s" for GetEqualizerState()', json_encode($result)), 0);
@@ -218,12 +226,16 @@ class EaseeHomeGateway extends IPSModule
 			$date = new DateTime($token->Expires->date, new DateTimeZone($token->Expires->timezone));
 			$easee = new Easee($Username, $Password, $token->AccessToken, $token->RefreshToken, $date);
 		}
-		
+
 		try{
+			if($easee==null) {
+				throw new Exception('Unable to initialize the Easee class');
+			}
+
 			if($this->ReadPropertyBoolean('SkipSSLCheck')) {
 				$easee->DisableSSLCheck();
 			}
-	
+
 			$result = $easee->GetCharger($ChargerId);
 		
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Easee REST API returned "%s" for GetCharger()', json_encode($result)), 0);
