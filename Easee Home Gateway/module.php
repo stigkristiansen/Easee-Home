@@ -84,7 +84,10 @@ class EaseeHomeGateway extends IPSModule
 		$password = $this->ReadPropertyString('Password');
 
 		$easee = new Easee($username, $password);
-		$easee->DisableSSLCheck();
+		
+		if($this->ReadPropertyBoolean('SkipSSLCheck')) {
+			$easee->DisableSSLCheck();
+		}
 		
 		try {
 			$this->SendDebug(IPS_GetName($this->InstanceID), 'Connection to Easee Cloud API...', 0);
@@ -156,7 +159,9 @@ class EaseeHomeGateway extends IPSModule
 			$easee = new Easee($Username, $Password, $token->AccessToken, $token->RefreshToken, $date);
 		}
 
-		$easee->DisableSSLCheck();
+		if($this->ReadPropertyBoolean('SkipSSLCheck')) {
+			$easee->DisableSSLCheck();
+		}
 		
 		try {
 			$result = $easee->GetProducts();
@@ -187,7 +192,9 @@ class EaseeHomeGateway extends IPSModule
 			$easee = new Easee($Username, $Password, $token->AccessToken, $token->RefreshToken, $expire);
 		}
 		
-		$easee->DisableSSLCheck();
+		if($this->ReadPropertyBoolean('SkipSSLCheck')) {
+			$easee->DisableSSLCheck();
+		}
 
 		try {
 			$result = $easee->GetEqualizerState($EqualizerId);
@@ -218,7 +225,9 @@ class EaseeHomeGateway extends IPSModule
 			$easee = new Easee($Username, $Password, $token->AccessToken, $token->RefreshToken, $date);
 		}
 
-		$easee->DisableSSLCheck();
+		if($this->ReadPropertyBoolean('SkipSSLCheck')) {
+			$easee->DisableSSLCheck();
+		}
 		
 		try{
 			$result = $easee->GetCharger($ChargerId);
