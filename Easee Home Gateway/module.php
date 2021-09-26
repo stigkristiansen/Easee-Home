@@ -6,8 +6,6 @@ include 'easee.php';
 
 class EaseeHomeGateway extends IPSModule
 {
-	//private $easee;
-
 	public function Create()
 	{
 		//Never delete this line!
@@ -39,7 +37,7 @@ class EaseeHomeGateway extends IPSModule
 	public function MessageSink($TimeStamp, $SenderID, $Message, $Data) {
         parent::MessageSink($TimeStamp, $SenderID, $Message, $Data);
 
-        if ($Message == IPS_KERNELMESSAGE && $Data[0] == KR_READY) {
+		if ($Message == IPS_KERNELMESSAGE && $Data[0] == KR_READY) {
 			$this->InitEasee();
 		}
     }
@@ -83,6 +81,13 @@ class EaseeHomeGateway extends IPSModule
 		$username = $this->ReadPropertyString('Username');
 		$password = $this->ReadPropertyString('Password');
 
+		if(strlen($username)==0) {
+			$this->LogMessage(sprintf('InitEasee(): Missing property "Username" in module "%s"', IPS_GetName($this->InstanceID), KL_ERROR);
+			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('InitEasee(): Missing property "Username" in module "%s"', IPS_GetName($this->InstanceID), 0);
+			
+			return;
+		}
+
 		$easee = new Easee($username, $password);
 		
 		if($this->ReadPropertyBoolean('SkipSSLCheck')) {
@@ -96,7 +101,6 @@ class EaseeHomeGateway extends IPSModule
 			
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Saving Token for later use: %s', json_encode($token)), 0);
 			$this->AddTokenToBuffer(json_encode($token));
-
 		} catch(Exception $e) {
 			$this->LogMessage(sprintf('Failed to connect to Easee Cloud API. The error was "%s"',  $e->getMessage()), KL_ERROR);
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Failed to connec to Easee Cloud API. The error was "%s"', $e->getMessage()), 0);
@@ -115,31 +119,24 @@ class EaseeHomeGateway extends IPSModule
 
 		$function = strtolower($request->Function);
 		$childId =  strtolower($request->ChildId);
-
-		$username = $this->ReadPropertyString('Username');
-		$password = $this->ReadPropertyString('Password');
-
-		if(strlen($username)==0) {
-			throw new Exception(sprintf('HandleAsyncRequest: Missing "Username" in module "%s"', IPS_GetName($this->InstanceID)));
-		}
 		
 		switch($function) {
 			case 'getproducts':
-				$this->GetProducts($childId, $username, $password);
+				$this->GetProducts($childId);
 				break;
 			case 'getcharger':
 				if(!isset($request->ChargerId)) {
 					throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "ChargerId" is missing. The request was "%s"', $Request));
 				}
 				
-				$this->GetCharger($childId, $request->ChargerId, $username, $password);
+				$this->GetCharger($childId, $request->ChargerId);
 				break;
 			case 'getequalizerstate':
 				if(!isset($request->EqualizerId)) {
 					throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "EqualizerId" is missing. The request was "%s"', $Request));
 				}
 				
-				$this->GetEqualizerState($childId, $request->EqualizerId, $username, $password);
+				$this->GetEqualizerState($childId, $request->EqualizerId);
 				break;
 			default:
 				throw new Exception(sprintf('HandleAsyncRequest failed. Unknown function "%s"', $function));
@@ -179,14 +176,13 @@ class EaseeHomeGateway extends IPSModule
 		$this->SendDataToChildren(json_encode(["DataID" => "{47508B62-3B4E-67BE-0F29-0B82A2C62B58}", "ChildId" => $ChildId, "Buffer" => $products]));
 	}
 
-	private function GetEqualizerState(string $ChildId, string $EqualizerId, string $Username, string $Password) {
+	private function GetEqualizerState(string $ChildId, string $EqualizerId) {
 		$easee = null;
 
 		$JSONToken = $this->GetTokenFromBuffer();
 		if(strlen($JSONToken)==0) {
 			$easee = $this->InitEasee();
 		} else {
-			//$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Token fetched from buffer is "%s"', $JSONToken), 0);
 			$token = json_decode($JSONToken);
 			$expire = new DateTime($token->Expires->date, new DateTimeZone($token->Expires->timezone));
 			$easee = new Easee($Username, $Password, $token->AccessToken, $token->RefreshToken, $expire);
@@ -265,13 +261,18 @@ class EaseeHomeGateway extends IPSModule
 	}
 
 	private function Lock(string $Id){
-		for ($i = 0; $i < 500; $i++){
+		for ($i=0;$i<500;$i++){
 			if (IPS_SemaphoreEnter("EaseeHome" . (string)$this->InstanceID . $Id, 1)){
-				$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('The Lock with id "%s" has been created', $Id), 0);
+				if($i==0) {
+					$msg = sprintf('The Lock with id "%s" has been released and recreated', $Id)
+				} else {
+					$msg = sprintf('The Lock with id "%s" has been created', $Id)
+				}
+				$this->SendDebug(IPS_GetName($this->InstanceID), $msg, 0);
 				return true;
 			} else {
 				if($i==0) {
-					$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('The Lock with id "%s" to be released', $Id), 0);
+					$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Waiting for the Lock with id "%s" to be released', $Id), 0);
 				}
 				IPS_Sleep(mt_rand(1, 5));
 			}
@@ -283,10 +284,8 @@ class EaseeHomeGateway extends IPSModule
 
     private function Unlock(string $Id)
     {
-        IPS_SemaphoreLeave("EaseeHome" . (string) $this->InstanceID . $Id);
+        IPS_SemaphoreLeave("EaseeHome" . (string)$this->InstanceID . $Id);
 
 		$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('The Lock with id "%s" has been removed', $Id), 0);
-		
-		//$log->LogMessage($Id." is unlocked");
     }
 }
