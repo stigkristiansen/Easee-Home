@@ -150,6 +150,9 @@ class EaseeHomeGateway extends IPSModule
 		if(strlen($JSONToken)==0) {
 			$easee = $this->InitEasee();
 		} else {
+			$username = $this->ReadPropertyString('Username');
+			$password = $this->ReadPropertyString('Password');	
+
 			$token = json_decode($JSONToken);
 			$date = new DateTime($token->Expires->date, new DateTimeZone($token->Expires->timezone));
 			$easee = new Easee($Username, $Password, $token->AccessToken, $token->RefreshToken, $date);
@@ -186,6 +189,9 @@ class EaseeHomeGateway extends IPSModule
 		if(strlen($JSONToken)==0) {
 			$easee = $this->InitEasee();
 		} else {
+			$username = $this->ReadPropertyString('Username');
+			$password = $this->ReadPropertyString('Password');
+
 			$token = json_decode($JSONToken);
 			$expire = new DateTime($token->Expires->date, new DateTimeZone($token->Expires->timezone));
 			$easee = new Easee($Username, $Password, $token->AccessToken, $token->RefreshToken, $expire);
@@ -222,6 +228,9 @@ class EaseeHomeGateway extends IPSModule
 		if(strlen($JSONToken)==0) {
 			$easee = $this->InitEasee();
 		} else {
+			$username = $this->ReadPropertyString('Username');
+			$password = $this->ReadPropertyString('Password');
+
 			$token = json_decode($JSONToken);
 			$date = new DateTime($token->Expires->date, new DateTimeZone($token->Expires->timezone));
 			$easee = new Easee($Username, $Password, $token->AccessToken, $token->RefreshToken, $date);
