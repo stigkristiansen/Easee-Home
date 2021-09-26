@@ -92,11 +92,12 @@ class EaseeHomeGateway extends IPSModule
 			$token = $easee->GetToken();
 			
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Saving Token for later use: %s', json_encode($token)), 0);
-			$this->SetBuffer('Token', json_encode($token));
+			$this->AddTokenToBuffer(json_encode($token));
 
 		} catch(Exception $e) {
 			$this->LogMessage(sprintf('Failed to connec to Easee Cloud API. The error was "%s"',  $e->getMessage()), KL_ERROR);
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Failed to connec to Easee Cloud API. The error was "%s"', $e->getMessage()), 0);
+			return null;
 		}
 
 		return $easee;
@@ -145,7 +146,7 @@ class EaseeHomeGateway extends IPSModule
 	private function GetProducts(string $ChildId, string $Username, string $Password) {
 		$easee = null;
 		
-		$JSONToken = $this->GetBuffer('Token');
+		$JSONToken = $this->GetTokenFromBuffer();
 		if(strlen($JSONToken)==0) {
 			$easee = InitEasee();
 		} else {
@@ -176,7 +177,7 @@ class EaseeHomeGateway extends IPSModule
 	private function GetEqualizerState(string $ChildId, string $EqualizerId, string $Username, string $Password) {
 		$easee = null;
 
-		$JSONToken = $this->GetBuffer('Token');
+		$JSONToken = $this->GetTokenFromBuffer();
 		if(strlen($JSONToken)==0) {
 			$easee = $this->InitEasse();
 		} else {
@@ -207,7 +208,7 @@ class EaseeHomeGateway extends IPSModule
 	private function GetCharger(string $ChildId, $ChargerId, string $Username, string $Password) {
 		$easee = null;
 		
-		$JSONToken = $this->GetBuffer('Token');
+		$JSONToken = $this->GetTokenFromBuffer();
 		if(strlen($JSONToken)==0) {
 			$easee = InitEasee();
 		} else {
@@ -224,6 +225,7 @@ class EaseeHomeGateway extends IPSModule
 		
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Easee REST API returned "%s" for GetCharger()', json_encode($result)), 0);
 		} catch(Exception $e) {
+
 			$this->SetBuffer('Token', '');	
 			throw new Exception(sprintf('GetEqualizerState failed. The error was "%s"', $e->getMessage()));
 		}
@@ -234,4 +236,42 @@ class EaseeHomeGateway extends IPSModule
 
 		$this->SendDataToChildren(json_encode(["DataID" => "{47508B62-3B4E-67BE-0F29-0B82A2C62B58}", "ChildId" => $ChildId, "Buffer" => $product]));
 	}
+
+	private function GetTokenFromBuffer(){
+		if($this->Lock('Token')) {
+			$token = $this->GetBuffer('Token');
+			$this->Unlock('Token');
+			return $token;
+		}
+	}
+
+	private function AddTokenToBuffer(string $token) {
+		if($this->Lock('Token')) {
+			$this->SetBuffer('Token', '');	
+			$this->Unlock('Token');
+		}
+	}
+
+	private function Lock(string $Id){
+		for ($i = 0; $i < 100; $i++){
+			if (IPS_SemaphoreEnter("EaseeHome" . (string)$this->InstanceID . $Id, 1)){
+				//$log->LogMessage($ident." is locked"); 
+				return true;
+			} else {
+				if($i==0)
+					//$log->LogMessage("Waiting for lock...");
+				IPS_Sleep(mt_rand(1, 5));
+			}
+		}
+        
+        //$log->LogMessage($ident." is already locked"); 
+        return false;
+    }
+
+    private function Unlock(string $Id)
+    {
+        IPS_SemaphoreLeave("EaseeHome" . (string) $this->InstanceID . $Id);
+		
+		//$log->LogMessage($Id." is unlocked");
+    }
 }
