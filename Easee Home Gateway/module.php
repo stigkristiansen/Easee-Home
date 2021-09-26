@@ -215,7 +215,7 @@ class EaseeHomeGateway extends IPSModule
 		$this->SendDataToChildren(json_encode(["DataID" => "{47508B62-3B4E-67BE-0F29-0B82A2C62B58}", "ChildId" => $ChildId, "Buffer" => $product]));
 	}
 
-	private function GetCharger(string $ChildId, $ChargerId, string $Username, string $Password) {
+	private function GetCharger(string $ChildId, $ChargerId) {
 		$easee = null;
 		
 		$JSONToken = $this->GetTokenFromBuffer();
