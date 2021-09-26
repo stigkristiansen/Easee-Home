@@ -310,8 +310,9 @@ class EaseeHomeGateway extends IPSModule
 	private function GetTokenFromBuffer(){
 		if($this->Lock('Token')) {
 			$token = $this->GetBuffer('Token');
-			$this->Unlock('Token');
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Got token "%s" from the buffer', $token), 0);
+			$this->Unlock('Token');
+			
 			return $token;
 		}
 	}
@@ -319,10 +320,9 @@ class EaseeHomeGateway extends IPSModule
 	private function AddTokenToBuffer(string $Token) {
 		if($this->Lock('Token')) {
 			$this->SetBuffer('Token', $Token);
-			$this->Unlock('Token');
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Added token "%s" to the buffer', $Token), 0);
+			$this->Unlock('Token');
 		}
-		
 	}
 
 	private function Lock(string $Id){
