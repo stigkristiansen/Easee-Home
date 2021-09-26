@@ -70,6 +70,8 @@ class Easee {
                     throw new Exception('Error: Expirered access token and missing username and/or password');
                 }
             } else {
+                return;
+                
                 //var_dump('Refresh token');
                 if(strlen($this->refreshToken)>0) {
                     $url = self::ENDPOINT . '/api/accounts/refresh_token';
