@@ -255,23 +255,25 @@ class EaseeHomeGateway extends IPSModule
 	private function Lock(string $Id){
 		for ($i = 0; $i < 500; $i++){
 			if (IPS_SemaphoreEnter("EaseeHome" . (string)$this->InstanceID . $Id, 1)){
-				//$log->LogMessage($ident." is locked"); 
+				$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('The Lock with id "%s" has been created', $Id), 0);
 				return true;
 			} else {
-				//if($i==0) {
-					//$log->LogMessage("Waiting for lock...");
-				//}
+				if($i==0) {
+					$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('The Lock with id "%s" to be released', $Id), 0);
+				}
 				IPS_Sleep(mt_rand(1, 5));
 			}
 		}
         
-        //$log->LogMessage($ident." is already locked"); 
+        $this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Timedout waiting for the Lock with id "%s" to be released', $Id), 0);
         return false;
     }
 
     private function Unlock(string $Id)
     {
         IPS_SemaphoreLeave("EaseeHome" . (string) $this->InstanceID . $Id);
+
+		$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('The Lock with id "%s" has been removed', $Id), 0);
 		
 		//$log->LogMessage($Id." is unlocked");
     }
