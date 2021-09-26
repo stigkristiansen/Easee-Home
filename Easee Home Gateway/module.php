@@ -245,16 +245,16 @@ class EaseeHomeGateway extends IPSModule
 		}
 	}
 
-	private function AddTokenToBuffer(string $token) {
+	private function AddTokenToBuffer(string $Token) {
 		if($this->Lock('Token')) {
-			$this->SetBuffer('Token', '');	
+			$this->SetBuffer('Token', $Token);	
 			$this->Unlock('Token');
 		}
 	}
 
 	private function Lock(string $Id){
 		for ($i = 0; $i < 500; $i++){
-			if (IPS_SemaphoreEnter("EaseeHome" . (string)$this->InstanceID . $Id, 2)){
+			if (IPS_SemaphoreEnter("EaseeHome" . (string)$this->InstanceID . $Id, 1)){
 				//$log->LogMessage($ident." is locked"); 
 				return true;
 			} else {
