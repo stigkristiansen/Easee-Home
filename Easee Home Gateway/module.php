@@ -210,7 +210,7 @@ class EaseeHomeGateway extends IPSModule
 		
 		$JSONToken = $this->GetTokenFromBuffer();
 		if(strlen($JSONToken)==0) {
-			$easee = InitEasee();
+			$easee = $this->InitEasee();
 		} else {
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Token fetched from buffer is "%s"', $JSONToken), 0);
 			$token = json_decode($JSONToken);
@@ -253,8 +253,8 @@ class EaseeHomeGateway extends IPSModule
 	}
 
 	private function Lock(string $Id){
-		for ($i = 0; $i < 100; $i++){
-			if (IPS_SemaphoreEnter("EaseeHome" . (string)$this->InstanceID . $Id, 1)){
+		for ($i = 0; $i < 500; $i++){
+			if (IPS_SemaphoreEnter("EaseeHome" . (string)$this->InstanceID . $Id, 2)){
 				//$log->LogMessage($ident." is locked"); 
 				return true;
 			} else {
