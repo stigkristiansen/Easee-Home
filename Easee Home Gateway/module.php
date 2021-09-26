@@ -153,7 +153,7 @@ class EaseeHomeGateway extends IPSModule
 		if(strlen($JSONToken)==0) {
 			$easee = $this->InitEasee();
 		} else {
-			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Token fetched from buffer is "%s"', $JSONToken), 0);
+			//$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Token fetched from buffer is "%s"', $JSONToken), 0);
 			$token = json_decode($JSONToken);
 			$date = new DateTime($token->Expires->date, new DateTimeZone($token->Expires->timezone));
 			$easee = new Easee($Username, $Password, $token->AccessToken, $token->RefreshToken, $date);
@@ -186,7 +186,7 @@ class EaseeHomeGateway extends IPSModule
 		if(strlen($JSONToken)==0) {
 			$easee = $this->InitEasee();
 		} else {
-			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Token fetched from buffer is "%s"', $JSONToken), 0);
+			//$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Token fetched from buffer is "%s"', $JSONToken), 0);
 			$token = json_decode($JSONToken);
 			$expire = new DateTime($token->Expires->date, new DateTimeZone($token->Expires->timezone));
 			$easee = new Easee($Username, $Password, $token->AccessToken, $token->RefreshToken, $expire);
@@ -219,7 +219,7 @@ class EaseeHomeGateway extends IPSModule
 		if(strlen($JSONToken)==0) {
 			$easee = $this->InitEasee();
 		} else {
-			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Token fetched from buffer is "%s"', $JSONToken), 0);
+			//$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('The token fetched from buffer is "%s"', $JSONToken), 0);
 			$token = json_decode($JSONToken);
 			$date = new DateTime($token->Expires->date, new DateTimeZone($token->Expires->timezone));
 			$easee = new Easee($Username, $Password, $token->AccessToken, $token->RefreshToken, $date);
@@ -250,15 +250,17 @@ class EaseeHomeGateway extends IPSModule
 		if($this->Lock('Token')) {
 			$token = $this->GetBuffer('Token');
 			$this->Unlock('Token');
+			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Got token "%s" from the buffer', $token), 0);
 			return $token;
 		}
 	}
 
 	private function AddTokenToBuffer(string $Token) {
 		if($this->Lock('Token')) {
-			$this->SetBuffer('Token', $Token);	
+			$this->SetBuffer('Token', $Token);
 			$this->Unlock('Token');
 		}
+		$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Added token "%s" to the buffer', $Token), 0);
 	}
 
 	private function Lock(string $Id){
