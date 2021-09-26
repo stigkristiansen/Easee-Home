@@ -48,6 +48,38 @@ class Easee {
 
         return (object)$token;
     }
+
+    public function RefreshToken() {
+        if(strlen($this->refreshToken)>0) {
+            $url = self::ENDPOINT . '/api/accounts/refresh_token';
+            $body = array('accessToken' => $this->accessToken); 
+            $body['refreshToken'] = $this->refreshToken;
+        } else {
+            throw new Exception('Error: Missing refresh token');
+        }
+
+        try {
+            $now = new DateTime('now');
+
+            $result = self::request('post', $url, $body);
+   
+            if($result->error) {
+                throw new Exception(sprintf('%s failed. The error was "%s"', $url, $result->errortext));
+            } else if(isset($result->result->status) && $result->result->status != 200) {
+                throw new Exception(sprintf('%s failed. The error was "%s"', $url, $result->result->title));
+            } else if($result->httpcode!=200) {
+                throw new Exception(sprintf('%s returned http status code %d', $url, $result->httpcode));
+            } else {
+                $this->accessToken = $result->result->accessToken;
+                $this->refreshToken = $result->result->refreshToken; 
+                $this->expires = $now; //new DateTime('now');
+                $this->expires->add(new DateInterval('PT'.(string)$result->result->expiresIn.'S')); // adds expiresIn to "now"
+            }    
+        } catch(Exception $e) {
+            // report error
+            throw new Exception($e->getMessage());
+        }
+    }
     
     public function Connect() {
         if (strlen($this->accessToken) == 0) {

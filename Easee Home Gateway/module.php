@@ -15,6 +15,8 @@ class EaseeHomeGateway extends IPSModule
 		$this->RegisterPropertyString ('Password', '');
 		$this->RegisterPropertyBoolean('SkipSSLCheck', true);
 
+		$this->RegisterTimer('EaseeHomeRefreshToken' . (string)$this->InstanceID, 0, 'IPS_RequestAction(' . (string)$this->InstanceID . ', "RefreshToken", 0);'); 
+
 		$this->RegisterMessage(0, IPS_KERNELMESSAGE);
 	}
 
@@ -66,12 +68,54 @@ class EaseeHomeGateway extends IPSModule
 				case 'async':
 					$this->HandleAsyncRequest($Value);
 					break;
+				case 'refreshtoken':
+					$this->RefreshToken();
+					break;
 				default:
 					throw new Exception(sprintf('ReqestAction called with unkown Ident "%s"', $Ident));
 			}
 		} catch(Exception $e) {
 			$this->LogMessage(sprintf('RequestAction failed. The error was "%s"',  $e->getMessage()), KL_ERROR);
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('RequestAction failed. The error was "%s"', $e->getMessage()), 0);
+		}
+	}
+
+	private function RefreshToken() {
+		$easee = null;
+		
+		$JSONToken = $this->GetTokenFromBuffer();
+		if(strlen($JSONToken)==0) {
+			$easee = $this->InitEasee();
+		} else {
+			$username = $this->ReadPropertyString('Username');
+			$password = $this->ReadPropertyString('Password');	
+
+			$token = json_decode($JSONToken);
+			$expires = new DateTime($token->Expires->date, new DateTimeZone($token->Expires->timezone));
+			$easee = new Easee($username, $password, $token->AccessToken, $token->RefreshToken, $expires);
+		}
+
+		try {
+			if($easee==null) {
+				throw new Exception('Unable to initialize the Easee class');
+			}
+
+			if($this->ReadPropertyBoolean('SkipSSLCheck')) {
+				$easee->DisableSSLCheck();
+			}
+
+			$easee->RefreshToken();
+
+			$token = $easee->GetToken();
+			$diff = $token->Expires->diff(new DateTime('now'));
+						
+			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Saving refreshed Token for later use: %s', json_encode($token)), 0);
+			$this->AddTokenToBuffer(json_encode($token));
+
+			$this->SetTimerInterval('EaseeHomeRefreshToken' . (string)$this->InstanceID, ($diff->s*1000)-60000); // Refresh token 60 sec before it times out
+		} catch(Exception $e) {
+			$this->AddTokenToBuffer('');	
+			throw new Exception(sprintf('RefreshToken() failed. The error was "%s"', $e->getMessage()));
 		}
 	}
 
@@ -98,9 +142,12 @@ class EaseeHomeGateway extends IPSModule
 			$this->SendDebug(IPS_GetName($this->InstanceID), 'Connection to Easee Cloud API...', 0);
 			$easee->Connect();
 			$token = $easee->GetToken();
-			
+			$diff = $token->Expires->diff(new DateTime('now'));
+						
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Saving Token for later use: %s', json_encode($token)), 0);
 			$this->AddTokenToBuffer(json_encode($token));
+			
+			$this->SetTimerInterval('EaseeHomeRefreshToken' . (string)$this->InstanceID, ($diff->s*1000)-60000); // Refresh token 60 sec before it times out
 		} catch(Exception $e) {
 			$this->LogMessage(sprintf('Failed to connect to Easee Cloud API. The error was "%s"',  $e->getMessage()), KL_ERROR);
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Failed to connec to Easee Cloud API. The error was "%s"', $e->getMessage()), 0);
@@ -154,8 +201,8 @@ class EaseeHomeGateway extends IPSModule
 			$password = $this->ReadPropertyString('Password');	
 
 			$token = json_decode($JSONToken);
-			$date = new DateTime($token->Expires->date, new DateTimeZone($token->Expires->timezone));
-			$easee = new Easee($username, $password, $token->AccessToken, $token->RefreshToken, $date);
+			$expires = new DateTime($token->Expires->date, new DateTimeZone($token->Expires->timezone));
+			$easee = new Easee($username, $password, $token->AccessToken, $token->RefreshToken, $expires);
 		}
 
 		try {
@@ -193,8 +240,8 @@ class EaseeHomeGateway extends IPSModule
 			$password = $this->ReadPropertyString('Password');
 
 			$token = json_decode($JSONToken);
-			$expire = new DateTime($token->Expires->date, new DateTimeZone($token->Expires->timezone));
-			$easee = new Easee($username, $password, $token->AccessToken, $token->RefreshToken, $expire);
+			$expires = new DateTime($token->Expires->date, new DateTimeZone($token->Expires->timezone));
+			$easee = new Easee($username, $password, $token->AccessToken, $token->RefreshToken, $expires);
 		}
 
 		try {
@@ -232,8 +279,8 @@ class EaseeHomeGateway extends IPSModule
 			$password = $this->ReadPropertyString('Password');
 
 			$token = json_decode($JSONToken);
-			$date = new DateTime($token->Expires->date, new DateTimeZone($token->Expires->timezone));
-			$easee = new Easee($username, $password, $token->AccessToken, $token->RefreshToken, $date);
+			$expires = new DateTime($token->Expires->date, new DateTimeZone($token->Expires->timezone));
+			$easee = new Easee($username, $password, $token->AccessToken, $token->RefreshToken, $expires);
 		}
 
 		try{
@@ -306,4 +353,6 @@ class EaseeHomeGateway extends IPSModule
 
 		$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('The Lock with id "%s" has been removed', $Id), 0);
     }
+
+	
 }
