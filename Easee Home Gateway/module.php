@@ -163,7 +163,7 @@ class EaseeHomeGateway extends IPSModule
 			
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Easee REST API returned "%s" for GetProducts()', json_encode($result)), 0);
 		} catch(Exception $e) {
-			$this->SetBuffer('Token', '');	
+			$this->AddTokenToBuffer('');	
 			throw new Exception(sprintf('GetProducts failed. The error was "%s"', $e->getMessage()));
 		}
 
@@ -194,7 +194,7 @@ class EaseeHomeGateway extends IPSModule
 			
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Easee REST API returned "%s" for GetEqualizerState()', json_encode($result)), 0);
 		} catch(Exception $e) {
-			$this->SetBuffer('Token', '');	
+			$this->AddTokenToBuffer('');	
 			throw new Exception(sprintf('GetEqualizerState failed. The error was "%s"', $e->getMessage()));
 		}
 
@@ -226,7 +226,7 @@ class EaseeHomeGateway extends IPSModule
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Easee REST API returned "%s" for GetCharger()', json_encode($result)), 0);
 		} catch(Exception $e) {
 
-			$this->SetBuffer('Token', '');	
+			$this->AddTokenToBuffer('');	
 			throw new Exception(sprintf('GetEqualizerState failed. The error was "%s"', $e->getMessage()));
 		}
 
