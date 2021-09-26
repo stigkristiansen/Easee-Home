@@ -85,7 +85,7 @@ class EaseeHomeGateway extends IPSModule
 			$this->LogMessage(sprintf('InitEasee(): Missing property "Username" in module "%s"', IPS_GetName($this->InstanceID), KL_ERROR);
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('InitEasee(): Missing property "Username" in module "%s"', IPS_GetName($this->InstanceID), 0);
 			
-			return;
+			return null;
 		}
 
 		$easee = new Easee($username, $password);
@@ -150,17 +150,16 @@ class EaseeHomeGateway extends IPSModule
 		if(strlen($JSONToken)==0) {
 			$easee = $this->InitEasee();
 		} else {
-			//$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Token fetched from buffer is "%s"', $JSONToken), 0);
 			$token = json_decode($JSONToken);
 			$date = new DateTime($token->Expires->date, new DateTimeZone($token->Expires->timezone));
 			$easee = new Easee($Username, $Password, $token->AccessToken, $token->RefreshToken, $date);
 		}
-
-		if($this->ReadPropertyBoolean('SkipSSLCheck')) {
-			$easee->DisableSSLCheck();
-		}
 		
 		try {
+			if($this->ReadPropertyBoolean('SkipSSLCheck')) {
+				$easee->DisableSSLCheck();
+			}
+
 			$result = $easee->GetProducts();
 			
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Easee REST API returned "%s" for GetProducts()', json_encode($result)), 0);
@@ -187,12 +186,12 @@ class EaseeHomeGateway extends IPSModule
 			$expire = new DateTime($token->Expires->date, new DateTimeZone($token->Expires->timezone));
 			$easee = new Easee($Username, $Password, $token->AccessToken, $token->RefreshToken, $expire);
 		}
-		
-		if($this->ReadPropertyBoolean('SkipSSLCheck')) {
-			$easee->DisableSSLCheck();
-		}
 
 		try {
+			if($this->ReadPropertyBoolean('SkipSSLCheck')) {
+				$easee->DisableSSLCheck();
+			}
+	
 			$result = $easee->GetEqualizerState($EqualizerId);
 			
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Easee REST API returned "%s" for GetEqualizerState()', json_encode($result)), 0);
@@ -215,22 +214,20 @@ class EaseeHomeGateway extends IPSModule
 		if(strlen($JSONToken)==0) {
 			$easee = $this->InitEasee();
 		} else {
-			//$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('The token fetched from buffer is "%s"', $JSONToken), 0);
 			$token = json_decode($JSONToken);
 			$date = new DateTime($token->Expires->date, new DateTimeZone($token->Expires->timezone));
 			$easee = new Easee($Username, $Password, $token->AccessToken, $token->RefreshToken, $date);
 		}
-
-		if($this->ReadPropertyBoolean('SkipSSLCheck')) {
-			$easee->DisableSSLCheck();
-		}
 		
 		try{
+			if($this->ReadPropertyBoolean('SkipSSLCheck')) {
+				$easee->DisableSSLCheck();
+			}
+	
 			$result = $easee->GetCharger($ChargerId);
 		
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Easee REST API returned "%s" for GetCharger()', json_encode($result)), 0);
 		} catch(Exception $e) {
-
 			$this->AddTokenToBuffer('');	
 			throw new Exception(sprintf('GetEqualizerState failed. The error was "%s"', $e->getMessage()));
 		}
