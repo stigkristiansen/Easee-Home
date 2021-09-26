@@ -98,7 +98,7 @@ class EaseeHomeGateway extends IPSModule
 			$this->AddTokenToBuffer(json_encode($token));
 
 		} catch(Exception $e) {
-			$this->LogMessage(sprintf('Failed to connec to Easee Cloud API. The error was "%s"',  $e->getMessage()), KL_ERROR);
+			$this->LogMessage(sprintf('Failed to connect to Easee Cloud API. The error was "%s"',  $e->getMessage()), KL_ERROR);
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Failed to connec to Easee Cloud API. The error was "%s"', $e->getMessage()), 0);
 			return null;
 		}
@@ -259,8 +259,9 @@ class EaseeHomeGateway extends IPSModule
 		if($this->Lock('Token')) {
 			$this->SetBuffer('Token', $Token);
 			$this->Unlock('Token');
+			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Added token "%s" to the buffer', $Token), 0);
 		}
-		$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Added token "%s" to the buffer', $Token), 0);
+		
 	}
 
 	private function Lock(string $Id){
