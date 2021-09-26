@@ -71,7 +71,7 @@ class Easee {
                 }
             } else {
                 return;
-                
+
                 //var_dump('Refresh token');
                 if(strlen($this->refreshToken)>0) {
                     $url = self::ENDPOINT . '/api/accounts/refresh_token';
@@ -99,7 +99,7 @@ class Easee {
             } else {
                 $this->accessToken = $result->result->accessToken;
                 $this->refreshToken = $result->result->refreshToken; 
-                $this->expires = $now; //new DateTime('now');
+                $this->expires = $now; 
                 $this->expires->add(new DateInterval('PT'.(string)$result->result->expiresIn.'S')); // adds expiresIn to "now"
 
                 IPS_LogMessage('Connect','AccessToken: '.$this->accessToken);

@@ -6,7 +6,7 @@ include 'easee.php';
 
 class EaseeHomeGateway extends IPSModule
 {
-	private $easee;
+	//private $easee;
 
 	public function Create()
 	{
@@ -83,21 +83,23 @@ class EaseeHomeGateway extends IPSModule
 		$username = $this->ReadPropertyString('Username');
 		$password = $this->ReadPropertyString('Password');
 
-		$this->easee = new Easee($username, $password);
-		$this->easee->DisableSSLCheck();
+		$easee = new Easee($username, $password);
+		$easee->DisableSSLCheck();
 		
 		try {
 			$this->SendDebug(IPS_GetName($this->InstanceID), 'Connection to Easee Cloud API...', 0);
-			$this->easee->Connect();
+			$easee->Connect();
 			$token = $this->easee->GetToken();
 			
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Saving Token for later use: %s', json_encode($token)), 0);
 			$this->SetBuffer('Token', json_encode($token));
-		
+
 		} catch(Exception $e) {
 			$this->LogMessage(sprintf('Failed to connec to Easee Cloud API. The error was "%s"',  $e->getMessage()), KL_ERROR);
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Failed to connec to Easee Cloud API. The error was "%s"', $e->getMessage()), 0);
 		}
+
+		return $easee;
 	}
 
 	private function HandleAsyncRequest(string $Request) {
@@ -141,22 +143,29 @@ class EaseeHomeGateway extends IPSModule
 	}
 
 	private function GetProducts(string $ChildId, string $Username, string $Password) {
+		$easee = null;
+		
 		$JSONToken = $this->GetBuffer('Token');
-		if(strlen($JSONToken)>0) {
+		if(strlen($JSONToken)==0) {
+			$easee = InitEasee();
+		} else {
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Token fetched from buffer is "%s"', $JSONToken), 0);
 			$token = json_decode($JSONToken);
 			$date = new DateTime($token->Expires->date, new DateTimeZone($token->Expires->timezone));
 			$easee = new Easee($Username, $Password, $token->AccessToken, $token->RefreshToken, $date);
-		} else {
-			$easee = new Easee($Username, $Password);
 		}
 
 		$easee->DisableSSLCheck();
 		
-		$result = $easee->GetProducts();
-		
-		$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Easee REST API returned "%s" for GetProducts()', json_encode($result)), 0);
-		
+		try {
+			$result = $easee->GetProducts();
+			
+			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Easee REST API returned "%s" for GetProducts()', json_encode($result)), 0);
+		} catch(Exception $e) {
+			$this->SetBuffer('Token', '');	
+			throw new Exception(sprintf('GetProducts failed. The error was "%s"', $e->getMessage()));
+		}
+
 		// To do
 		// Format $products to only include products and neccessary properties from $result
 		$products = $result;
@@ -165,21 +174,28 @@ class EaseeHomeGateway extends IPSModule
 	}
 
 	private function GetEqualizerState(string $ChildId, string $EqualizerId, string $Username, string $Password) {
+		$easee = null;
+
 		$JSONToken = $this->GetBuffer('Token');
-		if(strlen($JSONToken)>0) {
+		if(strlen($JSONToken)==0) {
+			$easee = $this->InitEasse();
+		} else {
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Token fetched from buffer is "%s"', $JSONToken), 0);
 			$token = json_decode($JSONToken);
-			$date = new DateTime($token->Expires->date, new DateTimeZone($token->Expires->timezone));
-			$easee = new Easee($Username, $Password, $token->AccessToken, $token->RefreshToken, $date);
-		} else {
-			$easee = new Easee($Username, $Password);
+			$expire = new DateTime($token->Expires->date, new DateTimeZone($token->Expires->timezone));
+			$easee = new Easee($Username, $Password, $token->AccessToken, $token->RefreshToken, $expire);
 		}
 		
 		$easee->DisableSSLCheck();
-		
-		$result = $easee->GetEqualizerState($EqualizerId);
-		
-		$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Easee REST API returned "%s" for GetEqualizerState()', json_encode($result)), 0);
+
+		try {
+			$result = $easee->GetEqualizerState($EqualizerId);
+			
+			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Easee REST API returned "%s" for GetEqualizerState()', json_encode($result)), 0);
+		} catch(Exception $e) {
+			$this->SetBuffer('Token', '');	
+			throw new Exception(sprintf('GetEqualizerState failed. The error was "%s"', $e->getMessage()));
+		}
 
 		// To do
 		// Format $product to only include neccessary properties
@@ -189,21 +205,28 @@ class EaseeHomeGateway extends IPSModule
 	}
 
 	private function GetCharger(string $ChildId, $ChargerId, string $Username, string $Password) {
+		$easee = null;
+		
 		$JSONToken = $this->GetBuffer('Token');
-		if(strlen($JSONToken)>0) {
+		if(strlen($JSONToken)==0) {
+			$easee = InitEasee();
+		} else {
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Token fetched from buffer is "%s"', $JSONToken), 0);
 			$token = json_decode($JSONToken);
 			$date = new DateTime($token->Expires->date, new DateTimeZone($token->Expires->timezone));
 			$easee = new Easee($Username, $Password, $token->AccessToken, $token->RefreshToken, $date);
-		} else {
-			$easee = new Easee($Username, $Password);
 		}
 
 		$easee->DisableSSLCheck();
 		
-		$result = $easee->GetCharger($ChargerId);
+		try{
+			$result = $easee->GetCharger($ChargerId);
 		
-		$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Easee REST API returned "%s" for GetCharger()', json_encode($result)), 0);
+			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Easee REST API returned "%s" for GetCharger()', json_encode($result)), 0);
+		} catch(Exception $e) {
+			$this->SetBuffer('Token', '');	
+			throw new Exception(sprintf('GetEqualizerState failed. The error was "%s"', $e->getMessage()));
+		}
 
 		// To do
 		// Format $product to only include neccessary properties
