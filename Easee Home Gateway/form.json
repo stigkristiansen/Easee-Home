@@ -15,6 +15,9 @@
         },
         {
             "type": "PasswordTextBox", "name": "Password", "caption": "Password"
+        },
+        {
+            "type": "CheckBox", "name": "SkipSSLCheck", "caption": "Skip SSL Check"
         }
     ],
     "actions": [],

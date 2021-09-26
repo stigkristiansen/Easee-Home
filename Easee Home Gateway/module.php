@@ -15,6 +15,7 @@ class EaseeHomeGateway extends IPSModule
 
 		$this->RegisterPropertyString ('Username', '');
 		$this->RegisterPropertyString ('Password', '');
+		$this->RegisterPropertyBoolean('SkipSSLCheck', true);
 
 		$this->RegisterMessage(0, IPS_KERNELMESSAGE);
 	}
@@ -41,14 +42,13 @@ class EaseeHomeGateway extends IPSModule
         if ($Message == IPS_KERNELMESSAGE && $Data[0] == KR_READY) {
 			$this->InitEasee();
 		}
-            
     }
 
 	public function ForwardData($JSONString) {
 		$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Received data from a child. The data was "%s"', $JSONString), 0);
 
 		$data = json_decode($JSONString);
-		$instructions = json_encode($data->Buffer, JSON_HEX_QUOT);
+		$instructions = json_encode($data->Buffer);
 		$script = "IPS_RequestAction(" . (string)$this->InstanceID . ", 'Async', '" . $instructions . "');";
 
 		$this->SendDebug(IPS_GetName($this->InstanceID), 'Calling IPS_RunScriptText...', 0);

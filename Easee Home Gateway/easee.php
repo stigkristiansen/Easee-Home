@@ -52,7 +52,6 @@ class Easee {
     public function Connect() {
         if (strlen($this->accessToken) == 0) {
             if(strlen($this->username)>0 && strlen($this->password)>0) {
-                //var_dump('Get new token');
                 $url = self::ENDPOINT . '/api/accounts/token';
                 $body = array('username' => $this->username); 
                 $body['password'] = $this->password;
@@ -61,7 +60,6 @@ class Easee {
             }
         } else {
             if($this->expires < new DateTime('now')) {
-                //var_dump('Token expired. Get new token');
                 if(strlen($this->username)>0 && strlen($this->password)>0) {
                     $url = self::ENDPOINT . '/api/accounts/token';
                     $body = array('username' => $this->username); 
@@ -71,15 +69,6 @@ class Easee {
                 }
             } else {
                 return;
-
-                //var_dump('Refresh token');
-                if(strlen($this->refreshToken)>0) {
-                    $url = self::ENDPOINT . '/api/accounts/refresh_token';
-                    $body = array('accessToken' => $this->accessToken); 
-                    $body['refreshToken'] = $this->refreshToken;
-                } else {
-                    throw new Exception('Error: Missing refresh token');
-                }
             }
         }
 
@@ -87,8 +76,6 @@ class Easee {
             $now = new DateTime('now');
 
             $result = self::request('post', $url, $body);
-
-            //var_dump($result);
             
             if($result->error) {
                 throw new Exception(sprintf('%s failed. The error was "%s"', $url, $result->errortext));
@@ -102,8 +89,8 @@ class Easee {
                 $this->expires = $now; 
                 $this->expires->add(new DateInterval('PT'.(string)$result->result->expiresIn.'S')); // adds expiresIn to "now"
 
-                IPS_LogMessage('Connect','AccessToken: '.$this->accessToken);
-                IPS_LogMessage('Connect','RefreshToken: '.$this->refreshToken);
+                //IPS_LogMessage('Connect','AccessToken: '.$this->accessToken);
+                //IPS_LogMessage('Connect','RefreshToken: '.$this->refreshToken);
             }    
         } catch(Exception $e) {
 			// report error
