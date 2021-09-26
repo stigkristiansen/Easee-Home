@@ -31,7 +31,7 @@ class EaseeHomeGateway extends IPSModule
 		parent::ApplyChanges();
 
 		if (IPS_GetKernelRunlevel() == KR_READY) {
-            $this->InitEasse();
+            $this->InitEasee();
         }
 	}
 
@@ -39,7 +39,7 @@ class EaseeHomeGateway extends IPSModule
         parent::MessageSink($TimeStamp, $SenderID, $Message, $Data);
 
         if ($Message == IPS_KERNELMESSAGE && $Data[0] == KR_READY) {
-			$this->InitEasse();
+			$this->InitEasee();
 		}
             
     }
@@ -77,7 +77,7 @@ class EaseeHomeGateway extends IPSModule
 		}
 	}
 
-	private function InitEasse() {
+	private function InitEasee() {
 		$this->SendDebug(IPS_GetName($this->InstanceID), 'Initializing Easee Class...', 0);
 
 		$username = $this->ReadPropertyString('Username');
@@ -148,7 +148,7 @@ class EaseeHomeGateway extends IPSModule
 		
 		$JSONToken = $this->GetTokenFromBuffer();
 		if(strlen($JSONToken)==0) {
-			$easee = InitEasee();
+			$easee = $this->InitEasee();
 		} else {
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Token fetched from buffer is "%s"', $JSONToken), 0);
 			$token = json_decode($JSONToken);
@@ -179,7 +179,7 @@ class EaseeHomeGateway extends IPSModule
 
 		$JSONToken = $this->GetTokenFromBuffer();
 		if(strlen($JSONToken)==0) {
-			$easee = $this->InitEasse();
+			$easee = $this->InitEasee();
 		} else {
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Token fetched from buffer is "%s"', $JSONToken), 0);
 			$token = json_decode($JSONToken);
@@ -258,8 +258,9 @@ class EaseeHomeGateway extends IPSModule
 				//$log->LogMessage($ident." is locked"); 
 				return true;
 			} else {
-				if($i==0)
+				//if($i==0) {
 					//$log->LogMessage("Waiting for lock...");
+				//}
 				IPS_Sleep(mt_rand(1, 5));
 			}
 		}
