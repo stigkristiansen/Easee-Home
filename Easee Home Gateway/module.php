@@ -143,8 +143,8 @@ class EaseeHomeGateway extends IPSModule
 			$now = new DateTime('now');
 			$diff = $token->Expires->diff($now);
 			
-			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Now: %s', (string)$now), 0);
-			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Expires: %s', (string)$token->Expires), 0);
+			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Now: %s', $now->format('Y-m-d H:i:s')), 0);
+			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Expires: %s', $token->Expires->format('Y-m-d H:i:s')), 0);
 
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Saving Token for later use: %s', json_encode($token)), 0);
 			$this->AddTokenToBuffer($token);
