@@ -106,14 +106,10 @@ class EaseeHomeGateway extends IPSModule
 
 			$token = $easee->GetToken();
 
-			$now = new DateTime('now');
-			$diff = $token->Expires->diff($now);
-			//$millisec = (((($diff->days*24+$diff->h)*60+$diff->i)*60+$diff->s)-5*60)*1000; // Timeout 5 minutes before the token is expirering
-						
-			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Saving refreshed Token for later use: %s', json_encode($token)), 0);
-			$this->AddTokenToBuffer($token);
+			$expiresIn = ($token->ExpiresIn-5*60); // Set to 5 minutes before token timeout
 
-			$this->SetTimerInterval('EaseeHomeRefreshToken' . (string)$this->InstanceID, ($token->ExpiresIn-5*60)*1000); 
+			$this->SetTimerInterval('EaseeHomeRefreshToken' . (string)$this->InstanceID, $expiresIn*1000); 
+			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Token Refresh Timer set to %s second(s)', (string)$expiresIn), 0);
 		} catch(Exception $e) {
 			$this->AddTokenToBuffer(null);	
 			throw new Exception(sprintf('RefreshToken() failed. The error was "%s"', $e->getMessage()));
@@ -146,17 +142,11 @@ class EaseeHomeGateway extends IPSModule
 			
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Saving Token for later use: %s', json_encode($token)), 0);
 			$this->AddTokenToBuffer($token);
-
-			$now = new DateTime('now');
-			$diff = $token->Expires->diff($now);
 			
-			//$millisec = (((($diff->days*24+$diff->h)*60+$diff->i)*60+$diff->s)-5*60)*1000;
+			$expiresIn = ($token->ExpiresIn-5*60); // Set to 5 minutes before token timeout
 
-			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Now: %s', $now->format('Y-m-d H:i:s')), 0);
-			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Expire: %s', $token->Expires->format('Y-m-d H:i:s')), 0);
-			
-			$this->SetTimerInterval('EaseeHomeRefreshToken' . (string)$this->InstanceID, ($token->ExpiresIn-5*60)*1000); 
-			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Token Refresh Timer set to %s second(s)', (string)$token->ExpiresIn), 0);
+			$this->SetTimerInterval('EaseeHomeRefreshToken' . (string)$this->InstanceID, $expiresIn*1000); 
+			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Token Refresh Timer set to %s second(s)', (string)$expiresIn), 0);
 		} catch(Exception $e) {
 			$this->LogMessage(sprintf('Failed to connect to Easee Cloud API. The error was "%s"',  $e->getMessage()), KL_ERROR);
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Failed to connec to Easee Cloud API. The error was "%s"', $e->getMessage()), 0);
