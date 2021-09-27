@@ -110,11 +110,12 @@ class EaseeHomeGateway extends IPSModule
 			$diff = $token->Expires->diff(new DateTime('now'));
 						
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Saving refreshed Token for later use: %s', json_encode($token)), 0);
-			$this->AddTokenToBuffer(json_encode($token));
+			//$this->AddTokenToBuffer(json_encode($token));
+			$this->AddTokenToBuffer($token);
 
 			$this->SetTimerInterval('EaseeHomeRefreshToken' . (string)$this->InstanceID, ($diff->s*1000)-60000); // Refresh token 60 sec before it times out
 		} catch(Exception $e) {
-			$this->AddTokenToBuffer('');	
+			$this->AddTokenToBuffer(null);	
 			throw new Exception(sprintf('RefreshToken() failed. The error was "%s"', $e->getMessage()));
 		}
 	}
@@ -139,13 +140,14 @@ class EaseeHomeGateway extends IPSModule
 		}
 		
 		try {
-			$this->SendDebug(IPS_GetName($this->InstanceID), 'Connection to Easee Cloud API...', 0);
+			$this->SendDebug(IPS_GetName($this->InstanceID), 'Connecting to Easee Cloud API...', 0);
 			$easee->Connect();
 			$token = $easee->GetToken();
 			$diff = $token->Expires->diff(new DateTime('now'));
 						
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Saving Token for later use: %s', json_encode($token)), 0);
-			$this->AddTokenToBuffer(json_encode($token));
+			//$this->AddTokenToBuffer(json_encode($token));
+			$this->AddTokenToBuffer($token);
 			
 			$this->SetTimerInterval('EaseeHomeRefreshToken' . (string)$this->InstanceID, ($diff->s*1000)-60000); // Refresh token 60 sec before it times out
 		} catch(Exception $e) {
@@ -218,7 +220,7 @@ class EaseeHomeGateway extends IPSModule
 			
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Easee REST API returned "%s" for GetProducts()', json_encode($result)), 0);
 		} catch(Exception $e) {
-			$this->AddTokenToBuffer('');	
+			$this->AddTokenToBuffer(null);	
 			throw new Exception(sprintf('GetProducts failed. The error was "%s"', $e->getMessage()));
 		}
 
@@ -257,7 +259,7 @@ class EaseeHomeGateway extends IPSModule
 			
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Easee REST API returned "%s" for GetEqualizerState()', json_encode($result)), 0);
 		} catch(Exception $e) {
-			$this->AddTokenToBuffer('');	
+			$this->AddTokenToBuffer(null);	
 			throw new Exception(sprintf('GetEqualizerState failed. The error was "%s"', $e->getMessage()));
 		}
 
@@ -296,7 +298,7 @@ class EaseeHomeGateway extends IPSModule
 		
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Easee REST API returned "%s" for GetCharger()', json_encode($result)), 0);
 		} catch(Exception $e) {
-			$this->AddTokenToBuffer('');	
+			$this->AddTokenToBuffer(null);	
 			throw new Exception(sprintf('GetEqualizerState failed. The error was "%s"', $e->getMessage()));
 		}
 
@@ -317,9 +319,21 @@ class EaseeHomeGateway extends IPSModule
 		}
 	}
 
-	private function AddTokenToBuffer(string $Token) {
+	/*private function AddTokenToBuffer(string $Token) {
 		if($this->Lock('Token')) {
 			$this->SetBuffer('Token', $Token);
+			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Added token "%s" to the buffer', $Token), 0);
+			$this->Unlock('Token');
+		}
+	}*/
+
+	private function AddTokenToBuffer($Token) {
+		if($this->Lock('Token')) {
+			if($Token==null)
+				$token = '';
+			else
+				$token = json_encode($Token);
+			$this->SetBuffer('Token', $token);
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Added token "%s" to the buffer', $Token), 0);
 			$this->Unlock('Token');
 		}
@@ -343,8 +357,10 @@ class EaseeHomeGateway extends IPSModule
 			}
 		}
         
+		$this->LogMessage(sprintf('Timedout waiting for the Lock with id "%s" to be released', $Id), KL_ERROR);
         $this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Timedout waiting for the Lock with id "%s" to be released', $Id), 0);
-        return false;
+        
+		return false;
     }
 
     private function Unlock(string $Id)
