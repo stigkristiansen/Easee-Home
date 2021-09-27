@@ -334,7 +334,7 @@ class EaseeHomeGateway extends IPSModule
 			else
 				$token = json_encode($Token);
 			$this->SetBuffer('Token', $token);
-			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Added token "%s" to the buffer', $Token), 0);
+			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Added token "%s" to the buffer', $token), 0);
 			$this->Unlock('Token');
 		}
 	}
