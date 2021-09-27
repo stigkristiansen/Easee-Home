@@ -143,7 +143,7 @@ class EaseeHomeGateway extends IPSModule
 			$now = new DateTime('now');
 			$diff = $token->Expires->diff($now, true);
 
-			$millisec = (($diff->days*24*60+$diff->i)*60+$diff->s)*1000;
+			$millisec = ((($diff->days*24+$diff->h)*60+$diff->i)*60+$diff->s)*1000;
 			
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Now: %s', $now->format('Y-m-d H:i:s')), 0);
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Expires: %s', $token->Expires->format('Y-m-d H:i:s')), 0);
