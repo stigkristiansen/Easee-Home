@@ -140,9 +140,11 @@ class EaseeHomeGateway extends IPSModule
 			$this->SendDebug(IPS_GetName($this->InstanceID), 'Connecting to Easee Cloud API...', 0);
 			$easee->Connect();
 			$token = $easee->GetToken();
-			$diff = $token->Expires->diff(new DateTime('now'));
+			$now = new DateTime('now')
+			$diff = $token->Expires->diff($now);
 			
-			
+			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Now: %s', (string)$now), 0);
+			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Expires: %s', (string)$token->Expires), 0);
 
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Saving Token for later use: %s', json_encode($token)), 0);
 			$this->AddTokenToBuffer($token);
