@@ -146,7 +146,7 @@ class EaseeHomeGateway extends IPSModule
 
 			$now = new DateTime('now');
 			$diff = $token->Expires->diff($now, true);
-			$millisec = (((($diff->days*24+$diff->h)*60+$diff->i)*60+$diff->s)-5*60)*1000; // Timeout 5 minutes before the token is expirering
+			$millisec = ((($diff->days*24+$diff->h)*60+$diff->i)*60+$diff->s)*1000; // Timeout 5 minutes before the token is expirering
 			
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Saving Token for later use: %s', json_encode($token)), 0);
 			$this->AddTokenToBuffer($token);
