@@ -8,6 +8,7 @@ class Easee {
     private $accessToken;
     private $refresToken; 
     private $expires;
+    private $ExpiresIn;
     private $disableSSL;
     private $userProfile;
 
@@ -45,6 +46,7 @@ class Easee {
         $token = array('AccessToken' => $this->accessToken);
         $token['RefreshToken'] = $this->refreshToken;
         $token['Expires'] = $this->expires;
+        $token['ExpiresIn'] = $this->expiresIn;
 
         return (object)$token;
     }
@@ -74,6 +76,7 @@ class Easee {
                 $this->refreshToken = $result->result->refreshToken; 
                 $this->expires = $now; //new DateTime('now');
                 $this->expires->add(new DateInterval('PT'.(string)$result->result->expiresIn.'S')); // adds expiresIn to "now"
+                $this->expiresIn = $result->result->expiresIn;
             }    
         } catch(Exception $e) {
             // report error
@@ -120,7 +123,8 @@ class Easee {
                 $this->refreshToken = $result->result->refreshToken; 
                 $this->expires = $now; 
                 $this->expires->add(new DateInterval('PT'.(string)$result->result->expiresIn.'S')); // adds expiresIn to "now"
-
+                $this->expiresIn = $result->result->expiresIn;
+                
                 //IPS_LogMessage('Connect','AccessToken: '.$this->accessToken);
                 //IPS_LogMessage('Connect','RefreshToken: '.$this->refreshToken);
             }    

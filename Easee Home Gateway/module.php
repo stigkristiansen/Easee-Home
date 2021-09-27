@@ -108,12 +108,12 @@ class EaseeHomeGateway extends IPSModule
 
 			$now = new DateTime('now');
 			$diff = $token->Expires->diff($now);
-			$millisec = (((($diff->days*24+$diff->h)*60+$diff->i)*60+$diff->s)-5*60)*1000; // Timeout 5 minutes before the token is expirering
+			//$millisec = (((($diff->days*24+$diff->h)*60+$diff->i)*60+$diff->s)-5*60)*1000; // Timeout 5 minutes before the token is expirering
 						
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Saving refreshed Token for later use: %s', json_encode($token)), 0);
 			$this->AddTokenToBuffer($token);
 
-			$this->SetTimerInterval('EaseeHomeRefreshToken' . (string)$this->InstanceID, $millisec); 
+			$this->SetTimerInterval('EaseeHomeRefreshToken' . (string)$this->InstanceID, ($token->ExpiresIn-5*60)*1000); 
 		} catch(Exception $e) {
 			$this->AddTokenToBuffer(null);	
 			throw new Exception(sprintf('RefreshToken() failed. The error was "%s"', $e->getMessage()));
@@ -150,13 +150,13 @@ class EaseeHomeGateway extends IPSModule
 			$now = new DateTime('now');
 			$diff = $token->Expires->diff($now);
 			
-			$millisec = (((($diff->days*24+$diff->h)*60+$diff->i)*60+$diff->s)-5*60)*1000;
+			//$millisec = (((($diff->days*24+$diff->h)*60+$diff->i)*60+$diff->s)-5*60)*1000;
 
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Now: %s', $now->format('Y-m-d H:i:s')), 0);
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Expire: %s', $token->Expires->format('Y-m-d H:i:s')), 0);
 			
-			$this->SetTimerInterval('EaseeHomeRefreshToken' . (string)$this->InstanceID, $millisec); 
-			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Token Refresh Timer set to %s second(s)', (string)$millisec/1000), 0);
+			$this->SetTimerInterval('EaseeHomeRefreshToken' . (string)$this->InstanceID, ($token->ExpiresIn-5*60)*1000); 
+			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Token Refresh Timer set to %s second(s)', (string)$token->ExpiresIn), 0);
 		} catch(Exception $e) {
 			$this->LogMessage(sprintf('Failed to connect to Easee Cloud API. The error was "%s"',  $e->getMessage()), KL_ERROR);
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Failed to connec to Easee Cloud API. The error was "%s"', $e->getMessage()), 0);
