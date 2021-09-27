@@ -170,7 +170,7 @@ class EaseeHomeGateway extends IPSModule
 			case 'getproducts':
 				$this->GetProducts($childId);
 				break;
-			case 'getcharger':
+			case 'getchargerstate':
 				if(!isset($request->ChargerId)) {
 					throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "ChargerId" is missing. The request was "%s"', $Request));
 				}
@@ -263,7 +263,7 @@ class EaseeHomeGateway extends IPSModule
 		$this->SendDataToChildren(json_encode(["DataID" => "{47508B62-3B4E-67BE-0F29-0B82A2C62B58}", "ChildId" => $ChildId, "Buffer" => $product]));
 	}
 
-	private function GetCharger(string $ChildId, $ChargerId) {
+	private function GetChargerState(string $ChildId, $ChargerId) {
 		$easee = null;
 		
 		$token = $this->GetTokenFromBuffer();
@@ -285,7 +285,7 @@ class EaseeHomeGateway extends IPSModule
 				$easee->DisableSSLCheck();
 			}
 
-			$result = $easee->GetCharger($ChargerId);
+			$result = $easee->GetChargerState($ChargerId);
 		
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Easee REST API returned "%s" for GetCharger()', json_encode($result)), 0);
 		} catch(Exception $e) {

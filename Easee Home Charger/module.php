@@ -27,7 +27,7 @@ declare(strict_types=1);
 
 		public function Send()
 		{
-			$data = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetCharger','ChargerId'=>'EHTWHEX7'];
+			$data = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerState','ChargerId'=>'EHTWHEX7'];
 			$this->SendDataToParent(json_encode(['DataID' => '{B62C0F65-7B59-0CD8-8C92-5DA32FBBD317}', 'Buffer' => $data]));
 		}
 

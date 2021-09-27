@@ -124,7 +124,7 @@ class Easee {
                 $this->expires = $now; 
                 $this->expires->add(new DateInterval('PT'.(string)$result->result->expiresIn.'S')); // adds expiresIn to "now"
                 $this->expiresIn = $result->result->expiresIn;
-                
+
                 //IPS_LogMessage('Connect','AccessToken: '.$this->accessToken);
                 //IPS_LogMessage('Connect','RefreshToken: '.$this->refreshToken);
             }    
@@ -194,12 +194,12 @@ class Easee {
         }
     }
 
-    public function GetCharger(string $ChargerId) {
+    public function GetChargerState(string $ChargerId) {
         
         try{
             $this->Connect();
             
-            $url = self::ENDPOINT . '/api/chargers/' . $ChargerId;
+            $url = self::ENDPOINT . '/api/chargers/' . $ChargerId .'/state';
             $result = self::request('get', $url);
 
             //var_dump($result);
