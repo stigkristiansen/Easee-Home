@@ -83,16 +83,18 @@ class EaseeHomeGateway extends IPSModule
 	private function RefreshToken() {
 		$easee = null;
 		
-		$JSONToken = $this->GetTokenFromBuffer();
-		if(strlen($JSONToken)==0) {
+		//$JSONToken = $this->GetTokenFromBuffer();
+		//if(strlen($JSONToken)==0) {
+		$token = $this->GetTokenFromBuffer();
+		if($token==null) {
 			$easee = $this->InitEasee();
 		} else {
 			$username = $this->ReadPropertyString('Username');
 			$password = $this->ReadPropertyString('Password');	
 
-			$token = json_decode($JSONToken);
-			$expires = new DateTime($token->Expires->date, new DateTimeZone($token->Expires->timezone));
-			$easee = new Easee($username, $password, $token->AccessToken, $token->RefreshToken, $expires);
+			//$token = json_decode($JSONToken);
+			//$expires = new DateTime($token->Expires->date, new DateTimeZone($token->Expires->timezone));
+			$easee = new Easee($username, $password, $token->AccessToken, $token->RefreshToken, $token->Expires);
 		}
 
 		try {
@@ -195,8 +197,10 @@ class EaseeHomeGateway extends IPSModule
 	private function GetProducts(string $ChildId) {
 		$easee = null;
 		
-		$JSONToken = $this->GetTokenFromBuffer();
-		if(strlen($JSONToken)==0) {
+		//$JSONToken = $this->GetTokenFromBuffer();
+		//if(strlen($JSONToken)==0) {
+		$token = $this->GetTokenFromBuffer();
+		if($token==null) {
 			$easee = $this->InitEasee();
 		} else {
 			$username = $this->ReadPropertyString('Username');
@@ -234,8 +238,10 @@ class EaseeHomeGateway extends IPSModule
 	private function GetEqualizerState(string $ChildId, string $EqualizerId) {
 		$easee = null;
 
-		$JSONToken = $this->GetTokenFromBuffer();
-		if(strlen($JSONToken)==0) {
+		//$JSONToken = $this->GetTokenFromBuffer();
+		//if(strlen($JSONToken)==0) {
+		$token = $this->GetTokenFromBuffer();
+		if($token==null) {
 			$easee = $this->InitEasee();
 		} else {
 			$username = $this->ReadPropertyString('Username');
@@ -273,8 +279,10 @@ class EaseeHomeGateway extends IPSModule
 	private function GetCharger(string $ChildId, $ChargerId) {
 		$easee = null;
 		
-		$JSONToken = $this->GetTokenFromBuffer();
-		if(strlen($JSONToken)==0) {
+		//$JSONToken = $this->GetTokenFromBuffer();
+		//if(strlen($JSONToken)==0) {
+		$token = $this->GetTokenFromBuffer();
+		if($token==null) {
 			$easee = $this->InitEasee();
 		} else {
 			$username = $this->ReadPropertyString('Username');
@@ -309,7 +317,7 @@ class EaseeHomeGateway extends IPSModule
 		$this->SendDataToChildren(json_encode(["DataID" => "{47508B62-3B4E-67BE-0F29-0B82A2C62B58}", "ChildId" => $ChildId, "Buffer" => $product]));
 	}
 
-	private function GetTokenFromBuffer(){
+	/*private function GetTokenFromBuffer(){
 		if($this->Lock('Token')) {
 			$token = $this->GetBuffer('Token');
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Got token "%s" from the buffer', $token), 0);
@@ -317,7 +325,26 @@ class EaseeHomeGateway extends IPSModule
 			
 			return $token;
 		}
+	}*/
+
+	private function GetTokenFromBuffer(){
+		if($this->Lock('Token')) {
+			$jsonToken = $this->GetBuffer('Token');
+			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Got token "%s" from the buffer', $jsonToken), 0);
+			$this->Unlock('Token');
+			
+			$token = json_decode($jsonToken);
+			$expires = new DateTime($token->Expires->date, new DateTimeZone($token->Expires->timezone));
+			$token->Expires = $expires; 
+			
+			return $token;
+		} 
+
+		return null;
 	}
+
+	//$token = json_decode($JSONToken);
+	//$expires = new DateTime($token->Expires->date, new DateTimeZone($token->Expires->timezone));
 
 	/*private function AddTokenToBuffer(string $Token) {
 		if($this->Lock('Token')) {
