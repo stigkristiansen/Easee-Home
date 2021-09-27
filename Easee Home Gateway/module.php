@@ -333,9 +333,9 @@ class EaseeHomeGateway extends IPSModule
 		for ($i=0;$i<500;$i++){
 			if (IPS_SemaphoreEnter("EaseeHome" . (string)$this->InstanceID . $Id, 1)){
 				if($i==0) {
-					$msg = sprintf('The Lock with id "%s" has been created', $Id);
+					$msg = sprintf('Created the Lock with id "%s"', $Id);
 				} else {
-					$msg = sprintf('The Lock with id "%s" has been released and recreated', $Id);
+					$msg = sprintf('Released and recreated the Lock with id "%s"', $Id);
 				}
 				$this->SendDebug(IPS_GetName($this->InstanceID), $msg, 0);
 				return true;
@@ -357,7 +357,7 @@ class EaseeHomeGateway extends IPSModule
     {
         IPS_SemaphoreLeave("EaseeHome" . (string)$this->InstanceID . $Id);
 
-		$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('The Lock with id "%s" has been removed', $Id), 0);
+		$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Removed the Lock with id "%s"', $Id), 0);
     }
 
 	
