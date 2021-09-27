@@ -83,8 +83,6 @@ class EaseeHomeGateway extends IPSModule
 	private function RefreshToken() {
 		$easee = null;
 		
-		//$JSONToken = $this->GetTokenFromBuffer();
-		//if(strlen($JSONToken)==0) {
 		$token = $this->GetTokenFromBuffer();
 		if($token==null) {
 			$easee = $this->InitEasee();
@@ -92,8 +90,6 @@ class EaseeHomeGateway extends IPSModule
 			$username = $this->ReadPropertyString('Username');
 			$password = $this->ReadPropertyString('Password');	
 
-			//$token = json_decode($JSONToken);
-			//$expires = new DateTime($token->Expires->date, new DateTimeZone($token->Expires->timezone));
 			$easee = new Easee($username, $password, $token->AccessToken, $token->RefreshToken, $token->Expires);
 		}
 
@@ -112,7 +108,6 @@ class EaseeHomeGateway extends IPSModule
 			$diff = $token->Expires->diff(new DateTime('now'));
 						
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Saving refreshed Token for later use: %s', json_encode($token)), 0);
-			//$this->AddTokenToBuffer(json_encode($token));
 			$this->AddTokenToBuffer($token);
 
 			$this->SetTimerInterval('EaseeHomeRefreshToken' . (string)$this->InstanceID, ($diff->s*1000)-60000); // Refresh token 60 sec before it times out
@@ -146,12 +141,14 @@ class EaseeHomeGateway extends IPSModule
 			$easee->Connect();
 			$token = $easee->GetToken();
 			$diff = $token->Expires->diff(new DateTime('now'));
-						
+			
+			
+
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Saving Token for later use: %s', json_encode($token)), 0);
-			//$this->AddTokenToBuffer(json_encode($token));
 			$this->AddTokenToBuffer($token);
 			
 			$this->SetTimerInterval('EaseeHomeRefreshToken' . (string)$this->InstanceID, ($diff->s*1000)-60000); // Refresh token 60 sec before it times out
+			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Token Refresh Timer set to %s sec', (string)($diff->s*1000)-60000), 0);
 		} catch(Exception $e) {
 			$this->LogMessage(sprintf('Failed to connect to Easee Cloud API. The error was "%s"',  $e->getMessage()), KL_ERROR);
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Failed to connec to Easee Cloud API. The error was "%s"', $e->getMessage()), 0);
@@ -197,8 +194,6 @@ class EaseeHomeGateway extends IPSModule
 	private function GetProducts(string $ChildId) {
 		$easee = null;
 		
-		//$JSONToken = $this->GetTokenFromBuffer();
-		//if(strlen($JSONToken)==0) {
 		$token = $this->GetTokenFromBuffer();
 		if($token==null) {
 			$easee = $this->InitEasee();
@@ -206,8 +201,6 @@ class EaseeHomeGateway extends IPSModule
 			$username = $this->ReadPropertyString('Username');
 			$password = $this->ReadPropertyString('Password');	
 
-			//$token = json_decode($JSONToken);
-			//$expires = new DateTime($token->Expires->date, new DateTimeZone($token->Expires->timezone));
 			$easee = new Easee($username, $password, $token->AccessToken, $token->RefreshToken, $token->Expires);
 		}
 
@@ -238,8 +231,6 @@ class EaseeHomeGateway extends IPSModule
 	private function GetEqualizerState(string $ChildId, string $EqualizerId) {
 		$easee = null;
 
-		//$JSONToken = $this->GetTokenFromBuffer();
-		//if(strlen($JSONToken)==0) {
 		$token = $this->GetTokenFromBuffer();
 		if($token==null) {
 			$easee = $this->InitEasee();
@@ -247,8 +238,6 @@ class EaseeHomeGateway extends IPSModule
 			$username = $this->ReadPropertyString('Username');
 			$password = $this->ReadPropertyString('Password');
 
-			//$token = json_decode($JSONToken);
-			//$expires = new DateTime($token->Expires->date, new DateTimeZone($token->Expires->timezone));
 			$easee = new Easee($username, $password, $token->AccessToken, $token->RefreshToken, $token->Expires);
 		}
 
@@ -279,8 +268,6 @@ class EaseeHomeGateway extends IPSModule
 	private function GetCharger(string $ChildId, $ChargerId) {
 		$easee = null;
 		
-		//$JSONToken = $this->GetTokenFromBuffer();
-		//if(strlen($JSONToken)==0) {
 		$token = $this->GetTokenFromBuffer();
 		if($token==null) {
 			$easee = $this->InitEasee();
@@ -288,8 +275,6 @@ class EaseeHomeGateway extends IPSModule
 			$username = $this->ReadPropertyString('Username');
 			$password = $this->ReadPropertyString('Password');
 
-			//$token = json_decode($JSONToken);
-			//$expires = new DateTime($token->Expires->date, new DateTimeZone($token->Expires->timezone));
 			$easee = new Easee($username, $password, $token->AccessToken, $token->RefreshToken, $token->Expires);
 		}
 
@@ -317,15 +302,6 @@ class EaseeHomeGateway extends IPSModule
 		$this->SendDataToChildren(json_encode(["DataID" => "{47508B62-3B4E-67BE-0F29-0B82A2C62B58}", "ChildId" => $ChildId, "Buffer" => $product]));
 	}
 
-	/*private function GetTokenFromBuffer(){
-		if($this->Lock('Token')) {
-			$token = $this->GetBuffer('Token');
-			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Got token "%s" from the buffer', $token), 0);
-			$this->Unlock('Token');
-			
-			return $token;
-		}
-	}*/
 
 	private function GetTokenFromBuffer(){
 		if($this->Lock('Token')) {
@@ -342,17 +318,6 @@ class EaseeHomeGateway extends IPSModule
 
 		return null;
 	}
-
-	//$token = json_decode($JSONToken);
-	//$expires = new DateTime($token->Expires->date, new DateTimeZone($token->Expires->timezone));
-
-	/*private function AddTokenToBuffer(string $Token) {
-		if($this->Lock('Token')) {
-			$this->SetBuffer('Token', $Token);
-			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Added token "%s" to the buffer', $Token), 0);
-			$this->Unlock('Token');
-		}
-	}*/
 
 	private function AddTokenToBuffer($Token) {
 		if($this->Lock('Token')) {
