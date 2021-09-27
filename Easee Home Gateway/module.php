@@ -161,7 +161,6 @@ class EaseeHomeGateway extends IPSModule
 			$this->LogMessage(sprintf('Failed to connect to Easee Cloud API. The error was "%s"',  $e->getMessage()), KL_ERROR);
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Failed to connec to Easee Cloud API. The error was "%s"', $e->getMessage()), 0);
 			return null;
-			
 		}
 
 		return $easee;
