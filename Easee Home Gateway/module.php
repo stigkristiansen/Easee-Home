@@ -148,7 +148,7 @@ class EaseeHomeGateway extends IPSModule
 			$this->AddTokenToBuffer($token);
 			
 			$this->SetTimerInterval('EaseeHomeRefreshToken' . (string)$this->InstanceID, ($diff->s*1000)-60000); // Refresh token 60 sec before it times out
-			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Token Refresh Timer set to %s sec', (string)($diff->s*1000)-60000), 0);
+			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Token Refresh Timer set to %s sec', (string)$diff->s), 0);
 		} catch(Exception $e) {
 			$this->LogMessage(sprintf('Failed to connect to Easee Cloud API. The error was "%s"',  $e->getMessage()), KL_ERROR);
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Failed to connec to Easee Cloud API. The error was "%s"', $e->getMessage()), 0);
