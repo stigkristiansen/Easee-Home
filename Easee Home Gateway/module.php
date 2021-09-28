@@ -81,6 +81,10 @@ class EaseeHomeGateway extends IPSModule
 	}
 
 	private function RefreshToken() {
+		$this->SendDebug(IPS_GetName($this->InstanceID), 'Refreshing the Easee Class...', 0);
+
+		$this->SetTimerInterval('EaseeHomeRefreshToken' . (string)$this->InstanceID, 0); // Disable the timer
+
 		$easee = null;
 		
 		$token = $this->GetTokenFromBuffer();
@@ -95,7 +99,7 @@ class EaseeHomeGateway extends IPSModule
 
 		try {
 			if($easee==null) {
-				throw new Exception('Unable to initialize the Easee class');
+				throw new Exception('Unable to refresh the Easee class');
 			}
 
 			if($this->ReadPropertyBoolean('SkipSSLCheck')) {
@@ -120,7 +124,9 @@ class EaseeHomeGateway extends IPSModule
 	}
 
 	private function InitEasee() {
-		$this->SendDebug(IPS_GetName($this->InstanceID), 'Initializing Easee Class...', 0);
+		$this->SendDebug(IPS_GetName($this->InstanceID), 'Initializing the Easee Class...', 0);
+
+		$this->SetTimerInterval('EaseeHomeRefreshToken' . (string)$this->InstanceID, 0); // Disable the timer
 
 		$username = $this->ReadPropertyString('Username');
 		$password = $this->ReadPropertyString('Password');
