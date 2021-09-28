@@ -113,7 +113,7 @@ class EaseeHomeGateway extends IPSModule
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Saving refreshed Token for later use: %s', json_encode($token)), 0);
 			$this->AddTokenToBuffer($token);
 
-			$expiresIn = 60;//($token->ExpiresIn-5*60); // Set to 5 minutes before token timeout
+			$expiresIn = ($token->ExpiresIn-5*60); // Set to 5 minutes before token timeout
 
 			$this->SetTimerInterval('EaseeHomeRefreshToken' . (string)$this->InstanceID, $expiresIn*1000); 
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Token Refresh Timer set to %s second(s)', (string)$expiresIn), 0);
@@ -152,7 +152,7 @@ class EaseeHomeGateway extends IPSModule
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Saving Token for later use: %s', json_encode($token)), 0);
 			$this->AddTokenToBuffer($token);
 			
-			$expiresIn = 60; //($token->ExpiresIn-5*60); // Set to 5 minutes before token timeout
+			$expiresIn = ($token->ExpiresIn-5*60); // Set to 5 minutes before token timeout
 
 			$this->SetTimerInterval('EaseeHomeRefreshToken' . (string)$this->InstanceID, $expiresIn*1000); 
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Token Refresh Timer set to %s second(s)', (string)$expiresIn), 0);
@@ -313,6 +313,11 @@ class EaseeHomeGateway extends IPSModule
 	private function GetTokenFromBuffer(){
 		if($this->Lock('Token')) {
 			$jsonToken = $this->GetBuffer('Token');
+			if(strlen($jsonToken)==0) {
+				$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Missing token in the buffer', $jsonToken), 0);
+				return null;
+			}
+
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Got token "%s" from the buffer', $jsonToken), 0);
 			$this->Unlock('Token');
 			
