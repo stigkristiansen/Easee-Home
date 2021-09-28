@@ -106,6 +106,9 @@ class EaseeHomeGateway extends IPSModule
 
 			$token = $easee->GetToken();
 
+			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Saving refreshed Token for later use: %s', json_encode($token)), 0);
+			$this->AddTokenToBuffer($token);
+
 			$expiresIn = ($token->ExpiresIn-5*60); // Set to 5 minutes before token timeout
 
 			$this->SetTimerInterval('EaseeHomeRefreshToken' . (string)$this->InstanceID, $expiresIn*1000); 
