@@ -51,7 +51,7 @@ class EaseeHomeGateway extends IPSModule
 		$instructions = json_encode($data->Buffer);
 		$script = "IPS_RequestAction(" . (string)$this->InstanceID . ", 'Async', '" . $instructions . "');";
 
-		$this->SendDebug(IPS_GetName($this->InstanceID), 'Calling IPS_RunScriptText...', 0);
+		$this->SendDebug(IPS_GetName($this->InstanceID), 'Calling RequestAction in a new thread...', 0);
 				
 		// Call RequestAction in another thread
 		IPS_RunScriptText($script);
