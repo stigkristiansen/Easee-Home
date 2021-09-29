@@ -348,7 +348,7 @@ class Easee {
 		if($Data!=NULL)
 			curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($Data)); 
 
-        IPS_LogMessage('Data for curl', json_encode($Data));
+        //IPS_LogMessage('Data for curl ', json_encode($Data));
 		
 		$result = curl_exec($ch);
 
