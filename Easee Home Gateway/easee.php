@@ -166,8 +166,6 @@ class Easee {
             if(!isset($this->userProfile))
                 $this->GetUserProfile();
 
-                //throw new Exception('Error: User Profile must be retrieved before calling GetDevices()');
-
             $this->Connect();
             
             $url = self::ENDPOINT . '/api/accounts/products?userId=' . (string)$this->userProfile->userId;
@@ -215,8 +213,10 @@ class Easee {
         try{
             $this->Connect();
             
+            ///api/chargers/{id}/access
+
             $url = self::ENDPOINT . '/api/chargers/' . $ChargerId .'/access';
-            $data = $UseKey?"2":"1";
+            $data = $UseKey?2:1;
             $result = self::request('post', $url, $data);
             
             if($result->error) {
@@ -316,8 +316,12 @@ class Easee {
 		curl_setopt($ch, CURLOPT_URL, $Url);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1 );
 		
+
+
 		if($Data!=NULL)
 			curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($Data)); 
+
+        IPS_LogMessage('Data for curl', json_encode($Data));
 		
 		$result = curl_exec($ch);
 
