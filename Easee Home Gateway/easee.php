@@ -216,7 +216,7 @@ class Easee {
             $this->Connect();
             
             $url = self::ENDPOINT . '/api/chargers/' . $ChargerId .'/access';
-            $data = $UseKey?2:1;
+            $data = $UseKey?"2":"1";
             $result = self::request('post', $url, $data);
             
             if($result->error) {
