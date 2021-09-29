@@ -307,7 +307,7 @@ class EaseeHomeGateway extends IPSModule
 
 			$result = $easee->GetChargerState($ChargerId);
 		
-			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Easee REST API returned "%s" for GetCharger()', json_encode($result)), 0);
+			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Easee REST API returned "%s" for GetChargerState()', json_encode($result)), 0);
 		} catch(Exception $e) {
 			$this->AddTokenToBuffer(null);	
 			throw new Exception(sprintf('GetEqualizerState failed. The error was "%s"', $e->getMessage()));
@@ -344,7 +344,7 @@ class EaseeHomeGateway extends IPSModule
 
 			$result = $easee->SetChargerLockState($ChargerId, $State);
 		
-			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Easee REST API returned "%s" for GetCharger()', json_encode($result)), 0);
+			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Easee REST API returned "%s" for SetChargerLockState()', json_encode($result)), 0);
 		} catch(Exception $e) {
 			$this->AddTokenToBuffer(null);	
 			throw new Exception(sprintf('SetChargerLockState failed. The error was "%s"', $e->getMessage()));
@@ -357,14 +357,15 @@ class EaseeHomeGateway extends IPSModule
 	private function GetTokenFromBuffer(){
 		if($this->Lock('Token')) {
 			$jsonToken = $this->GetBuffer('Token');
-			$this->Unlock('Token');
 			
 			if(strlen($jsonToken)==0) {
 				$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Missing token in the buffer', $jsonToken), 0);
+				$this->Unlock('Token');
 				return null;
 			}
 
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Got token "%s" from the buffer', $jsonToken), 0);
+			$this->Unlock('Token');
 			
 			$token = json_decode($jsonToken);
 			$expires = new DateTime($token->Expires->date, new DateTimeZone($token->Expires->timezone));
@@ -383,9 +384,8 @@ class EaseeHomeGateway extends IPSModule
 			else
 				$token = json_encode($Token);
 			$this->SetBuffer('Token', $token);
-			$this->Unlock('Token');
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Added token "%s" to the buffer', $token), 0);
-			
+			$this->Unlock('Token');
 		}
 	}
 
