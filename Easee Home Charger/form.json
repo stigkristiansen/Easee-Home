@@ -6,6 +6,12 @@
         },
         {
             "type" :  "Label" ,  "caption" :  "CHARGER"
+        },
+        {
+            "type" :  "ValidationTextBox" ,  "name" :  "ChargerId" ,  "caption" :  "Charger Id"
+        },
+        {
+            "type": "NumberSpinner", "name": "UpdateInterval", "caption": "Refresh Interval", "suffix": "seconds"
         }
     ],
     "actions": [],
