@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 			$this->ConnectParent('{55B60EF1-A0FE-F43C-5CD2-1782E17ED9C6}');
 
-			$this->RegisterPropertyInteger('UpdateInterval', 5);
+			$this->RegisterPropertyInteger('UpdateInterval', 15);
 			$this->RegisterPropertyString('ChargerId', '');
 
 			$this->RegisterTimer('EaseeChargerRefresh' . (string)$this->InstanceID, 0, 'IPS_RequestAction(' . (string)$this->InstanceID . ', "Refresh", 0);'); 
