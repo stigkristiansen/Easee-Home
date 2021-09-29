@@ -10,6 +10,7 @@ declare(strict_types=1);
 			$this->ConnectParent('{55B60EF1-A0FE-F43C-5CD2-1782E17ED9C6}');
 
 			$this->RegisterPropertyInteger('UpdateInterval', 5);
+			$this->RegisterPropertyString('ChargerId', '');
 
 			$this->RegisterTimer('EaseeChargerRefresh' . (string)$this->InstanceID, 0, 'IPS_RequestAction(' . (string)$this->InstanceID . ', "Refresh", 0);'); 
 
@@ -74,7 +75,7 @@ declare(strict_types=1);
 		}
 
 		private function InitTimer(){
-			$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, $this->ReadPropertyInteger('UpdateInterval')); 
+			$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, $this->ReadPropertyInteger('UpdateInterval')*1000); 
 		}
 
 		private function Refresh(){
