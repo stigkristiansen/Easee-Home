@@ -84,10 +84,6 @@ class Easee {
         }
     }
 
-    public function SetChargerLockState(string $ChargerId, bool $State) {
-
-    }
-    
     public function Connect() {
         if (strlen($this->accessToken) == 0) {
             if(strlen($this->username)>0 && strlen($this->password)>0) {
