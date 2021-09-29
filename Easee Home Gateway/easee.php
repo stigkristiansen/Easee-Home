@@ -257,11 +257,11 @@ class Easee {
         }
     }
 
-    public function SetChargingStatus(string $ChargerId, bool $Status) {
+    public function SetChargingState(string $ChargerId, bool $State) {
         try{
             $this->Connect();
             
-            if($Status) {
+            if($State) {
                 $url = self::ENDPOINT . '/api/chargers/' . $ChargerId .'/commands/start_charging';
             } else {
                 $url = self::ENDPOINT . '/api/chargers/' . $ChargerId .'/commands/stop_charging';

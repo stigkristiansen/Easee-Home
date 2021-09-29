@@ -208,16 +208,16 @@ class EaseeHomeGateway extends IPSModule
 
 				$this->SetChargerAccessLevel($childId, $request->ChargerId, $request->UseKey);
 				break;
-			case 'setchargingstatus':
+			case 'setchargingstate':
 				if(!isset($request->ChargerId)) {
 					throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "ChargerId" is missing. The request was "%s"', $Request));
 				}
 
-				if(!(isset($request->Status) && is_bool($request->Status))) {
+				if(!(isset($request->State) && is_bool($request->State))) {
 					throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "Status" is missing or is a invalid type. The request was "%s"', $Request));
 				}
 
-				$this->SetChargingStatus($childId, $request->ChargerId, $request->Status);
+				$this->SetChargingStatus($childId, $request->ChargerId, $request->State);
 				break;
 			case 'getequalizerstate':
 				if(!isset($request->EqualizerId)) {
@@ -413,7 +413,7 @@ class EaseeHomeGateway extends IPSModule
 		$this->SendDataToChildren(json_encode(["DataID" => "{47508B62-3B4E-67BE-0F29-0B82A2C62B58}", "ChildId" => $ChildId, "Buffer" => $result]));
 	}
 
-	private function SetChargingStatus(string $ChildId, string $ChargerId, bool $Status) {
+	private function SetChargingState(string $ChildId, string $ChargerId, bool $State) {
 		$this->SendDebug(IPS_GetName($this->InstanceID), 'Changing chargers Charge Status...', 0);
 		$easee = null;
 		
@@ -436,12 +436,12 @@ class EaseeHomeGateway extends IPSModule
 				$easee->DisableSSLCheck();
 			}
 
-			$result = $easee->SetChargingStatus($ChargerId, $UseKey);
+			$result = $easee->SetChargingState($ChargerId, $State);
 		
-			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Easee REST API returned "%s" for SetChargingStatus()', json_encode($result)), 0);
+			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Easee REST API returned "%s" for SetChargingState()', json_encode($result)), 0);
 		} catch(Exception $e) {
 			$this->AddTokenToBuffer(null);	
-			throw new Exception(sprintf('SetChargingStatus() failed. The error was "%s"', $e->getMessage()));
+			throw new Exception(sprintf('SetChargingState() failed. The error was "%s"', $e->getMessage()));
 		}
 
 		$this->SendDataToChildren(json_encode(["DataID" => "{47508B62-3B4E-67BE-0F29-0B82A2C62B58}", "ChildId" => $ChildId, "Buffer" => $result]));	
