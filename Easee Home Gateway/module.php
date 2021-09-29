@@ -357,13 +357,14 @@ class EaseeHomeGateway extends IPSModule
 	private function GetTokenFromBuffer(){
 		if($this->Lock('Token')) {
 			$jsonToken = $this->GetBuffer('Token');
+			$this->Unlock('Token');
+			
 			if(strlen($jsonToken)==0) {
 				$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Missing token in the buffer', $jsonToken), 0);
 				return null;
 			}
 
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Got token "%s" from the buffer', $jsonToken), 0);
-			$this->Unlock('Token');
 			
 			$token = json_decode($jsonToken);
 			$expires = new DateTime($token->Expires->date, new DateTimeZone($token->Expires->timezone));
@@ -382,8 +383,9 @@ class EaseeHomeGateway extends IPSModule
 			else
 				$token = json_encode($Token);
 			$this->SetBuffer('Token', $token);
-			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Added token "%s" to the buffer', $token), 0);
 			$this->Unlock('Token');
+			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Added token "%s" to the buffer', $token), 0);
+			
 		}
 	}
 
