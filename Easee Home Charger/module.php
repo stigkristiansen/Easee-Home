@@ -74,7 +74,7 @@ declare(strict_types=1);
 		}
 
 		private function InitTimer(){
-			$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, $this->ReadPropertyBoolean('UpdateInterval')); 
+			$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, $this->ReadPropertyInteger('UpdateInterval')); 
 		}
 
 		private function Refresh(){
