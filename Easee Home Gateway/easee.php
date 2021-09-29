@@ -217,7 +217,7 @@ class Easee {
 
             $url = self::ENDPOINT . '/api/chargers/' . $ChargerId .'/access';
             $data = $UseKey?2:1;
-            $result = self::request('post', $url, $data);
+            $result = self::request('put', $url, $data);
             
             if($result->error) {
                 throw new Exception(sprintf('%s failed. The error was "%s"', $url, $result->errortext));
@@ -299,7 +299,7 @@ class Easee {
         $headers = array(
             'User-Agent: Symcon',
             'Content-Type: application/json;charset=UTF-8',
-            //'Accept: application/json'
+            'Accept: application/json'
             );
 
         if(strlen($this->accessToken)>0 && $this->expires > new DateTime('now')) {
