@@ -208,6 +208,17 @@ class EaseeHomeGateway extends IPSModule
 
 				$this->SetChargerAccessLevel($childId, $request->ChargerId, $request->UseKey);
 				break;
+			case 'setchargingstatus':
+				if(!isset($request->ChargerId)) {
+					throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "ChargerId" is missing. The request was "%s"', $Request));
+				}
+
+				if(!(isset($request->Status) && is_bool($request->Status))) {
+					throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "Status" is missing or is a invalid type. The request was "%s"', $Request));
+				}
+
+				$this->SetChargingStatus($childId, $request->ChargerId, $request->Status);
+				break;
 			case 'getequalizerstate':
 				if(!isset($request->EqualizerId)) {
 					throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "EqualizerId" is missing. The request was "%s"', $Request));
@@ -248,7 +259,7 @@ class EaseeHomeGateway extends IPSModule
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Easee REST API returned "%s" for GetProducts()', json_encode($result)), 0);
 		} catch(Exception $e) {
 			$this->AddTokenToBuffer(null);	
-			throw new Exception(sprintf('GetProducts failed. The error was "%s"', $e->getMessage()));
+			throw new Exception(sprintf('GetProducts() failed. The error was "%s"', $e->getMessage()));
 		}
 
 		// To do
@@ -286,7 +297,7 @@ class EaseeHomeGateway extends IPSModule
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Easee REST API returned "%s" for GetEqualizerState()', json_encode($result)), 0);
 		} catch(Exception $e) {
 			$this->AddTokenToBuffer(null);	
-			throw new Exception(sprintf('GetEqualizerState failed. The error was "%s"', $e->getMessage()));
+			throw new Exception(sprintf('GetEqualizerState(() failed. The error was "%s"', $e->getMessage()));
 		}
 
 		// To do
@@ -324,7 +335,7 @@ class EaseeHomeGateway extends IPSModule
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Easee REST API returned "%s" for GetChargerState()', json_encode($result)), 0);
 		} catch(Exception $e) {
 			$this->AddTokenToBuffer(null);	
-			throw new Exception(sprintf('GetEqualizerState failed. The error was "%s"', $e->getMessage()));
+			throw new Exception(sprintf('GetChargerState() failed. The error was "%s"', $e->getMessage()));
 		}
 
 		// To do
@@ -362,7 +373,7 @@ class EaseeHomeGateway extends IPSModule
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Easee REST API returned "%s" for SetChargerLockState()', json_encode($result)), 0);
 		} catch(Exception $e) {
 			$this->AddTokenToBuffer(null);	
-			throw new Exception(sprintf('SetChargerLockState failed. The error was "%s"', $e->getMessage()));
+			throw new Exception(sprintf('SetChargerLockState() failed. The error was "%s"', $e->getMessage()));
 		}
 
 		$this->SendDataToChildren(json_encode(["DataID" => "{47508B62-3B4E-67BE-0F29-0B82A2C62B58}", "ChildId" => $ChildId, "Buffer" => $result]));
@@ -396,10 +407,44 @@ class EaseeHomeGateway extends IPSModule
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Easee REST API returned "%s" for SetChargerAccessLevel()', json_encode($result)), 0);
 		} catch(Exception $e) {
 			$this->AddTokenToBuffer(null);	
-			throw new Exception(sprintf('SetChargerAccessLevel failed. The error was "%s"', $e->getMessage()));
+			throw new Exception(sprintf('SetChargerAccessLevel() failed. The error was "%s"', $e->getMessage()));
 		}
 
 		$this->SendDataToChildren(json_encode(["DataID" => "{47508B62-3B4E-67BE-0F29-0B82A2C62B58}", "ChildId" => $ChildId, "Buffer" => $result]));
+	}
+
+	private function SetChargingStatus(string $ChildId, string $ChargerId, bool $Status) {
+		$this->SendDebug(IPS_GetName($this->InstanceID), 'Changing chargers Charge Status...', 0);
+		$easee = null;
+		
+		$token = $this->GetTokenFromBuffer();
+		if($token==null) {
+			$easee = $this->InitEasee();
+		} else {
+			$username = $this->ReadPropertyString('Username');
+			$password = $this->ReadPropertyString('Password');
+
+			$easee = new Easee($username, $password, $token->AccessToken, $token->RefreshToken, $token->Expires);
+		}
+
+		try{
+			if($easee==null) {
+				throw new Exception('Unable to initialize the Easee class');
+			}
+
+			if($this->ReadPropertyBoolean('SkipSSLCheck')) {
+				$easee->DisableSSLCheck();
+			}
+
+			$result = $easee->SetChargingStatus($ChargerId, $UseKey);
+		
+			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Easee REST API returned "%s" for SetChargingStatus()', json_encode($result)), 0);
+		} catch(Exception $e) {
+			$this->AddTokenToBuffer(null);	
+			throw new Exception(sprintf('SetChargingStatus() failed. The error was "%s"', $e->getMessage()));
+		}
+
+		$this->SendDataToChildren(json_encode(["DataID" => "{47508B62-3B4E-67BE-0F29-0B82A2C62B58}", "ChildId" => $ChildId, "Buffer" => $result]));	
 	}
 
 
