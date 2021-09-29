@@ -25,9 +25,10 @@ declare(strict_types=1);
 			$this->SetReceiveDataFilter('.*"ChildId":"'. (string)$this->InstanceID .'".*');
 		}
 
-		public function Send()
+		public function Send(bool $State)
 		{
-			$data = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerState','ChargerId'=>'EHTWHEX7'];
+			// $data = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerState','ChargerId'=>'EHTWHEX7'];
+			$data = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargerLockState','ChargerId'=>'EHTWHEX7', 'State' => $State];
 			$this->SendDataToParent(json_encode(['DataID' => '{B62C0F65-7B59-0CD8-8C92-5DA32FBBD317}', 'Buffer' => $data]));
 		}
 

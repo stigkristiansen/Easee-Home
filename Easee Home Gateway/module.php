@@ -169,7 +169,7 @@ class EaseeHomeGateway extends IPSModule
 		$request = json_decode($Request);
 		
 		if(!isset($request->Function)||!isset($request->ChildId)) {
-			throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "Function" and/or "ChildId" is missing. The request was "%s"', $Request));
+			throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "Function", "ChildId" and/or "Parameter" is missing. The request was "%s"', $Request));
 		}
 
 		$function = strtolower($request->Function);
@@ -185,6 +185,14 @@ class EaseeHomeGateway extends IPSModule
 				}
 				
 				$this->GetChargerState($childId, $request->ChargerId);
+				break;
+			case 'setchargerlockstate';
+				if(!(isset($request->State) && is_bool($request->State)))
+					throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "State" is missing or is a invalid type. The request was "%s"', $Request));
+				}
+
+				$this->SetChargerLockState($childId, $request->ChargerId, $request->State);
+
 				break;
 			case 'getequalizerstate':
 				if(!isset($request->EqualizerId)) {

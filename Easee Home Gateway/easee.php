@@ -83,6 +83,10 @@ class Easee {
             throw new Exception($e->getMessage());
         }
     }
+
+    public function SetChargerLockState(string $ChargerId, bool $State) {
+
+    }
     
     public function Connect() {
         if (strlen($this->accessToken) == 0) {
@@ -103,6 +107,7 @@ class Easee {
                     throw new Exception('Error: Expirered access token and missing username and/or password');
                 }
             } else {
+                // Use existing token
                 return;
             }
         }
@@ -124,7 +129,7 @@ class Easee {
                 $this->expires = $now; 
                 $this->expires->add(new DateInterval('PT'.(string)$result->result->expiresIn.'S')); // adds expiresIn to "now"
                 $this->expiresIn = $result->result->expiresIn;
-
+                
                 //IPS_LogMessage('Connect','AccessToken: '.$this->accessToken);
                 //IPS_LogMessage('Connect','RefreshToken: '.$this->refreshToken);
             }    
@@ -144,8 +149,6 @@ class Easee {
 
             $result = self::request('get', $url);
 
-            //var_dump($result);
-
             if($result->error) {
                 throw new Exception(sprintf('%s failed. The error was "%s"', $url, $result->errortext));
             } else if(isset($result->result->status) && $result->result->status != 200) {
@@ -159,9 +162,6 @@ class Easee {
         } catch(Exception $e) {
             throw new Exception($e->getMessage());
         }
-
-        //var_dump($this->userId);
-
     }
 
     public function GetProducts() {
@@ -176,8 +176,6 @@ class Easee {
             
             $url = self::ENDPOINT . '/api/accounts/products?userId=' . (string)$this->userProfile->userId;
             $result = self::request('get', $url);
-
-            //var_dump($result);
 
             if($result->error) {
                 throw new Exception(sprintf('%s failed. The error was "%s"', $url, $result->errortext));
@@ -202,13 +200,34 @@ class Easee {
             $url = self::ENDPOINT . '/api/chargers/' . $ChargerId .'/state';
             $result = self::request('get', $url);
 
-            //var_dump($result);
-
             if($result->error) {
                 throw new Exception(sprintf('%s failed. The error was "%s"', $url, $result->errortext));
             } else if(isset($result->result->status) && $result->result->status != 200) {
                 throw new Exception(sprintf('%s failed. The error was "%s"', $url, $result->result->title));
             } else if($result->httpcode!=200) {
+                throw new Exception(sprintf('%s returned http status code %d', $url, $result->httpcode)); 
+            } else {
+                return $result->result;
+            }
+
+        } catch(Exception $e) {
+            throw new Exception($e->getMessage());
+        }
+    }
+
+    public function SetChargerLockState(string $ChargerId, bool $State) {
+        try{
+            $this->Connect();
+            
+            $url = self::ENDPOINT . '/api/chargers/' . $ChargerId .'/commands/lock_state';
+            $data = ['State' => $State];
+            $result = self::request('post', $url, $data);
+            
+            if($result->error) {
+                throw new Exception(sprintf('%s failed. The error was "%s"', $url, $result->errortext));
+            } else if(isset($result->result->status) && $result->result->status != 200) {
+                throw new Exception(sprintf('%s failed. The error was "%s"', $url, $result->result->title));
+            } else if($result->httpcode!=200  || $result->httpcode!=202) {
                 throw new Exception(sprintf('%s returned http status code %d', $url, $result->httpcode)); 
             } else {
                 return $result->result;
@@ -226,8 +245,6 @@ class Easee {
             
             $url = self::ENDPOINT . '/api/equalizers/' .  $EqualizerId . '/state';
             $result = self::request('get', $url);
-
-            //var_dump($result);
 
             if($result->error) {
                 throw new Exception(sprintf('%s failed. The error was "%s"', $url, $result->errortext));
