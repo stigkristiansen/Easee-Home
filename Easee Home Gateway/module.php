@@ -187,7 +187,7 @@ class EaseeHomeGateway extends IPSModule
 				$this->GetChargerState($childId, $request->ChargerId);
 				break;
 			case 'setchargerlockstate':
-				if(!(isset($request->State) && is_bool($request->State)))
+				if(!(isset($request->State) && is_bool($request->State))) {
 					throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "State" is missing or is a invalid type. The request was "%s"', $Request));
 				}
 
