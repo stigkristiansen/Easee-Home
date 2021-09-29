@@ -211,6 +211,29 @@ class Easee {
         }
     }
 
+    public function SetChargerAccessLevel(string $ChargerId, bool $UseKey) {
+        try{
+            $this->Connect();
+            
+            $url = self::ENDPOINT . '/api/chargers/' . $ChargerId .'/access';
+            $data = $UseKey?2:1;
+            $result = self::request('post', $url, $data);
+            
+            if($result->error) {
+                throw new Exception(sprintf('%s failed. The error was "%s"', $url, $result->errortext));
+            } else if(isset($result->result->status) && $result->result->status != 200) {
+                throw new Exception(sprintf('%s failed. The error was "%s"', $url, $result->result->title));
+            } else if($result->httpcode!=200) {
+                throw new Exception(sprintf('%s returned http status code %d', $url, $result->httpcode)); 
+            } else {
+                return $result->result;
+            }
+
+        } catch(Exception $e) {
+            throw new Exception($e->getMessage());
+        }
+    }
+
     public function SetChargerLockState(string $ChargerId, bool $State) {
         try{
             $this->Connect();
