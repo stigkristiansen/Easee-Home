@@ -187,12 +187,15 @@ class EaseeHomeGateway extends IPSModule
 				$this->GetChargerState($childId, $request->ChargerId);
 				break;
 			case 'setchargerlockstate':
+				if(!isset($request->ChargerId)) {
+					throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "ChargerId" is missing. The request was "%s"', $Request));
+				}
+
 				if(!(isset($request->State) && is_bool($request->State))) {
 					throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "State" is missing or is a invalid type. The request was "%s"', $Request));
 				}
 
 				$this->SetChargerLockState($childId, $request->ChargerId, $request->State);
-
 				break;
 			case 'getequalizerstate':
 				if(!isset($request->EqualizerId)) {
@@ -315,6 +318,39 @@ class EaseeHomeGateway extends IPSModule
 		$product = $result;
 
 		$this->SendDataToChildren(json_encode(["DataID" => "{47508B62-3B4E-67BE-0F29-0B82A2C62B58}", "ChildId" => $ChildId, "Buffer" => $product]));
+	}
+
+	private function SetChargerLockState(string ChildId, string $ChargerId, bool $State){
+		$easee = null;
+		
+		$token = $this->GetTokenFromBuffer();
+		if($token==null) {
+			$easee = $this->InitEasee();
+		} else {
+			$username = $this->ReadPropertyString('Username');
+			$password = $this->ReadPropertyString('Password');
+
+			$easee = new Easee($username, $password, $token->AccessToken, $token->RefreshToken, $token->Expires);
+		}
+
+		try{
+			if($easee==null) {
+				throw new Exception('Unable to initialize the Easee class');
+			}
+
+			if($this->ReadPropertyBoolean('SkipSSLCheck')) {
+				$easee->DisableSSLCheck();
+			}
+
+			$result = $easee->SetChargerLockState($ChargerId, $State);
+		
+			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Easee REST API returned "%s" for GetCharger()', json_encode($result)), 0);
+		} catch(Exception $e) {
+			$this->AddTokenToBuffer(null);	
+			throw new Exception(sprintf('SetChargerLockState failed. The error was "%s"', $e->getMessage()));
+		}
+
+		$this->SendDataToChildren(json_encode(["DataID" => "{47508B62-3B4E-67BE-0F29-0B82A2C62B58}", "ChildId" => $ChildId, "Buffer" => $result]));
 	}
 
 
