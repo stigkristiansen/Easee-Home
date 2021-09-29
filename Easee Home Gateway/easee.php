@@ -299,7 +299,7 @@ class Easee {
         $headers = array(
             'User-Agent: Symcon',
             'Content-Type: application/json;charset=UTF-8',
-            'Accept: application/json'
+            //'Accept: application/json'
             );
 
         if(strlen($this->accessToken)>0 && $this->expires > new DateTime('now')) {
