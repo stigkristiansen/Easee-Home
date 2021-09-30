@@ -322,6 +322,8 @@ class EaseeHomeGateway extends IPSModule
 		}
 
 		try{
+			$return = ['function'=>'GetChargerState'];
+
 			if($easee==null) {
 				throw new Exception('Unable to initialize the Easee class');
 			}
@@ -335,13 +337,18 @@ class EaseeHomeGateway extends IPSModule
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Easee REST API returned "%s" for GetChargerState()', json_encode($result)), 0);
 		} catch(Exception $e) {
 			$this->AddTokenToBuffer(null);	
-			throw new Exception(sprintf('GetChargerState() failed. The error was "%s"', $e->getMessage()));
+			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('GetChargerState() failed. The error was "%s"', $e->getMessage()), 0);
+			$this->LogMessage(sprintf('GetChargerState() failed. The error was "%s"', $e->getMessage()), KL_ERROR);
+
+			$return['Success'] = false;
+			$return['Error'] = $e->getMessage()];
 		}
 
-		
-		$product = ['function'=>'GetChargerState', 'result'=>$result];
+		$return['Success'] = true;
+		$return['Result'] = $result;
 
-		$this->SendDataToChildren(json_encode(["DataID" => "{47508B62-3B4E-67BE-0F29-0B82A2C62B58}", "ChildId" => $ChildId, "Buffer" => $product]));
+		$this->SendDataToChildren(json_encode(["DataID" => "{47508B62-3B4E-67BE-0F29-0B82A2C62B58}", "ChildId" => $ChildId, "Buffer" => $return]));
+
 	}
 
 	private function SetChargerLockState(string $ChildId, string $ChargerId, bool $State){
