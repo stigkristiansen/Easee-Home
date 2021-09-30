@@ -150,7 +150,7 @@ class Easee {
             } else if(isset($result->result->status) && $result->result->status != 200) {
                 throw new Exception(sprintf('%s failed. The error was "%s"', $url, $result->result->title));
             } else if($result->httpcode!=200) {
-                throw new Exception(sprintf('%s returned http status code %d', $url, $result->httpcode)); 
+                throw new Exception(sprintf('%s failed. The error was "%s"', $url, isset($result->result->title)?$result->result->title:(string)$result->result->status));
             } else {
                 $this->userProfile = $result->result;
             }
@@ -174,7 +174,7 @@ class Easee {
             if($result->error) {
                 throw new Exception(sprintf('%s failed. The error was "%s"', $url, $result->errortext));
             } else if(isset($result->result->status) && $result->result->status != 200) {
-                throw new Exception(sprintf('%s failed. The error was "%s"', $url, $result->result->title));
+                throw new Exception(sprintf('%s failed. The error was "%s"', $url, isset($result->result->title)?$result->result->title:(string)$result->result->status));
             } else if($result->httpcode!=200) {
                 throw new Exception(sprintf('%s returned http status code %d', $url, $result->httpcode)); 
             } else {
@@ -197,7 +197,7 @@ class Easee {
             if($result->error) {
                 throw new Exception(sprintf('%s failed. The error was "%s"', $url, $result->errortext));
             } else if(isset($result->result->status) && $result->result->status != 200) {
-                throw new Exception(sprintf('%s failed. The error was "%s"', $url, $result->result->title));
+                throw new Exception(sprintf('%s failed. The error was "%s"', $url, isset($result->result->title)?$result->result->title:(string)$result->result->status));
             } else if($result->httpcode!=200) {
                 throw new Exception(sprintf('%s returned http status code %d', $url, $result->httpcode)); 
             } else {
@@ -222,7 +222,7 @@ class Easee {
             if($result->error) {
                 throw new Exception(sprintf('%s failed. The error was "%s"', $url, $result->errortext));
             } else if(isset($result->result->status) && $result->result->status != 200) {
-                throw new Exception(sprintf('%s failed. The error was "%s"', $url, $result->result->title));
+                throw new Exception(sprintf('%s failed. The error was "%s"', $url, isset($result->result->title)?$result->result->title:(string)$result->result->status));
             } else if($result->httpcode!=200) {
                 throw new Exception(sprintf('%s returned http status code %d', $url, $result->httpcode)); 
             } else {
@@ -245,7 +245,7 @@ class Easee {
             if($result->error) {
                 throw new Exception(sprintf('%s failed. The error was "%s"', $url, $result->errortext));
             } else if(isset($result->result->status) && $result->result->status != 200) {
-                throw new Exception(sprintf('%s failed. The error was "%s"', $url, $result->result->title));
+                throw new Exception(sprintf('%s failed. The error was "%s"', $url, isset($result->result->title)?$result->result->title:(string)$result->result->status));
             } else if($result->httpcode!=200 && $result->httpcode!=202) {
                 throw new Exception(sprintf('%s returned http status code %d', $url, $result->httpcode)); 
             } else {
@@ -272,7 +272,7 @@ class Easee {
             if($result->error) {
                 throw new Exception(sprintf('%s failed. The error was "%s"', $url, $result->errortext));
             } else if(isset($result->result->status) && $result->result->status != 200) {
-                throw new Exception(sprintf('%s failed. The error was "%s"', $url, $result->result->title));
+                throw new Exception(sprintf('%s failed. The error was "%s"', $url, isset($result->result->title)?$result->result->title:(string)$result->result->status));
             } else if($result->httpcode!=200 && $result->httpcode!=202) {
                 throw new Exception(sprintf('%s returned http status code %d', $url, $result->httpcode)); 
             } else {
@@ -296,7 +296,7 @@ class Easee {
             if($result->error) {
                 throw new Exception(sprintf('%s failed. The error was "%s"', $url, $result->errortext));
             } else if(isset($result->result->status) && $result->result->status != 200) {
-                throw new Exception(sprintf('%s failed. The error was "%s"', $url, $result->result->title));
+                throw new Exception(sprintf('%s failed. The error was "%s"', $url, isset($result->result->title)?$result->result->title:(string)$result->result->status));
             } else if($result->httpcode!=200) {
                 throw new Exception(sprintf('%s returned http status code %d', $url, $result->httpcode)); 
             } else {
@@ -319,7 +319,7 @@ class Easee {
             if($result->error) {
                 throw new Exception(sprintf('%s failed. The error was "%s"', $url, $result->errortext));
             } else if(isset($result->result->status) && $result->result->status != 200) {
-                throw new Exception(sprintf('%s failed. The error was "%s"', $url, $result->result->title));
+                throw new Exception(sprintf('%s failed. The error was "%s"', $url, isset($result->result->title)?$result->result->title:(string)$result->result->status));
             } else if($result->httpcode!=200) {
                 throw new Exception(sprintf('%s returned http status code %d', $url, $result->httpcode)); 
             } else {
