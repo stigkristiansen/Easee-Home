@@ -63,13 +63,13 @@ declare(strict_types=1);
 				$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Received data from parent: %s', json_encode($data->Buffer)), 0);
 			
 				if(!isset($data->Buffer->Function) ) {
-					throw new Exception('Invalid data receieved from parent 1');
+					throw new Exception('Invalid data receieved from parent');
 				} 
 				if(!isset($data->Buffer->Success) ) {
-					throw new Exception('Invalid data receieved from parent 2');
+					throw new Exception('Invalid data receieved from parent');
 				} 
 				if(!isset($data->Buffer->Result) ) {
-					throw new Exception('Invalid data receieved from parent 3');
+					throw new Exception('Invalid data receieved from parent');
 				} 
 				
 				$success = $data->Buffer->Success;

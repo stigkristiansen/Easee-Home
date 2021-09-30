@@ -395,9 +395,11 @@ class EaseeHomeGateway extends IPSModule
 			$return['Result'] = $e->getMessage();
 		}
 
-		$return['Success'] = true;
-		$return['Result'] = $result;
-
+		if(!isset($return['Success'])) {
+			$return['Success'] = true;
+			$return['Result'] = $result;
+		}
+		
 		$this->SendDataToChildren(json_encode(["DataID" => "{47508B62-3B4E-67BE-0F29-0B82A2C62B58}", "ChildId" => $ChildId, "Buffer" => $return]));
 
 	}
