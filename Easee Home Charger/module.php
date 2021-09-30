@@ -95,6 +95,7 @@ declare(strict_types=1);
 						case 'setchargerlockstate':
 						case 'setchargeraccesslevel':
 						case 'setchargingstate':
+							$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Processing result from %s(): %s...', $data->Buffer->Function, json_encode($result)), 0);
 							$this->Refresh($this->ReadPropertyString('ChargerId'));
 							break;
 						default:
