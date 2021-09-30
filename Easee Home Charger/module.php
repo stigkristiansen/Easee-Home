@@ -79,7 +79,7 @@ declare(strict_types=1);
 							throw new Exception('Invalid data receievd from parent');
 					}
 				} else {
-					throw new Exception(sprintf('The error from parent gateway was "%s".',$result);
+					throw new Exception(sprintf('The error from parent gateway was "%s".',$result));
 				}
 				
 				
