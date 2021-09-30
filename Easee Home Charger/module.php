@@ -115,7 +115,7 @@ declare(strict_types=1);
 						break;
 					case 'protectaccess':
 						$request = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargerAccessLevel','ChargerId'=>'EHTWHEX7', 'UseKey' => $Value];
-						break
+						break;
 					default:
 						throw new Exception(sprintf('ReqestAction called with unkown Ident "%s"', $Ident));
 				}
