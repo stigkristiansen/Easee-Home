@@ -118,7 +118,7 @@ declare(strict_types=1);
 						$request = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerConfig','ChargerId'=>$chargerId];
 						//$this->Refresh($chargerId);
 						break;
-					case 'lockecable':
+					case 'lockcable':
 						$request = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargerLockState','ChargerId'=>$ChargerId, 'State' => $Value];
 						break;
 					case 'protectaccess':
