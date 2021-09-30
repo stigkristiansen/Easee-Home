@@ -12,10 +12,10 @@ declare(strict_types=1);
 			$this->RegisterPropertyInteger('UpdateInterval', 15);
 			$this->RegisterPropertyString('ChargerId', '');
 
-			$this->RegisterVariableBoolean('LockeCable', 'Lock Cable', '~Switch', 1);
-			$this->EnableAction('LockeCable');
+			$this->RegisterVariableBoolean('LockCable', 'Lock Cable', '~Switch', 1);
+			$this->EnableAction('LockCable');
 			
-			$this->RegisterVariableBoolean('ProtectAccess', 'Protect Access', '~Switch', 1);
+			$this->RegisterVariableBoolean('ProtectAccess', 'Protect Access', '~Switch', 2);
 			$this->EnableAction('ProtectAccess');
 
 			$this->RegisterTimer('EaseeChargerRefresh' . (string)$this->InstanceID, 0, 'IPS_RequestAction(' . (string)$this->InstanceID . ', "Refresh", 0);'); 
@@ -84,10 +84,10 @@ declare(strict_types=1);
 						case 'getchargerconfig':
 							$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Processing result from GetChargerConfig(): %s...', json_encode($result)), 0);
 							if(isset($result->lockCablePermanently)) {
-								$this->SetValue('LockeCable', $result->lockCablePermanently);
+								$this->SetValueEx('LockCable', $result->lockCablePermanently);
 							}
 							if(isset($result->authorizationRequired)) {
-								$this->SetValue('ProtectAccess', $result->lockCablePermanently);
+								$this->SetValueEx('ProtectAccess', $result->authorizationRequired);
 							}
 							break;
 						default:
@@ -144,5 +144,11 @@ declare(strict_types=1);
 				$this->SendDataToParent(json_encode(['DataID' => '{B62C0F65-7B59-0CD8-8C92-5DA32FBBD317}', 'Buffer' => $data]));
 
 			}
+		}
+
+		private function SetValueEx(string $Ident, $Value) {
+			$oldValue = $this->GetValue($Ident);
+			if($oldValue!=$Value)
+				$this->SetValue($Ident, $Value);
 		}
 	}
