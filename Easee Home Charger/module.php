@@ -96,7 +96,7 @@ declare(strict_types=1);
 						case 'setchargeraccesslevel':
 						case 'setchargingstate':
 							$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Processing result from %s(): %s...', $data->Buffer->Function, json_encode($result)), 0);
-							$this->Refresh($this->ReadPropertyString('ChargerId'));
+							$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, 1000); 
 							break;
 						default:
 							throw new Exception(sprintf('Unknown function "%s" receeived in repsponse from parent', $function));
@@ -120,7 +120,9 @@ declare(strict_types=1);
 
 				switch (strtolower($Ident)) {
 					case 'refresh':
+						$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, 0); 
 						$request = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerConfig','ChargerId'=>$chargerId];
+						$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, $this->ReadPropertyInteger('UpdateInterval')*1000); 
 						//$this->Refresh($chargerId);
 						break;
 					case 'lockcable':
@@ -147,9 +149,12 @@ declare(strict_types=1);
 
 		private function Refresh(string $ChargerId){
 			if(strlen($ChargerId)>0) {
+				$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, 0); 
+
 				$request = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerConfig','ChargerId'=>$ChargerId];
-				//$request = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerConfig','ChargerId'=>$ChargerId];
 				$this->SendDataToParent(json_encode(['DataID' => '{B62C0F65-7B59-0CD8-8C92-5DA32FBBD317}', 'Buffer' => $request]));
+
+				$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, $this->ReadPropertyInteger('UpdateInterval')*1000); 
 			}
 		}
 
