@@ -83,6 +83,12 @@ declare(strict_types=1);
 							break;
 						case 'getchargerconfig':
 							$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Processing result from GetChargerConfig(): %s...', json_encode($result)), 0);
+							if(isset($result->lockCablePermanently)) {
+								$this->SetValue('LockeCable', $result->lockCablePermanently);
+							}
+							if(isset($result->authorizationRequired)) {
+								$this->SetValue('ProtectAccess', $result->lockCablePermanently);
+							}
 							break;
 						default:
 							throw new Exception(sprintf('Unknown function "%s" receeived in repsponse from parent', $function));
