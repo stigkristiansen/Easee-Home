@@ -11,7 +11,7 @@
             "type" :  "ValidationTextBox" ,  "name" :  "ChargerId" ,  "caption" :  "Charger Id"
         },
         {
-            "type": "NumberSpinner", "name": "UpdateInterval", "caption": "Refresh Interval", "suffix": "seconds"
+            "type": "NumberSpinner", "name": "UpdateInterval", "minimum":15, "caption": "Refresh Interval", "suffix": "seconds"
         }
     ],
     "actions": [],

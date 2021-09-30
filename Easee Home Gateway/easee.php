@@ -213,8 +213,6 @@ class Easee {
         try{
             $this->Connect();
             
-            ///api/chargers/{id}/access
-
             $url = self::ENDPOINT . '/api/chargers/' . $ChargerId .'/access';
             $data = $UseKey?2:1;
             $result = self::request('put', $url, $data);
