@@ -57,6 +57,38 @@ declare(strict_types=1);
 			$this->SendDataToParent(json_encode(['DataID' => '{B62C0F65-7B59-0CD8-8C92-5DA32FBBD317}', 'Buffer' => $data]));
 		}
 
+		public function RequestAction($Ident, $Value) {
+			try {
+				$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('ReqestAction called for Ident "%s" with Value %s', $Ident, (string)$Value), 0);
+	
+				$chargerId = $this->ReadPropertyString('ChargerId');
+
+				switch (strtolower($Ident)) {
+					case 'refresh':
+						$request = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerConfig','ChargerId'=>$chargerId];
+						$this->InitTimer();
+						//$this->Refresh($chargerId);
+						break;
+					case 'lockcable':
+						$this->SetValue($Ident, $Value);
+						$request = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargerLockState','ChargerId'=>$chargerId, 'State' => $Value];
+						break;
+					case 'protectaccess':
+						$this->SetValue($Ident, $Value);
+						$request = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargerAccessLevel','ChargerId'=>$chargerId, 'UseKey' => $Value];
+						break;
+					default:
+						throw new Exception(sprintf('ReqestAction called with unkown Ident "%s"', $Ident));
+				}
+
+				$this->SendDataToParent(json_encode(['DataID' => '{B62C0F65-7B59-0CD8-8C92-5DA32FBBD317}', 'Buffer' => $request]));
+
+			} catch(Exception $e) {
+				$this->LogMessage(sprintf('RequestAction failed. The error was "%s"',  $e->getMessage()), KL_ERROR);
+				$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('RequestAction failed. The error was "%s"', $e->getMessage()), 0);
+			}
+		}
+
 		public function ReceiveData($JSONString){
 			try {
 				$data = json_decode($JSONString);
@@ -96,7 +128,7 @@ declare(strict_types=1);
 						case 'setchargeraccesslevel':
 						case 'setchargingstate':
 							$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Processing result from %s(): %s...', $data->Buffer->Function, json_encode($result)), 0);
-							$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, 2000); 
+							$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, 5000); 
 							break;
 						default:
 							throw new Exception(sprintf('Unknown function "%s" receeived in repsponse from parent', $function));
@@ -112,36 +144,7 @@ declare(strict_types=1);
 			
 		}
 
-		public function RequestAction($Ident, $Value) {
-			try {
-				$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('ReqestAction called for Ident "%s" with Value %s', $Ident, (string)$Value), 0);
-	
-				$chargerId = $this->ReadPropertyString('ChargerId');
 
-				switch (strtolower($Ident)) {
-					case 'refresh':
-						$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, 0); 
-						$request = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerConfig','ChargerId'=>$chargerId];
-						$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, $this->ReadPropertyInteger('UpdateInterval')*1000); 
-						//$this->Refresh($chargerId);
-						break;
-					case 'lockcable':
-						$request = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargerLockState','ChargerId'=>$chargerId, 'State' => $Value];
-						break;
-					case 'protectaccess':
-						$request = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargerAccessLevel','ChargerId'=>$chargerId, 'UseKey' => $Value];
-						break;
-					default:
-						throw new Exception(sprintf('ReqestAction called with unkown Ident "%s"', $Ident));
-				}
-
-				$this->SendDataToParent(json_encode(['DataID' => '{B62C0F65-7B59-0CD8-8C92-5DA32FBBD317}', 'Buffer' => $request]));
-
-			} catch(Exception $e) {
-				$this->LogMessage(sprintf('RequestAction failed. The error was "%s"',  $e->getMessage()), KL_ERROR);
-				$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('RequestAction failed. The error was "%s"', $e->getMessage()), 0);
-			}
-		}
 
 		private function InitTimer(){
 			$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, $this->ReadPropertyInteger('UpdateInterval')*1000); 
