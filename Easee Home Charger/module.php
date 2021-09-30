@@ -94,8 +94,8 @@ declare(strict_types=1);
 							break;
 						case 'setchargerlockstate':
 						case 'setchargeraccesslevel':
-							
 						case 'setchargingstate':
+							$this->Refresh($this->ReadPropertyString('ChargerId'));
 							break;
 						default:
 							throw new Exception(sprintf('Unknown function "%s" receeived in repsponse from parent', $function));
@@ -119,8 +119,8 @@ declare(strict_types=1);
 
 				switch (strtolower($Ident)) {
 					case 'refresh':
-						$request = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerConfig','ChargerId'=>$chargerId];
-						//$this->Refresh($chargerId);
+						//$request = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerConfig','ChargerId'=>$chargerId];
+						$this->Refresh($chargerId);
 						break;
 					case 'lockcable':
 						$request = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargerLockState','ChargerId'=>$chargerId, 'State' => $Value];
@@ -147,8 +147,7 @@ declare(strict_types=1);
 		private function Refresh(string $ChargerId){
 			if(strlen($ChargerId)>0) {
 				$request = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerConfig','ChargerId'=>$ChargerId];
-				$this->SendDataToParent(json_encode(['DataID' => '{B62C0F65-7B59-0CD8-8C92-5DA32FBBD317}', 'Buffer' => $data]));
-
+				$this->SendDataToParent(json_encode(['DataID' => '{B62C0F65-7B59-0CD8-8C92-5DA32FBBD317}', 'Buffer' => $request]));
 			}
 		}
 
