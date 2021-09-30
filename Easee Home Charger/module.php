@@ -110,11 +110,8 @@ declare(strict_types=1);
 					$function = strtolower($data->Buffer->Function);
 					switch($function) {
 						case 'getchargerstate':
-							$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Processing result from GetChargerState(): %s...', json_encode($result)), 0);
 							break;
 						case 'getchargerconfig':
-							$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Processing result from GetChargerConfig(): %s...', json_encode($result)), 0);
-							
 							if(isset($result->lockCablePermanently)) {
 								$this->SetValueEx('LockCable', $result->lockCablePermanently);
 							}
@@ -126,12 +123,13 @@ declare(strict_types=1);
 						case 'setchargerlockstate':
 						case 'setchargeraccesslevel':
 						case 'setchargingstate':
-							$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Processing result from %s(): %s...', $data->Buffer->Function, json_encode($result)), 0);
 							$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, 5000); // Do a extra refresh after a change
 							break;
 						default:
 							throw new Exception(sprintf('Unknown function "%s" receeived in repsponse from parent', $function));
 					}
+					
+					$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Processed the result from %s(): %s...', $data->Buffer->Function, json_encode($result)), 0);
 				} else {
 					throw new Exception(sprintf('The parent gateway returned an error: %s',$result));
 				}
