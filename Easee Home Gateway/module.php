@@ -331,16 +331,15 @@ class EaseeHomeGateway extends IPSModule
 			}
 
 			$result = $easee->GetChargerState($ChargerId);
-		
+
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Easee REST API returned "%s" for GetChargerState()', json_encode($result)), 0);
 		} catch(Exception $e) {
 			$this->AddTokenToBuffer(null);	
 			throw new Exception(sprintf('GetChargerState() failed. The error was "%s"', $e->getMessage()));
 		}
 
-		// To do
-		// Format $product to only include neccessary properties
-		$product = $result;
+		
+		$product = ['function'=>'GetChargerState', 'result'=>$result];
 
 		$this->SendDataToChildren(json_encode(["DataID" => "{47508B62-3B4E-67BE-0F29-0B82A2C62B58}", "ChildId" => $ChildId, "Buffer" => $product]));
 	}
