@@ -321,9 +321,9 @@ class EaseeHomeGateway extends IPSModule
 			$easee = new Easee($username, $password, $token->AccessToken, $token->RefreshToken, $token->Expires);
 		}
 
-		try{
-			$return = ['function'=>'GetChargerState'];
+		$return['function'] = 'GetChargerState';
 
+		try{
 			if($easee==null) {
 				throw new Exception('Unable to initialize the Easee class');
 			}
@@ -341,7 +341,7 @@ class EaseeHomeGateway extends IPSModule
 			$this->LogMessage(sprintf('GetChargerState() failed. The error was "%s"', $e->getMessage()), KL_ERROR);
 
 			$return['Success'] = false;
-			$return['Error'] = $e->getMessage()];
+			$return['Error'] = $e->getMessage();
 		}
 
 		$return['Success'] = true;
