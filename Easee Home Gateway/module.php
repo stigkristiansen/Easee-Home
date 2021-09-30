@@ -341,7 +341,7 @@ class EaseeHomeGateway extends IPSModule
 			$this->LogMessage(sprintf('GetChargerState() failed. The error was "%s"', $e->getMessage()), KL_ERROR);
 
 			$return['Success'] = false;
-			$return['Error'] = $e->getMessage();
+			$return['Result'] = $e->getMessage();
 		}
 
 		$return['Success'] = true;

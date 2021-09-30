@@ -52,9 +52,42 @@ declare(strict_types=1);
 		}
 
 		public function ReceiveData($JSONString){
-			$data = json_decode($JSONString);
+			try {
+				$data = json_decode($JSONString);
+				$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Received data from parent: %s', json_encode($data->Buffer)), 0);
 			
-			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Received data from parent: %s', json_encode($data->Buffer)), 0);
+				if(!isset($data->Buffer->Function) ) {
+					throw new Exception('Invalid data receieved from parent');
+				} 
+				if(!isset($data->Buffer->Success) ) {
+					throw new Exception('Invalid data receieved from parent');
+				} 
+				if(!isset($data->Buffer->Result) ) {
+					throw new Exception('Invalid data receieved from parent');
+				} 
+				
+				$success = $data->Buffer->Success;
+				$result = $data->Buffer->Result;
+
+				if($success) {
+					$function = $data->Buffer->Function;
+					switch($function) {
+						case 'getchargerstate':
+							$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Processing result "%s"', json_encode($result)), 0);
+							break;
+						default:
+							throw new Exception('Invalid data receievd from parent');
+					}
+				} else {
+					throw new Exception(sprintf('The error from parent gateway was "%s".',$result);
+				}
+				
+				
+			} catch(Exception $e) {
+				$this->LogMessage(sprintf('ReceiveData() failed. The error was "%s"',  $e->getMessage()), KL_ERROR);
+				$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('RequestAction failed. The error was "%s"', $e->getMessage()), 0);
+			}
+			
 		}
 
 		public function RequestAction($Ident, $Value) {
