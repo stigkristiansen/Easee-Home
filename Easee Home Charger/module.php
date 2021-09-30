@@ -57,13 +57,13 @@ declare(strict_types=1);
 				$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Received data from parent: %s', json_encode($data->Buffer)), 0);
 			
 				if(!isset($data->Buffer->Function) ) {
-					throw new Exception('Invalid data receieved from parent');
+					throw new Exception('Invalid data receieved from parent 1');
 				} 
 				if(!isset($data->Buffer->Success) ) {
-					throw new Exception('Invalid data receieved from parent');
+					throw new Exception('Invalid data receieved from parent 2');
 				} 
 				if(!isset($data->Buffer->Result) ) {
-					throw new Exception('Invalid data receieved from parent');
+					throw new Exception('Invalid data receieved from parent 3');
 				} 
 				
 				$success = $data->Buffer->Success;
@@ -76,7 +76,7 @@ declare(strict_types=1);
 							$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Processing result "%s"', json_encode($result)), 0);
 							break;
 						default:
-							throw new Exception('Invalid data receievd from parent');
+							throw new Exception('Invalid data receievd from parent 4');
 					}
 				} else {
 					throw new Exception(sprintf('The error from parent gateway was "%s".',$result));
