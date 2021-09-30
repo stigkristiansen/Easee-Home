@@ -83,9 +83,11 @@ declare(strict_types=1);
 							break;
 						case 'getchargerconfig':
 							$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Processing result from GetChargerConfig(): %s...', json_encode($result)), 0);
+							
 							if(isset($result->lockCablePermanently)) {
 								$this->SetValueEx('LockCable', $result->lockCablePermanently);
 							}
+
 							if(isset($result->authorizationRequired)) {
 								$this->SetValueEx('ProtectAccess', $result->authorizationRequired);
 							}
