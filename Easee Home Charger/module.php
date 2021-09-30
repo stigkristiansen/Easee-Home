@@ -92,13 +92,16 @@ declare(strict_types=1);
 								$this->SetValueEx('ProtectAccess', $result->authorizationRequired);
 							}
 							break;
+						case 'setchargerlockstate':
+						case 'setchargeraccesslevel':
+						case 'setchargingstate':
+							break;
 						default:
 							throw new Exception(sprintf('Unknown function "%s" receeived in repsponse from parent', $function));
 					}
 				} else {
 					throw new Exception(sprintf('The parent gateway returned an error: %s',$result));
 				}
-				
 				
 			} catch(Exception $e) {
 				$this->LogMessage(sprintf('ReceiveData() failed. The error was "%s"',  $e->getMessage()), KL_ERROR);
@@ -109,7 +112,7 @@ declare(strict_types=1);
 
 		public function RequestAction($Ident, $Value) {
 			try {
-				$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('ReqestAction called for Ident "%s" with Value %s', $Ident, $Value), 0);
+				$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('ReqestAction called for Ident "%s" with Value %s', $Ident, (string)$Value), 0);
 	
 				$chargerId = $this->ReadPropertyString('ChargerId');
 
