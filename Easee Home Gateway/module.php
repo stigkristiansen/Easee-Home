@@ -240,9 +240,11 @@ class EaseeHomeGateway extends IPSModule
 
 	private function GetProducts(string $ChildId) {
 		$this->SendDebug(IPS_GetName($this->InstanceID), 'Getting all products...', 0);
+
 		$easee = null;
 		
 		$token = $this->GetTokenFromBuffer();
+
 		if($token==null) {
 			$easee = $this->InitEasee();
 		} else {
@@ -251,6 +253,8 @@ class EaseeHomeGateway extends IPSModule
 
 			$easee = new Easee($username, $password, $token->AccessToken, $token->RefreshToken, $token->Expires);
 		}
+
+		$return['Function'] = 'GetProducts';
 
 		try {
 			if($easee==null) {
@@ -265,19 +269,24 @@ class EaseeHomeGateway extends IPSModule
 			
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Easee REST API returned "%s" for GetProducts()', json_encode($result)), 0);
 		} catch(Exception $e) {
+			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Resetting token. GetEqualizerState() failed. The error was "%s"', $e->getMessage()), 0);
+			$this->LogMessage(sprintf('Resetting token. GetEqualizerState() failed. The error was "%s"', $e->getMessage()), KL_ERROR);
+
 			$this->AddTokenToBuffer(null);	
-			throw new Exception(sprintf('GetProducts() failed. The error was "%s"', $e->getMessage()));
+			
+			$return['Success'] = false;
+			$return['Result'] = $e->getMessage();
 		}
 
-		// To do
-		// Format $products to only include products and neccessary properties from $result
-		$products = $result;
+		$return['Success'] = true;
+		$return['Result'] = $result;
 
-		$this->SendDataToChildren(json_encode(["DataID" => "{47508B62-3B4E-67BE-0F29-0B82A2C62B58}", "ChildId" => $ChildId, "Buffer" => $products]));
+		$this->SendDataToChildren(json_encode(["DataID" => "{47508B62-3B4E-67BE-0F29-0B82A2C62B58}", "ChildId" => $ChildId, "Buffer" => $return]));
 	}
 
 	private function GetEqualizerState(string $ChildId, string $EqualizerId) {
 		$this->SendDebug(IPS_GetName($this->InstanceID), 'Getting equalizers state...', 0);
+
 		$easee = null;
 
 		$token = $this->GetTokenFromBuffer();
@@ -305,10 +314,11 @@ class EaseeHomeGateway extends IPSModule
 			
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Easee REST API returned "%s" for GetEqualizerState()', json_encode($result)), 0);
 		} catch(Exception $e) {
-			$this->AddTokenToBuffer(null);	
-			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('GetEqualizerState() failed. The error was "%s"', $e->getMessage()), 0);
-			$this->LogMessage(sprintf('GetEqualizerState() failed. The error was "%s"', $e->getMessage()), KL_ERROR);
+			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Resetting token. GetEqualizerState() failed. The error was "%s"', $e->getMessage()), 0);
+			$this->LogMessage(sprintf('Resetting token. GetEqualizerState() failed. The error was "%s"', $e->getMessage()), KL_ERROR);
 
+			$this->AddTokenToBuffer(null);	
+			
 			$return['Success'] = false;
 			$return['Result'] = $e->getMessage();
 		}
@@ -321,6 +331,7 @@ class EaseeHomeGateway extends IPSModule
 
 	private function GetChargerState(string $ChildId, string $ChargerId) {
 		$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Getting state for charger with id %s...', $ChargerId), 0);
+
 		$easee = null;
 		
 		$token = $this->GetTokenFromBuffer();
@@ -365,6 +376,7 @@ class EaseeHomeGateway extends IPSModule
 
 	private function GetChargerConfig(string $ChildId, string $ChargerId) {
 		$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Getting config for charger with id %s...', $ChargerId), 0);
+
 		$easee = null;
 		
 		$token = $this->GetTokenFromBuffer();
@@ -392,10 +404,10 @@ class EaseeHomeGateway extends IPSModule
 
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Easee REST API returned "%s" for GetChargerState()', json_encode($result)), 0);
 		} catch(Exception $e) {
-			$this->AddTokenToBuffer(null);	
+			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Resetting token. GetChargerConfig() failed. The error was "%s"', $e->getMessage()), 0);
+			$this->LogMessage(sprintf('Resetting token. GetChargerConfig() failed. The error was "%s"', $e->getMessage()), KL_ERROR);
 			
-			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('GetChargerConfig() failed. The error was "%s"', $e->getMessage()), 0);
-			$this->LogMessage(sprintf('GetChargerConfig() failed. The error was "%s"', $e->getMessage()), KL_ERROR);
+			$this->AddTokenToBuffer(null);	
 
 			$return['Success'] = false;
 			$return['Result'] = $e->getMessage();
@@ -407,11 +419,11 @@ class EaseeHomeGateway extends IPSModule
 		}
 		
 		$this->SendDataToChildren(json_encode(["DataID" => "{47508B62-3B4E-67BE-0F29-0B82A2C62B58}", "ChildId" => $ChildId, "Buffer" => $return]));
-
 	}
 
 	private function SetChargerLockState(string $ChildId, string $ChargerId, bool $State){
 		$this->SendDebug(IPS_GetName($this->InstanceID), 'Changing chargers cable lock state...', 0);
+
 		$easee = null;
 		
 		$token = $this->GetTokenFromBuffer();
@@ -439,11 +451,11 @@ class EaseeHomeGateway extends IPSModule
 		
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Easee REST API returned "%s" for SetChargerLockState()', json_encode($result)), 0);
 		} catch(Exception $e) {
+			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Resetting token. SetChargerLockState() failed. The error was "%s"', $e->getMessage()), 0);
+			$this->LogMessage(sprintf('Resetting token. SetChargerLockState() failed. The error was "%s"', $e->getMessage()), KL_ERROR);
+			
 			$this->AddTokenToBuffer(null);	
 			
-			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('SetChargerLockState() failed. The error was "%s"', $e->getMessage()), 0);
-			$this->LogMessage(sprintf('SetChargerLockState() failed. The error was "%s"', $e->getMessage()), KL_ERROR);
-
 			$return['Success'] = false;
 			$return['Result'] = $e->getMessage();
 		}
@@ -458,6 +470,7 @@ class EaseeHomeGateway extends IPSModule
 
 	private function SetChargerAccessLevel(string $ChildId, string $ChargerId, bool $UseKey){
 		$this->SendDebug(IPS_GetName($this->InstanceID), 'Changing chargers access level...', 0);
+
 		$easee = null;
 		
 		$token = $this->GetTokenFromBuffer();
@@ -483,10 +496,10 @@ class EaseeHomeGateway extends IPSModule
 
 			$result = $easee->SetChargerAccessLevel($ChargerId, $UseKey);
 		} catch(Exception $e) {
-			$this->AddTokenToBuffer(null);	
+			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Resetting token. SetChargerAccessLevel() failed. The error was "%s"', $e->getMessage()), 0);
+			$this->LogMessage(sprintf('Resetting token. SetChargerAccessLevel() failed. The error was "%s"', $e->getMessage()), KL_ERROR);
 			
-			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('SetChargerAccessLevel() failed. The error was "%s"', $e->getMessage()), 0);
-			$this->LogMessage(sprintf('SetChargerAccessLevel() failed. The error was "%s"', $e->getMessage()), KL_ERROR);
+			$this->AddTokenToBuffer(null);	
 
 			$return['Success'] = false;
 			$return['Result'] = $e->getMessage();
@@ -531,11 +544,11 @@ class EaseeHomeGateway extends IPSModule
 		
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Easee REST API returned "%s" for SetChargingState()', json_encode($result)), 0);
 		} catch(Exception $e) {
+			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Resetting token. SetChargingState() failed. The error was "%s"', $e->getMessage()), 0);
+			$this->LogMessage(sprintf('Resetting token. SetChargingState() failed. The error was "%s"', $e->getMessage()), KL_ERROR);
+
 			$this->AddTokenToBuffer(null);	
 			
-			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('SetChargingState() failed. The error was "%s"', $e->getMessage()), 0);
-			$this->LogMessage(sprintf('SetChargingState() failed. The error was "%s"', $e->getMessage()), KL_ERROR);
-
 			$return['Success'] = false;
 			$return['Result'] = $e->getMessage();
 		}
