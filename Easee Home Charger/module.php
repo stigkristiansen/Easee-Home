@@ -12,6 +12,12 @@ declare(strict_types=1);
 			$this->RegisterPropertyInteger('UpdateInterval', 15);
 			$this->RegisterPropertyString('ChargerId', '');
 
+			$this->RegisterVariableBoolean('LockeCable', 'Lock Cable', '~Switch', 1);
+			$this->EnableAction('LockeCable');
+			
+			$this->RegisterVariableBoolean('ProtectAccess', 'Protect Access', '~Switch', 1);
+			$this->EnableAction('ProtectAccess');
+
 			$this->RegisterTimer('EaseeChargerRefresh' . (string)$this->InstanceID, 0, 'IPS_RequestAction(' . (string)$this->InstanceID . ', "Refresh", 0);'); 
 
 			$this->RegisterMessage(0, IPS_KERNELMESSAGE);
@@ -73,13 +79,16 @@ declare(strict_types=1);
 					$function = strtolower($data->Buffer->Function);
 					switch($function) {
 						case 'getchargerstate':
-							$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Processing result "%s"', json_encode($result)), 0);
+							$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Processing result from GetChargerState(): %s...', json_encode($result)), 0);
+							break;
+						case 'getchargerconfig':
+							$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Processing result from GetChargerConfig(): %s...', json_encode($result)), 0);
 							break;
 						default:
-							throw new Exception('Invalid data receievd from parent 4');
+							throw new Exception(sprintf('Unknown function "%s" receeived in repsponse from parent', $function));
 					}
 				} else {
-					throw new Exception(sprintf('The error from parent gateway was "%s".',$result));
+					throw new Exception(sprintf('The parent gateway returned an error: %s',$result));
 				}
 				
 				
@@ -94,13 +103,25 @@ declare(strict_types=1);
 			try {
 				$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('ReqestAction called for Ident "%s" with Value %s', $Ident, $Value), 0);
 	
+				$chargerId = $this->ReadPropertyString('ChargerId');
+
 				switch (strtolower($Ident)) {
 					case 'refresh':
-						$this->Refresh();
+						$request = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerConfig','ChargerId'=>$chargerId];
+						//$this->Refresh($chargerId);
 						break;
+					case 'lockecable':
+						$request = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargerLockState','ChargerId'=>$ChargerId, 'State' => $Value];
+						break;
+					case 'protectaccess':
+						$request = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargerAccessLevel','ChargerId'=>'EHTWHEX7', 'UseKey' => $Value];
+						break
 					default:
 						throw new Exception(sprintf('ReqestAction called with unkown Ident "%s"', $Ident));
 				}
+
+				$this->SendDataToParent(json_encode(['DataID' => '{B62C0F65-7B59-0CD8-8C92-5DA32FBBD317}', 'Buffer' => $request]));
+
 			} catch(Exception $e) {
 				$this->LogMessage(sprintf('RequestAction failed. The error was "%s"',  $e->getMessage()), KL_ERROR);
 				$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('RequestAction failed. The error was "%s"', $e->getMessage()), 0);
@@ -111,12 +132,11 @@ declare(strict_types=1);
 			$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, $this->ReadPropertyInteger('UpdateInterval')*1000); 
 		}
 
-		private function Refresh(){
-			$chargerId = $this->ReadPropertyString('ChargerId');
-			
-			if(strlen($chargerId)>0) {
-				$data = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerState','ChargerId'=>$chargerId];
+		private function Refresh(string $ChargerId){
+			if(strlen($ChargerId)>0) {
+				$request = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerConfig','ChargerId'=>$ChargerId];
 				$this->SendDataToParent(json_encode(['DataID' => '{B62C0F65-7B59-0CD8-8C92-5DA32FBBD317}', 'Buffer' => $data]));
+
 			}
 		}
 	}

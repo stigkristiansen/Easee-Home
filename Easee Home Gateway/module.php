@@ -186,6 +186,13 @@ class EaseeHomeGateway extends IPSModule
 				
 				$this->GetChargerState($childId, $request->ChargerId);
 				break;
+			case 'getchargerconfig':
+				if(!isset($request->ChargerId)) {
+					throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "ChargerId" is missing. The request was "%s"', $Request));
+				}
+				
+				$this->GetChargerConfig($childId, $request->ChargerId);
+				break;
 			case 'setchargerlockstate':
 				if(!isset($request->ChargerId)) {
 					throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "ChargerId" is missing. The request was "%s"', $Request));
@@ -339,6 +346,50 @@ class EaseeHomeGateway extends IPSModule
 			$this->AddTokenToBuffer(null);	
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('GetChargerState() failed. The error was "%s"', $e->getMessage()), 0);
 			$this->LogMessage(sprintf('GetChargerState() failed. The error was "%s"', $e->getMessage()), KL_ERROR);
+
+			$return['Success'] = false;
+			$return['Result'] = $e->getMessage();
+		}
+
+		$return['Success'] = true;
+		$return['Result'] = $result;
+
+		$this->SendDataToChildren(json_encode(["DataID" => "{47508B62-3B4E-67BE-0F29-0B82A2C62B58}", "ChildId" => $ChildId, "Buffer" => $return]));
+
+	}
+
+	private function GetChargerConfig(string $ChildId, string $ChargerId) {
+		$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Getting config for charger with id %s...', $ChargerId), 0);
+		$easee = null;
+		
+		$token = $this->GetTokenFromBuffer();
+		if($token==null) {
+			$easee = $this->InitEasee();
+		} else {
+			$username = $this->ReadPropertyString('Username');
+			$password = $this->ReadPropertyString('Password');
+
+			$easee = new Easee($username, $password, $token->AccessToken, $token->RefreshToken, $token->Expires);
+		}
+
+		$return['Function'] = 'GetChargerConfig';
+
+		try{
+			if($easee==null) {
+				throw new Exception('Unable to initialize the Easee class');
+			}
+
+			if($this->ReadPropertyBoolean('SkipSSLCheck')) {
+				$easee->DisableSSLCheck();
+			}
+
+			$result = $easee->GetChargerConfig($ChargerId);
+
+			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Easee REST API returned "%s" for GetChargerState()', json_encode($result)), 0);
+		} catch(Exception $e) {
+			$this->AddTokenToBuffer(null);	
+			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('GetChargerConfig() failed. The error was "%s"', $e->getMessage()), 0);
+			$this->LogMessage(sprintf('GetChargerConfig() failed. The error was "%s"', $e->getMessage()), KL_ERROR);
 
 			$return['Success'] = false;
 			$return['Result'] = $e->getMessage();

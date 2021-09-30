@@ -284,6 +284,28 @@ class Easee {
         }
     }
 
+    public function GetChargerConfig(string $ChargerId) {
+        try{
+            $this->Connect();
+            
+            $url = self::ENDPOINT . '/api/chargers/' . $ChargerId .'/config';
+            $result = self::request('get', $url);
+
+            if($result->error) {
+                throw new Exception(sprintf('%s failed. The error was "%s"', $url, $result->errortext));
+            } else if(isset($result->result->status) && $result->result->status != 200) {
+                throw new Exception(sprintf('%s failed. The error was "%s"', $url, $result->result->title));
+            } else if($result->httpcode!=200) {
+                throw new Exception(sprintf('%s returned http status code %d', $url, $result->httpcode)); 
+            } else {
+                return $result->result;
+            }
+
+        } catch(Exception $e) {
+            throw new Exception($e->getMessage());
+        }
+    }
+
     public function GetEqualizerState(string $EqualizerId) {
         
         try{
