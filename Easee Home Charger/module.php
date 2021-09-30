@@ -70,7 +70,7 @@ declare(strict_types=1);
 				$result = $data->Buffer->Result;
 
 				if($success) {
-					$function = $data->Buffer->Function;
+					$function = strtolower($data->Buffer->Function);
 					switch($function) {
 						case 'getchargerstate':
 							$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Processing result "%s"', json_encode($result)), 0);
