@@ -66,8 +66,7 @@ declare(strict_types=1);
 				switch (strtolower($Ident)) {
 					case 'refresh':
 						$request = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerConfig','ChargerId'=>$chargerId];
-						$this->InitTimer();
-						//$this->Refresh($chargerId);
+						$this->InitTimer(); // Reset timer back to configured interval
 						break;
 					case 'lockcable':
 						$this->SetValue($Ident, $Value);
@@ -128,7 +127,7 @@ declare(strict_types=1);
 						case 'setchargeraccesslevel':
 						case 'setchargingstate':
 							$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Processing result from %s(): %s...', $data->Buffer->Function, json_encode($result)), 0);
-							$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, 5000); 
+							$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, 5000); // Do a extra refresh after a change
 							break;
 						default:
 							throw new Exception(sprintf('Unknown function "%s" receeived in repsponse from parent', $function));
