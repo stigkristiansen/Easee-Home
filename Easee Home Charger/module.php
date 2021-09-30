@@ -94,6 +94,7 @@ declare(strict_types=1);
 							break;
 						case 'setchargerlockstate':
 						case 'setchargeraccesslevel':
+							
 						case 'setchargingstate':
 							break;
 						default:

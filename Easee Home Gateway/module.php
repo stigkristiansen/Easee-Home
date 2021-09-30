@@ -495,6 +495,8 @@ class EaseeHomeGateway extends IPSModule
 			}
 
 			$result = $easee->SetChargerAccessLevel($ChargerId, $UseKey);
+
+			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Easee REST API returned "%s" for SetChargerAccessLevel()', json_encode($result)), 0);
 		} catch(Exception $e) {
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Resetting token. SetChargerAccessLevel() failed. The error was "%s"', $e->getMessage()), 0);
 			$this->LogMessage(sprintf('Resetting token. SetChargerAccessLevel() failed. The error was "%s"', $e->getMessage()), KL_ERROR);
