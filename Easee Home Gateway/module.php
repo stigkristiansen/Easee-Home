@@ -321,7 +321,7 @@ class EaseeHomeGateway extends IPSModule
 			$easee = new Easee($username, $password, $token->AccessToken, $token->RefreshToken, $token->Expires);
 		}
 
-		$return['function'] = 'GetChargerState';
+		$return['Function'] = 'GetChargerState';
 
 		try{
 			if($easee==null) {
