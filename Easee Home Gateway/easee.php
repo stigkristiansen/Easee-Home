@@ -291,6 +291,8 @@ class Easee {
             $url = self::ENDPOINT . '/api/chargers/' . $ChargerId .'/config';
             $result = self::request('get', $url);
 
+            IPS_LogMessage('Result from request '.$url, json_encode($result));
+
             if($result->error) {
                 throw new Exception(sprintf('%s failed. The error was "%s"', $url, $result->errortext));
             } else if(isset($result->result->status) && $result->result->status != 200) {
