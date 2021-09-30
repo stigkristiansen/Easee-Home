@@ -96,7 +96,7 @@ declare(strict_types=1);
 						case 'setchargeraccesslevel':
 						case 'setchargingstate':
 							$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Processing result from %s(): %s...', $data->Buffer->Function, json_encode($result)), 0);
-							$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, 1000); 
+							$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, 2000); 
 							break;
 						default:
 							throw new Exception(sprintf('Unknown function "%s" receeived in repsponse from parent', $function));
