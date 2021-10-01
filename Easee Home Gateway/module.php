@@ -374,6 +374,58 @@ class EaseeHomeGateway extends IPSModule
 
 	}
 
+	// $Args0 = ProductId ;
+	// $Args1-$ArgsX = Extra arguments if necessary
+	
+	private function ExecuteEaseeRequest(string $ChildId, string $Function, array $Args) {
+		$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Getting config for component with id %s...', $ProductId), 0);
+
+		$easee = null;
+				
+		$token = $this->GetTokenFromBuffer();
+		if($token==null) {
+			$easee = $this->InitEasee();
+		} else {
+			$username = $this->ReadPropertyString('Username');
+			$password = $this->ReadPropertyString('Password');
+
+			$easee = new Easee($username, $password, $token->AccessToken, $token->RefreshToken, $token->Expires);
+		}
+
+		$return['Function'] = $Function;
+
+		try{
+			if($easee==null) {
+				throw new Exception('Unable to initialize the Easee class');
+			}
+
+			if($this->ReadPropertyBoolean('SkipSSLCheck')) {
+				$easee->DisableSSLCheck();
+			}
+
+			$result = $easee->GetChargerConfig($ProductId);
+
+			$result = call_user_func_array(array($easee, $Function), $Args)
+
+			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Easee REST API returned "%s" for GetChargerState()', json_encode($result)), 0);
+		} catch(Exception $e) {
+			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Resetting token. %s() failed. The error was "%s"', $Function, $e->getMessage()), 0);
+			$this->LogMessage(sprintf('Resetting token. %s() failed. The error was "%s"', $Function, $e->getMessage()), KL_ERROR);
+			
+			$this->AddTokenToBuffer(null);	
+
+			$return['Success'] = false;
+			$return['Result'] = $e->getMessage();
+		}
+
+		if(!isset($return['Success'])) {
+			$return['Success'] = true;
+			$return['Result'] = $result;
+		}
+		
+		$this->SendDataToChildren(json_encode(["DataID" => "{47508B62-3B4E-67BE-0F29-0B82A2C62B58}", "ChildId" => $ChildId, "Buffer" => $return]));
+	}
+
 	private function GetChargerConfig(string $ChildId, string $ChargerId) {
 		$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Getting config for charger with id %s...', $ChargerId), 0);
 
