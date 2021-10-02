@@ -405,7 +405,7 @@ class EaseeHomeGateway extends IPSModule
 				$easee->DisableSSLCheck();
 			}
 
-			$result = $easee->GetChargerConfig($ProductId);
+			//$result = $easee->GetChargerConfig($ChargerId);
 
 			$result = call_user_func_array(array($easee, $Function), $Args);
 
