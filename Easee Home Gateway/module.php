@@ -204,7 +204,8 @@ class EaseeHomeGateway extends IPSModule
 					throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "State" is missing or is a invalid type. The request was "%s"', $Request));
 				}
 
-				$this->SetChargerLockState($childId, $request->ChargerId, $request->State);
+				$this->ExecuteEaseeRequest($childId, 'SetChargerLockState', array($request->ChargerId, $request->State));
+				//$this->SetChargerLockState($childId, $request->ChargerId, $request->State);
 				break;
 			case 'setchargeraccesslevel':
 				if(!isset($request->ChargerId)) {
@@ -215,7 +216,8 @@ class EaseeHomeGateway extends IPSModule
 					throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "UseKey" is missing or is a invalid type. The request was "%s"', $Request));
 				}
 
-				$this->SetChargerAccessLevel($childId, $request->ChargerId, $request->UseKey);
+				$this->ExecuteEaseeRequest($childId, 'SetChargerAccessLevel', array($request->ChargerId, $request->UseKey));
+				//$this->SetChargerAccessLevel($childId, $request->ChargerId, $request->UseKey);
 				break;
 			case 'setchargingstate':
 				if(!isset($request->ChargerId)) {
@@ -376,7 +378,7 @@ class EaseeHomeGateway extends IPSModule
 
 	}
 
-	// $Args0 = ProductId ;
+	// $Args0 = Product Id ;
 	// $Args1-$ArgsX = Extra arguments if necessary
 	
 	private function ExecuteEaseeRequest(string $ChildId, string $Function, array $Args) {
