@@ -71,7 +71,7 @@ declare(strict_types=1);
 						throw new Exception(sprintf('ReqestAction called with unkown Ident "%s"', $Ident));
 				}
 
-				$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Sending a request to the gateway: %s', $request), 0);
+				$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Sending a request to the gateway: %s', json_encode($request)), 0);
 				$this->SendDataToParent(json_encode(['DataID' => '{B62C0F65-7B59-0CD8-8C92-5DA32FBBD317}', 'Buffer' => $request]));
 
 			} catch(Exception $e) {
