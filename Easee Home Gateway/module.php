@@ -248,7 +248,7 @@ class EaseeHomeGateway extends IPSModule
 	// $Args0 = Product Id ;
 	// $Args1-$ArgsX = Extra arguments when necessary
 	
-	private function ExecuteEaseeRequest(string $ChildId, string $Function, array $Args==null) {
+	private function ExecuteEaseeRequest(string $ChildId, string $Function, array $Args=null) {
 		$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Executing Easee::%s() for component with id %s...', $Function, $Args[0]), 0);
 
 		$easee = null;
