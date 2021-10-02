@@ -32,7 +32,7 @@ declare(strict_types=1);
 			//Never delete this line!
 			parent::ApplyChanges();
 
-			$this->SetReceiveDataFilter('.*"ChildId":"'. (string)$this->InstanceID .'".*');
+			$this->SetReceiveDataFilter('.*"ChildId":"' . (string)$this->InstanceID .'".*');
 
 			if (IPS_GetKernelRunlevel() == KR_READY) {
 				$this->InitTimer();
