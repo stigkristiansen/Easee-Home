@@ -48,15 +48,6 @@ declare(strict_types=1);
 			}
 		}
 
-		public function Send(bool $State){
-			//$data = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerState','ChargerId'=>'EHTWHEX7'];
-			//$data = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargerLockState','ChargerId'=>'EHTWHEX7', 'State' => $State];
-			//$data = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargerAccessLevel','ChargerId'=>'EHTWHEX7', 'UseKey' => $State];
-			$data = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargingState','ChargerId'=>'EHTWHEX7', 'State' => $State];
-			
-			$this->SendDataToParent(json_encode(['DataID' => '{B62C0F65-7B59-0CD8-8C92-5DA32FBBD317}', 'Buffer' => $data]));
-		}
-
 		public function RequestAction($Ident, $Value) {
 			try {
 				$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('ReqestAction called for Ident "%s" with Value %s', $Ident, (string)$Value), 0);
@@ -80,6 +71,7 @@ declare(strict_types=1);
 						throw new Exception(sprintf('ReqestAction called with unkown Ident "%s"', $Ident));
 				}
 
+				$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Sending a request to the gateway: %s', $request), 0);
 				$this->SendDataToParent(json_encode(['DataID' => '{B62C0F65-7B59-0CD8-8C92-5DA32FBBD317}', 'Buffer' => $request]));
 
 			} catch(Exception $e) {
@@ -126,12 +118,12 @@ declare(strict_types=1);
 							$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, 5000); // Do a extra refresh after a change
 							break;
 						default:
-							throw new Exception(sprintf('Unknown function "%s" receeived in repsponse from parent', $function));
+							throw new Exception(sprintf('Unknown function "%s()" receeived in repsponse from gateway', $function));
 					}
 					
 					$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Processed the result from %s(): %s...', $data->Buffer->Function, json_encode($result)), 0);
 				} else {
-					throw new Exception(sprintf('The parent gateway returned an error: %s',$result));
+					throw new Exception(sprintf('The gateway returned an error: %s',$result));
 				}
 				
 			} catch(Exception $e) {
