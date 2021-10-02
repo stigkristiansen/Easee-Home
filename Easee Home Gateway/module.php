@@ -407,7 +407,7 @@ class EaseeHomeGateway extends IPSModule
 
 			$result = $easee->GetChargerConfig($ProductId);
 
-			$result = call_user_func_array(array($easee, $Function), $Args)
+			$result = call_user_func_array(array($easee, $Function), $Args);
 
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Easee REST API returned "%s" for GetChargerState()', json_encode($result)), 0);
 		} catch(Exception $e) {
