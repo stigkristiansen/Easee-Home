@@ -1,8 +1,8 @@
 <?php
 
 declare(strict_types=1);
-	class EaseeHomeCharger extends IPSModule
-	{
+
+	class EaseeHomeCharger extends IPSModule {
 		public function Create(){
 			//Never delete this line!
 			parent::Create();
@@ -37,7 +37,6 @@ declare(strict_types=1);
 			if (IPS_GetKernelRunlevel() == KR_READY) {
 				$this->InitTimer();
 			}
-		
 		}
 
 		public function MessageSink($TimeStamp, $SenderID, $Message, $Data) {
@@ -130,10 +129,7 @@ declare(strict_types=1);
 				$this->LogMessage(sprintf('ReceiveData() failed. The error was "%s"',  $e->getMessage()), KL_ERROR);
 				$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('RequestAction failed. The error was "%s"', $e->getMessage()), 0);
 			}
-			
 		}
-
-
 
 		private function InitTimer(){
 			$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, $this->ReadPropertyInteger('UpdateInterval')*1000); 
