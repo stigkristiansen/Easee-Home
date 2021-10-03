@@ -25,7 +25,7 @@ include __DIR__ . "/../libs/traits.php";
 				[6, 'Ready To Charge' , '', -1]
 			]);
 
-			$this->RegisterVariableInteger('Status', 'Status', '', 1);
+			$this->RegisterVariableInteger('Status', 'Status', 'EHCH.ChargerOpMode', 1);
 			
 			$this->RegisterVariableBoolean('StartCharging', 'Start Charging', '~Switch', 2);
 			$this->EnableAction('StartCharging');
@@ -42,6 +42,11 @@ include __DIR__ . "/../libs/traits.php";
 		}
 
 		public function Destroy(){
+			$module = json_decode(file_get_contents(__DIR__ . '/module.json'));
+			if(count(IPS_GetInstanceListByModuleID($module->id))==0) {
+				$this->DeleteProfile('EHCH.ChargerOpMode');
+			}
+
 			//Never delete this line!
 			parent::Destroy();
 		}
