@@ -102,6 +102,7 @@ include __DIR__ . "/../libs/traits.php";
 							$this->SetValue($Ident, $Value);
 							$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargingState','ChargerId'=>$chargerId, 'State' => $Value==1?true:false];
 						}
+						break;
 					default:
 						throw new Exception(sprintf('ReqestAction called with unkown Ident "%s"', $Ident));
 				}
