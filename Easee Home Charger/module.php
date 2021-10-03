@@ -26,7 +26,7 @@ include __DIR__ . "/../libs/traits.php";
 			]);
 
 			$this->RegisterProfileIntegerEx('EHCH.StartCharging', 'Power', '', '', [
-				[0, '', '', -1],
+				[0, ' ', '', -1],
 				[1, 'Start', '', -1],
 				[2, 'Stop ', '', -1]
 			]);
@@ -53,7 +53,6 @@ include __DIR__ . "/../libs/traits.php";
 				$this->DeleteProfile('EHCH.ChargerOpMode');
 				$this->DeleteProfile('EHCH.StartCharging');
 			}
-			
 
 			//Never delete this line!
 			parent::Destroy();
