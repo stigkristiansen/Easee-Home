@@ -88,11 +88,12 @@ include __DIR__ . "/../libs/traits.php";
 	
 				$chargerId = $this->ReadPropertyString('ChargerId');
 
+				$request = null;
 				switch (strtolower($Ident)) {
 					case 'refresh':
 						//$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerConfig','ChargerId'=>$chargerId];
 						//$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerState','ChargerId'=>$chargerId];
-						$this->Refresh($chargerId);
+						$request = $this->Refresh($chargerId);
 						$this->InitTimer(); // Reset timer back to configured interval
 						break;
 					case 'lockcable':
@@ -113,7 +114,7 @@ include __DIR__ . "/../libs/traits.php";
 						throw new Exception(sprintf('ReqestAction called with unkown Ident "%s"', $Ident));
 				}
 
-				if(count($request)>0) {
+				if($request!=null) {
 					$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Sending a request to the gateway: %s', json_encode($request)), 0);
 					$this->SendDataToParent(json_encode(['DataID' => '{B62C0F65-7B59-0CD8-8C92-5DA32FBBD317}', 'Buffer' => $request]));
 				}
@@ -207,6 +208,8 @@ include __DIR__ . "/../libs/traits.php";
 				$this->SendDataToParent(json_encode(['DataID' => '{B62C0F65-7B59-0CD8-8C92-5DA32FBBD317}', 'Buffer' => $request]));
 
 				$this->SetValue('StartCharging', 0);
+
+				return $request;
 			}
 		}
 
