@@ -45,7 +45,7 @@ class EaseeHomeGateway extends IPSModule
     }
 
 	public function ForwardData($JSONString) {
-		$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Received a request a child. The request was "%s"', $JSONString), 0);
+		$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Received a request from a child. The request was "%s"', $JSONString), 0);
 
 		$data = json_decode($JSONString);
 		$instructions = json_encode($data->Buffer);
