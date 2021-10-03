@@ -202,7 +202,7 @@ include __DIR__ . "/../libs/traits.php";
 
 				$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, $this->ReadPropertyInteger('UpdateInterval')*1000); 
 
-				SetValue('StartCharging', 0);
+				$this->SetValue('StartCharging', 0);
 			}
 		}
 
