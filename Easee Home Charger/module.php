@@ -12,10 +12,16 @@ declare(strict_types=1);
 			$this->RegisterPropertyInteger('UpdateInterval', 15);
 			$this->RegisterPropertyString('ChargerId', '');
 
-			$this->RegisterVariableBoolean('LockCable', 'Lock Cable', '~Switch', 1);
+			$this->RegisterVariableBoolean('StartCharging', 'Start Charging', '~Switch', 1);
+			$this->EnableAction('StartCharging');
+
+			$this->RegisterVariableBoolean('LockCable', 'Lock Cable', '~Switch', 2);
 			$this->EnableAction('LockCable');
 			
-			$this->RegisterVariableBoolean('ProtectAccess', 'Protect Access', '~Switch', 2);
+			$this->RegisterVariableBoolean('ProtectAccess', 'Protect Access', '~Switch', 3);
+			$this->EnableAction('ProtectAccess');
+
+			$this->RegisterVariableBoolean('StartCharging', 'Start Charging', '~Switch', 1);
 			$this->EnableAction('ProtectAccess');
 
 			$this->RegisterTimer('EaseeChargerRefresh' . (string)$this->InstanceID, 0, 'IPS_RequestAction(' . (string)$this->InstanceID . ', "Refresh", 0);'); 
@@ -55,7 +61,8 @@ declare(strict_types=1);
 
 				switch (strtolower($Ident)) {
 					case 'refresh':
-						$request = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerConfig','ChargerId'=>$chargerId];
+						$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerConfig','ChargerId'=>$chargerId];
+						$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerState','ChargerId'=>$chargerId];
 						//$request = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetProducts']; // Just for testing GetProducts()....
 						$this->InitTimer(); // Reset timer back to configured interval
 						break;
@@ -67,6 +74,9 @@ declare(strict_types=1);
 						$this->SetValue($Ident, $Value);
 						$request = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargerAccessLevel','ChargerId'=>$chargerId, 'UseKey' => $Value];
 						break;
+					case 'startcharging':
+						$this->SetValue($Ident, $Value);
+						$request = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargingState','ChargerId'=>$chargerId, 'State' => $Value];
 					default:
 						throw new Exception(sprintf('ReqestAction called with unkown Ident "%s"', $Ident));
 				}
