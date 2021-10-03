@@ -63,20 +63,19 @@ declare(strict_types=1);
 					case 'refresh':
 						$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerConfig','ChargerId'=>$chargerId];
 						$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerState','ChargerId'=>$chargerId];
-						//$request = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetProducts']; // Just for testing GetProducts()....
 						$this->InitTimer(); // Reset timer back to configured interval
 						break;
 					case 'lockcable':
 						$this->SetValue($Ident, $Value);
-						$request = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargerLockState','ChargerId'=>$chargerId, 'State' => $Value];
+						$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargerLockState','ChargerId'=>$chargerId, 'State' => $Value];
 						break;
 					case 'protectaccess':
 						$this->SetValue($Ident, $Value);
-						$request = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargerAccessLevel','ChargerId'=>$chargerId, 'UseKey' => $Value];
+						$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargerAccessLevel','ChargerId'=>$chargerId, 'UseKey' => $Value];
 						break;
 					case 'startcharging':
 						$this->SetValue($Ident, $Value);
-						$request = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargingState','ChargerId'=>$chargerId, 'State' => $Value];
+						$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargingState','ChargerId'=>$chargerId, 'State' => $Value];
 					default:
 						throw new Exception(sprintf('ReqestAction called with unkown Ident "%s"', $Ident));
 				}
