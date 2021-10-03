@@ -85,8 +85,9 @@ include __DIR__ . "/../libs/traits.php";
 
 				switch (strtolower($Ident)) {
 					case 'refresh':
-						$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerConfig','ChargerId'=>$chargerId];
-						$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerState','ChargerId'=>$chargerId];
+						//$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerConfig','ChargerId'=>$chargerId];
+						//$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerState','ChargerId'=>$chargerId];
+						$this->Refresh($chargerId)
 						$this->InitTimer(); // Reset timer back to configured interval
 						break;
 					case 'lockcable':
@@ -195,9 +196,9 @@ include __DIR__ . "/../libs/traits.php";
 
 		private function Refresh(string $ChargerId){
 			if(strlen($ChargerId)>0) {
-				$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, 0); 
-
-				$request = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerConfig','ChargerId'=>$ChargerId];
+				$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerConfig','ChargerId'=>$chargerId];
+				$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerState','ChargerId'=>$chargerId];
+				
 				$this->SendDataToParent(json_encode(['DataID' => '{B62C0F65-7B59-0CD8-8C92-5DA32FBBD317}', 'Buffer' => $request]));
 
 				$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, $this->ReadPropertyInteger('UpdateInterval')*1000); 
