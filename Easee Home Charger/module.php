@@ -25,11 +25,17 @@ include __DIR__ . "/../libs/traits.php";
 				[6, 'Ready To Charge' , '', -1]
 			]);
 
-			$this->RegisterVariableInteger('Status', 'Status', 'EHCH.ChargerOpMode', 1);
-			
-			$this->RegisterVariableBoolean('StartCharging', 'Start Charging', '~Switch', 2);
+			$this->RegisterProfileIntegerEx('EHCH.StartCharging', 'Power', '', '', [
+				[0, '', '', -1],
+				[1, 'Start', '', -1],
+				[2, 'Stop ', '', -1]
+			]);
+
+			$this->RegisterVariableInteger('StartCharging', 'Charging', 'EHCH.StartCharging', 1);
 			$this->EnableAction('StartCharging');
 
+			$this->RegisterVariableInteger('Status', 'Status', 'EHCH.ChargerOpMode', 2);
+			
 			$this->RegisterVariableBoolean('LockCable', 'Lock Cable', '~Switch', 3);
 			$this->EnableAction('LockCable');
 			
@@ -45,6 +51,7 @@ include __DIR__ . "/../libs/traits.php";
 			$module = json_decode(file_get_contents(__DIR__ . '/module.json'));
 			if(count(IPS_GetInstanceListByModuleID($module->id))==0) {
 				$this->DeleteProfile('EHCH.ChargerOpMode');
+				$this->DeleteProfile('EHCH.StartCharging');
 			}
 
 			//Never delete this line!
@@ -91,14 +98,18 @@ include __DIR__ . "/../libs/traits.php";
 						$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargerAccessLevel','ChargerId'=>$chargerId, 'UseKey' => $Value];
 						break;
 					case 'startcharging':
-						$this->SetValue($Ident, $Value);
-						$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargingState','ChargerId'=>$chargerId, 'State' => $Value];
+						if($Value>0){
+							$this->SetValue($Ident, $Value);
+							$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargingState','ChargerId'=>$chargerId, 'State' => $Value==1?true:false];
+						}
 					default:
 						throw new Exception(sprintf('ReqestAction called with unkown Ident "%s"', $Ident));
 				}
 
-				$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Sending a request to the gateway: %s', json_encode($request)), 0);
-				$this->SendDataToParent(json_encode(['DataID' => '{B62C0F65-7B59-0CD8-8C92-5DA32FBBD317}', 'Buffer' => $request]));
+				if(count($request)>0) {
+					$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Sending a request to the gateway: %s', json_encode($request)), 0);
+					$this->SendDataToParent(json_encode(['DataID' => '{B62C0F65-7B59-0CD8-8C92-5DA32FBBD317}', 'Buffer' => $request]));
+				}
 
 			} catch(Exception $e) {
 				$this->LogMessage(sprintf('RequestAction failed. The error was "%s"',  $e->getMessage()), KL_ERROR);
