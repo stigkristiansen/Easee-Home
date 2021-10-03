@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-include 'easee.php';
+include __DIR__ . "/../libs/easee.php";
 
 class EaseeHomeGateway extends IPSModule
 {
