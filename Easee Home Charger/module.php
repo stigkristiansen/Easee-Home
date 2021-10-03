@@ -2,7 +2,11 @@
 
 declare(strict_types=1);
 
+include __DIR__ . "/../libs/traits.php";
+
 	class EaseeHomeCharger extends IPSModule {
+		use Profiles;
+
 		public function Create(){
 			//Never delete this line!
 			parent::Create();
@@ -11,6 +15,15 @@ declare(strict_types=1);
 
 			$this->RegisterPropertyInteger('UpdateInterval', 15);
 			$this->RegisterPropertyString('ChargerId', '');
+
+			$this->RegisterProfileIntegerEx('EHCH.ChargerOpMode', 'Electricity', '', '', [
+				[1, 'Disconnected', '', -1],
+				[2, 'Awaiting Start ', '', -1],
+				[3, 'Charging ', '', -1],
+				[4, 'Completed ', '', -1],
+				[5, 'Error' , '', -1],
+				[6, 'Ready To Charge' , '', -1]
+			]);
 
 			$this->RegisterVariableInteger('Status', 'Status', '', 1);
 			
