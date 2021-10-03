@@ -55,7 +55,8 @@ declare(strict_types=1);
 
 				switch (strtolower($Ident)) {
 					case 'refresh':
-						$request = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerConfig','ChargerId'=>$chargerId];
+						//$request = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerConfig','ChargerId'=>$chargerId];
+						$request = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetProducts','ChargerId'=>$chargerId];
 						$this->InitTimer(); // Reset timer back to configured interval
 						break;
 					case 'lockcable':
@@ -101,6 +102,7 @@ declare(strict_types=1);
 					$function = strtolower($data->Buffer->Function);
 					switch($function) {
 						case 'getchargerstate':
+						case 'getproducts':
 							break;
 						case 'getchargerconfig':
 							if(isset($result->lockCablePermanently)) {
@@ -114,7 +116,7 @@ declare(strict_types=1);
 						case 'setchargerlockstate':
 						case 'setchargeraccesslevel':
 						case 'setchargingstate':
-							$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, 5000); // Do a extra refresh after a change
+							$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, 5000); // Do a extra refresh after a change in configuration
 							break;
 						default:
 							throw new Exception(sprintf('Unknown function "%s()" receeived in repsponse from gateway', $function));
