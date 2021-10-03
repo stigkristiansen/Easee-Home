@@ -53,6 +53,7 @@ include __DIR__ . "/../libs/traits.php";
 				$this->DeleteProfile('EHCH.ChargerOpMode');
 				$this->DeleteProfile('EHCH.StartCharging');
 			}
+			
 
 			//Never delete this line!
 			parent::Destroy();
