@@ -31,15 +31,18 @@ include __DIR__ . "/../libs/traits.php";
 				[2, 'Stop ', '', -1]
 			]);
 
+			$this->RegisterProfileBoolean('EHCH.LockCable', 'Lock', '', '');
+			$this->RegisterProfileBoolean('EHCH.ProtectAccess', 'Lock', '', '');
+
 			$this->RegisterVariableInteger('StartCharging', 'Charging', 'EHCH.StartCharging', 1);
 			$this->EnableAction('StartCharging');
 
 			$this->RegisterVariableInteger('Status', 'Status', 'EHCH.ChargerOpMode', 2);
 			
-			$this->RegisterVariableBoolean('LockCable', 'Lock Cable', '~Switch', 3);
+			$this->RegisterVariableBoolean('LockCable', 'Lock Cable', 'EHCH.LockCable', 3);
 			$this->EnableAction('LockCable');
 			
-			$this->RegisterVariableBoolean('ProtectAccess', 'Protect Access', '~Switch', 4);
+			$this->RegisterVariableBoolean('ProtectAccess', 'Protect Access', 'EHCH.ProtectAccess', 4);
 			$this->EnableAction('ProtectAccess');
 
 			$this->RegisterTimer('EaseeChargerRefresh' . (string)$this->InstanceID, 0, 'IPS_RequestAction(' . (string)$this->InstanceID . ', "Refresh", 0);'); 
@@ -52,6 +55,8 @@ include __DIR__ . "/../libs/traits.php";
 			if(count(IPS_GetInstanceListByModuleID($module->id))==0) {
 				$this->DeleteProfile('EHCH.ChargerOpMode');
 				$this->DeleteProfile('EHCH.StartCharging');
+				$this->DeleteProfile('EHCH.LockCable');
+				$this->DeleteProfile('EHCH.ProtectAccess');
 			}
 
 			//Never delete this line!
