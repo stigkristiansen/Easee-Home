@@ -55,8 +55,7 @@ declare(strict_types=1);
 
 				switch (strtolower($Ident)) {
 					case 'refresh':
-						//$request = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerConfig','ChargerId'=>$chargerId];
-						$request = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetProducts','ChargerId'=>$chargerId];
+						$request = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerConfig','ChargerId'=>$chargerId];
 						$this->InitTimer(); // Reset timer back to configured interval
 						break;
 					case 'lockcable':
