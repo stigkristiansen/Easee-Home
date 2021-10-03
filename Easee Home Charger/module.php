@@ -171,6 +171,7 @@ include __DIR__ . "/../libs/traits.php";
 						case 'setchargeraccesslevel':
 						case 'setchargingstate':
 							$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, 5000); // Do a extra refresh after a change in configuration
+							
 							break;
 						default:
 							throw new Exception(sprintf('Unknown function "%s()" receeived in repsponse from gateway', $function));
@@ -199,6 +200,8 @@ include __DIR__ . "/../libs/traits.php";
 				$this->SendDataToParent(json_encode(['DataID' => '{B62C0F65-7B59-0CD8-8C92-5DA32FBBD317}', 'Buffer' => $request]));
 
 				$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, $this->ReadPropertyInteger('UpdateInterval')*1000); 
+
+				SetValue('StartCharging', 0);
 			}
 		}
 
