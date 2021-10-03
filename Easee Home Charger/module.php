@@ -12,16 +12,15 @@ declare(strict_types=1);
 			$this->RegisterPropertyInteger('UpdateInterval', 15);
 			$this->RegisterPropertyString('ChargerId', '');
 
-			$this->RegisterVariableBoolean('StartCharging', 'Start Charging', '~Switch', 1);
+			$this->RegisterVariableInteger('Status', 'Status', '', 1);
+			
+			$this->RegisterVariableBoolean('StartCharging', 'Start Charging', '~Switch', 2);
 			$this->EnableAction('StartCharging');
 
-			$this->RegisterVariableBoolean('LockCable', 'Lock Cable', '~Switch', 2);
+			$this->RegisterVariableBoolean('LockCable', 'Lock Cable', '~Switch', 3);
 			$this->EnableAction('LockCable');
 			
-			$this->RegisterVariableBoolean('ProtectAccess', 'Protect Access', '~Switch', 3);
-			$this->EnableAction('ProtectAccess');
-
-			$this->RegisterVariableBoolean('StartCharging', 'Start Charging', '~Switch', 1);
+			$this->RegisterVariableBoolean('ProtectAccess', 'Protect Access', '~Switch', 4);
 			$this->EnableAction('ProtectAccess');
 
 			$this->RegisterTimer('EaseeChargerRefresh' . (string)$this->InstanceID, 0, 'IPS_RequestAction(' . (string)$this->InstanceID . ', "Refresh", 0);'); 
@@ -94,15 +93,28 @@ declare(strict_types=1);
 				$data = json_decode($JSONString);
 				$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Received data from parent: %s', json_encode($data->Buffer)), 0);
 			 
+				$msg = '';
 				if(!isset($data->Buffer->Function) ) {
-					throw new Exception('Invalid data receieved from parent');
+					$msg = 'Missing "Function"';
 				} 
 				if(!isset($data->Buffer->Success) ) {
-					throw new Exception('Invalid data receieved from parent');
+					if(strlen($msg)>0) {
+						$msg += ', missing "Buffer"';
+					} else {
+						$msg = 'Missing "Buffer"';
+					}
 				} 
 				if(!isset($data->Buffer->Result) ) {
-					throw new Exception('Invalid data receieved from parent');
+					if(strlen($msg)>0) {
+						$msg += ', missing "Result"';
+					} else {
+						$msg = 'Missing "Result"';
+					}
 				} 
+
+				if(strlen($msg)>0) {
+					throw new Exception('Invalid data receieved from parent. ' . $msg);
+				}
 				
 				$success = $data->Buffer->Success;
 				$result = $data->Buffer->Result;
@@ -111,6 +123,10 @@ declare(strict_types=1);
 					$function = strtolower($data->Buffer->Function);
 					switch($function) {
 						case 'getchargerstate':
+							if(isset($result->chargerOpMode)) {
+								$this->SetValueEx('Status', $result->chargerOpMode);
+							}
+							break;
 						case 'getproducts':
 							break;
 						case 'getchargerconfig':
