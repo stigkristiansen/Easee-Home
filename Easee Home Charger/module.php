@@ -38,11 +38,15 @@ include __DIR__ . "/../libs/traits.php";
 			$this->EnableAction('StartCharging');
 
 			$this->RegisterVariableInteger('Status', 'Status', 'EHCH.ChargerOpMode', 2);
+
+			$this->RegisterPropertyFloat('Voltage', 'Voltage', '~Volt', 3);
+
+			$this->RegisterPropertyFloat('Current', 'Current', '~Ampere', 4);
 			
-			$this->RegisterVariableBoolean('LockCable', 'Lock Cable', 'EHCH.LockCable', 3);
+			$this->RegisterVariableBoolean('LockCable', 'Lock Cable', 'EHCH.LockCable', 5);
 			$this->EnableAction('LockCable');
 			
-			$this->RegisterVariableBoolean('ProtectAccess', 'Protect Access', 'EHCH.ProtectAccess', 4);
+			$this->RegisterVariableBoolean('ProtectAccess', 'Protect Access', 'EHCH.ProtectAccess', 6);
 			$this->EnableAction('ProtectAccess');
 
 			$this->RegisterTimer('EaseeChargerRefresh' . (string)$this->InstanceID, 0, 'IPS_RequestAction(' . (string)$this->InstanceID . ', "Refresh", 0);'); 
@@ -91,8 +95,6 @@ include __DIR__ . "/../libs/traits.php";
 				$request = null;
 				switch (strtolower($Ident)) {
 					case 'refresh':
-						//$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerConfig','ChargerId'=>$chargerId];
-						//$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerState','ChargerId'=>$chargerId];
 						$request = $this->Refresh($chargerId);
 						$this->InitTimer(); // Reset timer back to configured interval
 						break;
@@ -125,7 +127,7 @@ include __DIR__ . "/../libs/traits.php";
 			}
 		}
 
-		public function ReceiveData($JSONString){
+		public function ReceiveData($JSONString) {
 			try {
 				$data = json_decode($JSONString);
 				$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Received data from parent: %s', json_encode($data->Buffer)), 0);
@@ -162,6 +164,12 @@ include __DIR__ . "/../libs/traits.php";
 						case 'getchargerstate':
 							if(isset($result->chargerOpMode)) {
 								$this->SetValueEx('Status', $result->chargerOpMode);
+							}
+							if(isset($result->voltage)) {
+								$this->SetValueEx('Voltage', $result->voltage);
+							}
+							if(isset($result->outputCurrent)) {
+								$this->SetValueEx('Current', $result->outputCurrent);
 							}
 							break;
 						case 'getproducts':
