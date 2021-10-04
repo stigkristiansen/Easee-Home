@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-	class EaseeHomeEqualizer extends IPSModule
+	class EaseeHomeEqualizer extends IPSModule {
 
 		public function Create(){
 			//Never delete this line!
