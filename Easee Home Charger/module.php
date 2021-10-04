@@ -39,9 +39,9 @@ include __DIR__ . "/../libs/traits.php";
 
 			$this->RegisterVariableInteger('Status', 'Status', 'EHCH.ChargerOpMode', 2);
 
-			$this->RegisterPropertyFloat('Voltage', 'Voltage', '~Volt', 3);
+			$this->RegisterVariableFloat('Voltage', 'Voltage', '~Volt', 3);
 
-			$this->RegisterPropertyFloat('Current', 'Current', '~Ampere', 4);
+			$this->RegisterVariableFloat('Current', 'Current', '~Ampere', 4);
 			
 			$this->RegisterVariableBoolean('LockCable', 'Lock Cable', 'EHCH.LockCable', 5);
 			$this->EnableAction('LockCable');
