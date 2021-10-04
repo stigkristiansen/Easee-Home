@@ -1,10 +1,11 @@
 <?php
 
-
-
 declare(strict_types=1);
 
+include __DIR__ . "/../libs/traits.php";
+
 	class EaseeHomeEqualizer extends IPSModule {
+		use Profiles;
 
 		public function Create(){
 			//Never delete this line!
@@ -15,12 +16,20 @@ declare(strict_types=1);
 			$this->RegisterPropertyInteger('UpdateInterval', 15);
 			$this->RegisterPropertyString('ProductId', '');
 
+			$this->RegisterProfileFloat('EHEQ.Watt', 'Electricity', '', 'W');
+
+			$this->RegisterVariableFloat('CurrentUsage', 'Usage', 'EHEQ.Watt', 1)
+
 			$this->RegisterTimer('EaseeEqualizerRefresh' . (string)$this->InstanceID, 0, 'IPS_RequestAction(' . (string)$this->InstanceID . ', "Refresh", 0);'); 
 
 			$this->RegisterMessage(0, IPS_KERNELMESSAGE);
 		}
 
 		public function Destroy(){
+			$module = json_decode(file_get_contents(__DIR__ . '/module.json'));
+			if(count(IPS_GetInstanceListByModuleID($module->id))==0) {
+				$this->DeleteProfile('EHEQ.Watt');
+			}
 			
 			//Never delete this line!
 			parent::Destroy();
@@ -107,19 +116,10 @@ declare(strict_types=1);
 					$function = strtolower($data->Buffer->Function);
 					switch($function) {
 						case 'getequalizerstate':  
-							if(isset($result->chargerOpMode)) {
-								$this->SetValueEx('Status', $result->chargerOpMode);
+							if(isset($result->activePowerImport)) {
+								$this->SetValueEx('CurrentUsage', $result->activePowerImport*1000);
 							}
-							if(isset($result->voltage)) {
-								$this->SetValueEx('Voltage', $result->voltage);
-							}
-							if(isset($result->outputCurrent)) {
-								$this->SetValueEx('Current', $result->outputCurrent);
-							}
-							if(isset($result->lifetimeEnergy)) {
-								$this->SetValueEx('TotalEnergi', $result->lifetimeEnergy);
-							}
-
+				
 							break;
 						default:
 							throw new Exception(sprintf('Unknown function "%s()" receeived in repsponse from gateway', $function));

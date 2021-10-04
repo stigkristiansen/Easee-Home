@@ -132,6 +132,21 @@ trait Profiles {
         }
     }
 
+    protected function RegisterProfileFloat($Name, $Icon, $Prefix, $Suffix) {
+
+        if (!IPS_VariableProfileExists($Name)) {
+            IPS_CreateVariableProfile($Name, 2);
+        } else {
+            $profile = IPS_GetVariableProfile($Name);
+            if ($profile['ProfileType'] != 2) {
+                throw new Exception('Variable profile type (float) does not match for profile ' . $Name);
+            }
+        }
+
+        IPS_SetVariableProfileIcon($Name, $Icon);
+        IPS_SetVariableProfileText($Name, $Prefix, $Suffix);
+    }
+
     protected function CreateProfileAssosiationList($List) {
         $count = 0;
         foreach($List as $value) {
