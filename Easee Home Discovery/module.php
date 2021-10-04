@@ -131,7 +131,8 @@ declare(strict_types=1);
 									];
 								}
 							}
-							$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Got the following products from %s()', $data->Buffer->Function, json_encode($products)), 0);							
+
+							$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Got the following products from %s(): %s', $data->Buffer->Function, json_encode($products)), 0);							
 
 							break;
 						default:
