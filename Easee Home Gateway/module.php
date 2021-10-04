@@ -277,7 +277,7 @@ class EaseeHomeGateway extends IPSModule
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Easee Cloud API returned "%s" for %s()', json_encode($result), $Function), 0);
 			
 		} catch(Exception $e) {
-			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('ExecuteEaseeRequest() failed for function %s(). The error was "%s"', $Function, $e->getMessage()), 0);
+			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('ExecuteEaseeRequest() failed for function %s(). The error was "%s:%d"', $Function, $e->getMessage(), $e->getCode()), 0);
 			$this->LogMessage(sprintf('ExecuteEaseeRequest() failed for function %s(). The error was "%s"', $Function, $e->getMessage()), KL_ERROR);
 			
 			// No need to reset token if it is just rate limited
