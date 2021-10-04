@@ -280,6 +280,7 @@ class EaseeHomeGateway extends IPSModule
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('ExecuteEaseeRequest() failed for function %s(). The error was "%s"', $Function, $e->getMessage()), 0);
 			$this->LogMessage(sprintf('ExecuteEaseeRequest() failed for function %s(). The error was "%s"', $Function, $e->getMessage()), KL_ERROR);
 			
+			// No need to reset token if it is just rate limited
 			if($e->getCode()!=429) {
 				$this->AddTokenToBuffer(null);	
 			}
