@@ -107,7 +107,7 @@ declare(strict_types=1);
 								throw new Exception('Invalid data received from parent. Missing "Circuits" and/or "Equalizers"');
 							}
 							foreach($result->circuits as $circuit) {
-								if(!isset(circuit->chargers)) {
+								if(!isset($circuit->chargers)) {
 									throw new Exception('Invalid data received from parent. Missing "Chargers"');
 								}
 								foreach($circuit->chargers as $charger) {
