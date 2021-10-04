@@ -142,14 +142,14 @@ class Easee {
 
         try{
             $this->Connect();
-            $return = self::request('get', $url);
-            IPS_LogMessage('GetUserProfile()','Return: '.json_encode($return));
+            //$return = self::request('get', $url);
+            //IPS_LogMessage('GetUserProfile()','Return: '.json_encode($return));
             
-            $result = self::EvaluateResult($return, $url);
+            $result = self::EvaluateResult(self::request('get', $url), $url);
             
-            IPS_LogMessage('GetUserProfile()','Evaluated: '.json_encode($result));
+            //IPS_LogMessage('GetUserProfile()','Evaluated: '.json_encode($result));
 
-            $this->userProfile = $result->result;
+            $this->userProfile = $result;
             
         } catch(Exception $e) {
             throw new Exception($e->getMessage());
