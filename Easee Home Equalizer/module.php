@@ -18,7 +18,7 @@ include __DIR__ . "/../libs/traits.php";
 
 			$this->RegisterProfileFloat('EHEQ.Watt', 'Electricity', '', 'W');
 
-			$this->RegisterVariableFloat('CurrentUsage', 'Usage', 'EHEQ.Watt', 1)
+			$this->RegisterVariableFloat('CurrentUsage', 'Current Usage', 'EHEQ.Watt', 1);
 
 			$this->RegisterTimer('EaseeEqualizerRefresh' . (string)$this->InstanceID, 0, 'IPS_RequestAction(' . (string)$this->InstanceID . ', "Refresh", 0);'); 
 
