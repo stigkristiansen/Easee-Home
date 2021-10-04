@@ -233,7 +233,7 @@ class EaseeHomeGateway extends IPSModule
 						throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "EqualizerId" is missing. The request was "%s"', $Request));
 					}
 					
-					$this->ExecuteEaseeRequest($childId, 'GetEqualizerState', array($request->EqualizerId));
+					$this->ExecuteEaseeRequest($childId, 'GetEqualizerState', array($request->ProductId));
 					break;
 				default:
 					throw new Exception(sprintf('HandleAsyncRequest failed. Unknown function "%s"', $function));
