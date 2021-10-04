@@ -42,11 +42,13 @@ include __DIR__ . "/../libs/traits.php";
 			$this->RegisterVariableFloat('Voltage', 'Voltage', '~Volt', 3);
 
 			$this->RegisterVariableFloat('Current', 'Current', '~Ampere', 4);
+
+			$this->RegisterVariableFloat('TotalEnergi', 'Total Energi', '~Electricity', 5);
 			
-			$this->RegisterVariableBoolean('LockCable', 'Lock Cable', 'EHCH.LockCable', 5);
+			$this->RegisterVariableBoolean('LockCable', 'Lock Cable', 'EHCH.LockCable', 6);
 			$this->EnableAction('LockCable');
 			
-			$this->RegisterVariableBoolean('ProtectAccess', 'Protect Access', 'EHCH.ProtectAccess', 6);
+			$this->RegisterVariableBoolean('ProtectAccess', 'Protect Access', 'EHCH.ProtectAccess', 7);
 			$this->EnableAction('ProtectAccess');
 
 			$this->RegisterTimer('EaseeChargerRefresh' . (string)$this->InstanceID, 0, 'IPS_RequestAction(' . (string)$this->InstanceID . ', "Refresh", 0);'); 
@@ -171,6 +173,10 @@ include __DIR__ . "/../libs/traits.php";
 							if(isset($result->outputCurrent)) {
 								$this->SetValueEx('Current', $result->outputCurrent);
 							}
+							if(isset($result->lifetimeEnergy)) {
+								$this->SetValueEx('TotalEnergi', $result->lifetimeEnergy);
+							}
+
 							break;
 						case 'getproducts':
 							break;
