@@ -99,8 +99,8 @@ declare(strict_types=1);
 									throw new Exception('Invalid data received from parent. Missing chargers "Name" and/or "Id"');
 								}
 								$products[$charger->id] = [
-									"Name" => $charger->name,
-									"Type" = 'Charger'
+									'Name' => $charger->name,
+									'Type' => "Charger"
 								];
 							}
 							foreach($result->equalizers as $equalizer) {
@@ -108,8 +108,8 @@ declare(strict_types=1);
 									throw new Exception('Invalid data received from parent. Missing equalizers "Name" and/or "Id"');
 								}
 								$products[$equalizer->id] = [
-									"Name" => $equalizer->name,
-									"Type" = 'Equalizer'
+									'Name' => $equalizer->name,
+									'Type' => 'Equalizer'
 								];
 							}
 
