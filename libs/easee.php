@@ -195,6 +195,9 @@ class Easee {
             $result = self::request('get', $url);
 
             if($result->error) {
+                if($result->httpcode==429) {
+                    throw new Exception(sprintf('Easee Cloud API call to "%s" is rate limited', $url), 429);
+                }
                 throw new Exception(sprintf('%s failed. The error was "%s"', $url, $result->errortext));
             } else if(isset($result->result->status) && $result->result->status != 200) {
                 throw new Exception(sprintf('%s failed. The error was "%s"', $url, isset($result->result->title)?$result->result->title:(string)$result->result->status));

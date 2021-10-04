@@ -273,13 +273,16 @@ class EaseeHomeGateway extends IPSModule
 			} else {
 				$result = call_user_func_array(array($easee, $Function), $Args);
 			}
-
+			
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Easee Cloud API returned "%s" for %s()', json_encode($result), $Function), 0);
+			
 		} catch(Exception $e) {
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('ExecuteEaseeRequest() failed for function %s(). The error was "%s"', $Function, $e->getMessage()), 0);
 			$this->LogMessage(sprintf('ExecuteEaseeRequest() failed for function %s(). The error was "%s"', $Function, $e->getMessage()), KL_ERROR);
 			
-			$this->AddTokenToBuffer(null);	
+			if($e->getCode()!=429) {
+				$this->AddTokenToBuffer(null);	
+			}
 
 			$return['Success'] = false;
 			$return['Result'] = $e->getMessage();
