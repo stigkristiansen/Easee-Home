@@ -195,7 +195,9 @@ class Easee {
             $this->Connect();
             
             $url = self::ENDPOINT . '/api/chargers/' . $ChargerId .'/state';
-            $result = self::request('get', $url);
+            $result = self::EvaluateResult(self::request('get', $url), $url);
+            
+            /*$result = self::request('get', $url);
 
             if($result->error) {
                 if($result->httpcode==429) {
@@ -209,9 +211,11 @@ class Easee {
             } else {
                 return $result->result;
             }
+*/
+            $return $result;
 
         } catch(Exception $e) {
-            throw new Exception($e->getMessage());
+            throw new Exception($e->getMessage(), $e->getCode());
         }
     }
 
@@ -293,7 +297,7 @@ class Easee {
             $this->Connect();
             
             $url = self::ENDPOINT . '/api/chargers/' . $ChargerId .'/config';
-            $result = self::EvaluateResult(self::request('get', $url));
+            $result = self::EvaluateResult(self::request('get', $url), $url);
 
             /*IPS_LogMessage('Result from request '.$url, json_encode($result));
 
@@ -323,27 +327,6 @@ class Easee {
         }
     }
 
-    private function EvaluateResult($Result) {
-            IPS_LogMessage('Result from request '.$url, json_encode($Result));
-
-            if($Result->httpcode==429) {
-                throw new Exception(sprintf('Easee Cloud API call to "%s" is rate limited', $url), 429);
-            }
-
-            if($Result->error) {
-                throw new Exception(sprintf('%s failed. The error was "%s"', $url, $Result->errortext));
-            } 
-            
-            if(isset($Result->result->status) && $Result->result->status != 200) {
-                throw new Exception(sprintf('%s failed. The error was "%s"', $url, isset($result->result->title)?$result->result->title:(string)$result->result->status));
-            } 
-            
-            if($Result->httpcode!=200 && $Result->httpcode!=202) {
-                throw new Exception(sprintf('%s returned http status code %d', $url, $result->httpcode)); 
-            } 
-            
-            return $Result->result;
-    }
 
     public function GetEqualizerState(string $EqualizerId) {
         
@@ -351,7 +334,9 @@ class Easee {
             $this->Connect();
             
             $url = self::ENDPOINT . '/api/equalizers/' .  $EqualizerId . '/state';
-            $result = self::request('get', $url);
+            $result = self::EvaluateResult(self::request('get', $url), $url);
+            
+            /*$result = self::request('get', $url);
 
             if($result->error) {
                 if($result->httpcode==429) {
@@ -365,12 +350,35 @@ class Easee {
             } else {
                 return $result->result;
             }
+*/
+            return $result;
 
         } catch(Exception $e) {
-            throw new Exception($e->getMessage());
+            throw new Exception($e->getMessage(), $e->getCode());
         }
     }
 
+    private function EvaluateResult($Result, string $Url) {
+        IPS_LogMessage('Result from request '.$url, json_encode($Result));
+
+        if($Result->httpcode==429) {
+            throw new Exception(sprintf('Easee Cloud API call to "%s" is rate limited', $Url), 429);
+        }
+
+        if($Result->error) {
+            throw new Exception(sprintf('%s failed. Error: %s', $Url, $Result->errortext));
+        } 
+        
+        if(isset($Result->result->status) && $Result->result->status != 200) {
+            throw new Exception(sprintf('%s failed. Error: "%s"', $url, isset($Result->result->title)?$Result->result->title:(string)$Result->result->status));
+        } 
+        
+        if($Result->httpcode!=200 && $Result->httpcode!=202) {
+            throw new Exception(sprintf('%s returned http status code %d', $Url, $Result->httpcode)); 
+        } 
+        
+        return $Result->result;
+    }
 
     private function request($Type, $Url, $Data=NULL) {
 		$ch = curl_init();
