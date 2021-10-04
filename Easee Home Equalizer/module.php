@@ -129,7 +129,7 @@ include __DIR__ . "/../libs/traits.php";
 							if(isset($result->activePowerImport)) {
 								$this->SetValueEx('CurrentUsage', $result->activePowerImport*1000);
 								if(isset($result->maxPowerImport)) {
-									$this->SetValueEx('CurrentAvailable', ($result->maxPowerImport-$result->activePowerImport)*1000));
+									$this->SetValueEx('CurrentAvailable', ($result->maxPowerImport-$result->activePowerImport)*1000);
 								}
 							}
 							if(isset($result->voltageNL1)) {
