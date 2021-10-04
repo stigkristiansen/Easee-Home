@@ -8,7 +8,7 @@
             "type" :  "Label" ,  "caption" :  "CHARGER"
         },
         {
-            "type" :  "ValidationTextBox" ,  "name" :  "ChargerId" ,  "caption" :  "Charger Id"
+            "type" :  "ValidationTextBox" ,  "name" :  "ProductId" ,  "caption" :  "Charger Id"
         },
         {
             "type": "NumberSpinner", "name": "UpdateInterval", "minimum":15, "caption": "Refresh Interval", "suffix": "seconds"

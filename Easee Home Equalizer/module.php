@@ -68,12 +68,12 @@ include __DIR__ . "/../libs/traits.php";
 			try {
 				$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('ReqestAction called for Ident "%s" with Value %s', $Ident, (string)$Value), 0);
 	
-				$productId = $this->ReadPropertyString('ProductId');
+				$equalizerId = $this->ReadPropertyString('ProductId');
 
 				$request = null;
 				switch (strtolower($Ident)) {
 					case 'refresh':
-						$request = $this->Refresh($productId);
+						$request = $this->Refresh($equalizerId);
 						
 						break;
 					default:
@@ -171,9 +171,9 @@ include __DIR__ . "/../libs/traits.php";
 			$this->SetTimerInterval('EaseeEqualizerRefresh' . (string)$this->InstanceID, $this->ReadPropertyInteger('UpdateInterval')*1000); 
 		}
 
-		private function Refresh(string $ProductId){
-			if(strlen($ProductId)>0) {
-				$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetEqualizerState','ProductId'=>$ProductId];
+		private function Refresh(string $EqualizerId){
+			if(strlen($EqualizerId)>0) {
+				$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetEqualizerState','EqualizerId'=>$EqualizerId];
 				
 				return $request;
 			}

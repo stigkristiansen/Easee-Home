@@ -14,7 +14,7 @@ include __DIR__ . "/../libs/traits.php";
 			$this->ConnectParent('{55B60EF1-A0FE-F43C-5CD2-1782E17ED9C6}');
 
 			$this->RegisterPropertyInteger('UpdateInterval', 15);
-			$this->RegisterPropertyString('ChargerId', '');
+			$this->RegisterPropertyString('ProductId', '');
 
 			$this->RegisterProfileIntegerEx('EHCH.ChargerOpMode', 'Electricity', '', '', [
 				[1, 'Disconnected', '', -1],
@@ -92,7 +92,7 @@ include __DIR__ . "/../libs/traits.php";
 			try {
 				$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('ReqestAction called for Ident "%s" with Value %s', $Ident, (string)$Value), 0);
 	
-				$chargerId = $this->ReadPropertyString('ChargerId');
+				$chargerId = $this->ReadPropertyString('ProductId');
 
 				$request = null;
 				switch (strtolower($Ident)) {
