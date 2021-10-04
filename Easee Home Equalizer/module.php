@@ -16,7 +16,7 @@ include __DIR__ . "/../libs/traits.php";
 			$this->RegisterPropertyInteger('UpdateInterval', 15);
 			$this->RegisterPropertyString('ProductId', '');
 
-			$this->RegisterProfileFloat('EHEQ.Watt', 'Electricity', '', 'W');
+			$this->RegisterProfileFloat('EHEQ.Watt', 'Electricity', '', ' W');
 
 			$this->RegisterVariableFloat('CurrentUsage', 'Current Usage', 'EHEQ.Watt', 1);
 
