@@ -143,7 +143,7 @@ class Easee {
         try{
             $this->Connect();
             $return = self::request('get', $url);
-            IPS_LogMessage('GetUserProfile()','Return: '.$return);
+            IPS_LogMessage('GetUserProfile()','Return: '.json_decode($return));
             
             $result = self::EvaluateResult($return, $url);
             
