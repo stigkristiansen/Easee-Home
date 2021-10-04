@@ -29,6 +29,18 @@ declare(strict_types=1);
 			parent::ApplyChanges();
 
 			$this->SetReceiveDataFilter('.*"ChildId":"' . (string)$this->InstanceID .'".*');
+
+			if (IPS_GetKernelRunlevel() == KR_READY) {
+				$this->InitTimer();
+			}
+		}
+
+		public function MessageSink($TimeStamp, $SenderID, $Message, $Data) {
+			parent::MessageSink($TimeStamp, $SenderID, $Message, $Data);
+
+			if ($Message == IPS_KERNELMESSAGE && $Data[0] == KR_READY) {
+				$this->InitTimer();
+			}
 		}
 
 		public function RequestAction($Ident, $Value) {
@@ -146,14 +158,6 @@ declare(strict_types=1);
 			$this->SendDebug(IPS_GetName($this->InstanceID), 'Finished searching for Easee modules', 0);	
 
 			return $devices;
-		}
-
-		public function MessageSink($TimeStamp, $SenderID, $Message, $Data) {
-			parent::MessageSink($TimeStamp, $SenderID, $Message, $Data);
-
-			if ($Message == IPS_KERNELMESSAGE && $Data[0] == KR_READY) {
-				$this->InitTimer();
-			}
 		}
 
 		private function InitTimer(){
