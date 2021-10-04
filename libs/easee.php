@@ -212,7 +212,7 @@ class Easee {
                 return $result->result;
             }
 */
-            $return $result;
+            return $result;
 
         } catch(Exception $e) {
             throw new Exception($e->getMessage(), $e->getCode());
