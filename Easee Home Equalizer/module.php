@@ -150,9 +150,6 @@ include __DIR__ . "/../libs/traits.php";
 							if(isset($result->currentL3)) {
 								$this->SetValueEx('CurrentL3', $result->currentL3);
 							}
-							if(isset($result->maxPowerImport)) {
-								$this->SetValueEx('CurrentAvailable', $result->currentL3);
-							}
 
 							break;
 						default:
