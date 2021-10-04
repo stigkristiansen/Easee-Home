@@ -293,9 +293,9 @@ class Easee {
             $this->Connect();
             
             $url = self::ENDPOINT . '/api/chargers/' . $ChargerId .'/config';
-            $result = self::request('get', $url);
+            $result = self::EvaluateResult(self::request('get', $url));
 
-            IPS_LogMessage('Result from request '.$url, json_encode($result));
+            /*IPS_LogMessage('Result from request '.$url, json_encode($result));
 
             if($result->httpcode==429) {
                 throw new Exception(sprintf('Easee Cloud API call to "%s" is rate limited', $url), 429);
@@ -312,13 +312,37 @@ class Easee {
             if($result->httpcode!=200) {
                 throw new Exception(sprintf('%s returned http status code %d', $url, $result->httpcode)); 
             } 
+            */
             
-            return $result->result;
-            
+            //return $result->result;
+
+            return $result;
 
         } catch(Exception $e) {
             throw new Exception($e->getMessage(), $e->getCode());
         }
+    }
+
+    private function EvaluateResult($Result) {
+            IPS_LogMessage('Result from request '.$url, json_encode($Result));
+
+            if($Result->httpcode==429) {
+                throw new Exception(sprintf('Easee Cloud API call to "%s" is rate limited', $url), 429);
+            }
+
+            if($Result->error) {
+                throw new Exception(sprintf('%s failed. The error was "%s"', $url, $Result->errortext));
+            } 
+            
+            if(isset($Result->result->status) && $Result->result->status != 200) {
+                throw new Exception(sprintf('%s failed. The error was "%s"', $url, isset($result->result->title)?$result->result->title:(string)$result->result->status));
+            } 
+            
+            if($Result->httpcode!=200 && $Result->httpcode!=202) {
+                throw new Exception(sprintf('%s returned http status code %d', $url, $result->httpcode)); 
+            } 
+            
+            return $Result->result;
     }
 
     public function GetEqualizerState(string $EqualizerId) {
