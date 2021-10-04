@@ -147,6 +147,8 @@ class Easee {
             
             $result = self::EvaluateResult($return, $url);
             
+            IPS_LogMessage('GetUserProfile()','Evaluated: '.json_encode($result));
+
             $this->userProfile = $result->result;
             
         } catch(Exception $e) {
