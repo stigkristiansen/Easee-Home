@@ -165,11 +165,10 @@ declare(strict_types=1);
 		}
 
 		private function Refresh(){
-			if(strlen($EqualizerId)>0) {
-				$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetProducts'];
+			$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetProducts'];
 				
-				return $request;
-			}
+			return $request;
+			
 		}
 
 		private function Lock(string $Id){
