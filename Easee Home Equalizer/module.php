@@ -16,9 +16,19 @@ include __DIR__ . "/../libs/traits.php";
 			$this->RegisterPropertyInteger('UpdateInterval', 15);
 			$this->RegisterPropertyString('ProductId', '');
 
-			$this->RegisterProfileFloat('EHEQ.Watt', 'Electricity', '', ' W');
+			$this->RegisterProfileFloat('EHEQ.Watt', 'IPS', '', ' W');
 
-			$this->RegisterVariableFloat('CurrentUsage', 'Current Usage', 'EHEQ.Watt', 1);
+			$this->RegisterVariableFloat('CurrentUsage', 'Usage', 'EHEQ.Watt', 1);
+			$this->RegisterVariableFloat('CurrentAvailable', 'Available', 'EHEQ.Watt', 2);
+			
+			$this->RegisterVariableFloat('VoltageNL1', 'Phase 1 (V)', '~Volt', 3);
+			$this->RegisterVariableFloat('CurrentL1', 'Phase 1 (A)', '~>Ampere', 4);
+
+			$this->RegisterVariableFloat('VoltageNL2', 'Phase 2 (V)', '~Volt', 5);
+			$this->RegisterVariableFloat('CurrentL2', 'Phase 3 (A)', '~>Ampere', 6);
+
+			$this->RegisterVariableFloat('VoltageNL3', 'Phase 3 (V)', '~Volt', 7);
+			$this->RegisterVariableFloat('CurrentL3', 'Phase 3 (A)', '~>Ampere', 8);
 
 			$this->RegisterTimer('EaseeEqualizerRefresh' . (string)$this->InstanceID, 0, 'IPS_RequestAction(' . (string)$this->InstanceID . ', "Refresh", 0);'); 
 
@@ -118,8 +128,32 @@ include __DIR__ . "/../libs/traits.php";
 						case 'getequalizerstate':  
 							if(isset($result->activePowerImport)) {
 								$this->SetValueEx('CurrentUsage', $result->activePowerImport*1000);
+								if(isset($result->maxPowerImport)) {
+									$this->SetValueEx('CurrentAvailable', ($result->maxPowerImport-$result->activePowerImport)*1000));
+								}
 							}
-				
+							if(isset($result->voltageNL1)) {
+								$this->SetValueEx('VoltageNL1', $result->voltageNL1);
+							}
+							if(isset($result->voltageNL2)) {
+								$this->SetValueEx('VoltageNL2', $result->voltageNL2);
+							}
+							if(isset($result->voltageNL3)) {
+								$this->SetValueEx('VoltageNL3', $result->voltageNL3);
+							}
+							if(isset($result->currentL1)) {
+								$this->SetValueEx('CurrentL1', $result->currentL1);
+							}
+							if(isset($result->currentL2)) {
+								$this->SetValueEx('CurrentL2', $result->currentL2);
+							}
+							if(isset($result->currentL3)) {
+								$this->SetValueEx('CurrentL3', $result->currentL3);
+							}
+							if(isset($result->maxPowerImport)) {
+								$this->SetValueEx('CurrentAvailable', $result->currentL3);
+							}
+
 							break;
 						default:
 							throw new Exception(sprintf('Unknown function "%s()" receeived in repsponse from gateway', $function));
