@@ -297,18 +297,24 @@ class Easee {
 
             IPS_LogMessage('Result from request '.$url, json_encode($result));
 
-            if($result->error) {
-                if($result->httpcode==429) {
-                    throw new Exception(sprintf('Easee Cloud API call to "%s" is rate limited', $url), 429);
-                }
-                throw new Exception(sprintf('%s failed. The error was "%s"', $url, $result->errortext));
-            } else if(isset($result->result->status) && $result->result->status != 200) {
-                throw new Exception(sprintf('%s failed. The error was "%s"', $url, isset($result->result->title)?$result->result->title:(string)$result->result->status));
-            } else if($result->httpcode!=200) {
-                throw new Exception(sprintf('%s returned http status code %d', $url, $result->httpcode)); 
-            } else {
-                return $result->result;
+            if($result->httpcode==429) {
+                throw new Exception(sprintf('Easee Cloud API call to "%s" is rate limited', $url), 429);
             }
+
+            if($result->error) {
+                throw new Exception(sprintf('%s failed. The error was "%s"', $url, $result->errortext));
+            } 
+            
+            if(isset($result->result->status) && $result->result->status != 200) {
+                throw new Exception(sprintf('%s failed. The error was "%s"', $url, isset($result->result->title)?$result->result->title:(string)$result->result->status));
+            } 
+            
+            if($result->httpcode!=200) {
+                throw new Exception(sprintf('%s returned http status code %d', $url, $result->httpcode)); 
+            } 
+            
+            return $result->result;
+            
 
         } catch(Exception $e) {
             throw new Exception($e->getMessage());
