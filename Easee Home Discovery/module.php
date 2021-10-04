@@ -103,17 +103,22 @@ declare(strict_types=1);
 					$function = strtolower($data->Buffer->Function);
 					switch($function) {
 						case 'getproducts':  
-							if(!isset($result->circuits->chargers) || !isset($result->equalizers)) {
-								throw new Exception('Invalid data received from parent. Missing "Chargers" and/or "Equalizers"');
+							if(!isset($result->circuits) || !isset($result->equalizers)) {
+								throw new Exception('Invalid data received from parent. Missing "Circuits" and/or "Equalizers"');
 							}
-							foreach($result->circuits->chargers as $charger) {
-								if(!isset($charger->id) || !isset($charger->name)) {
-									throw new Exception('Invalid data received from parent. Missing chargers "Name" and/or "Id"');
+							foreach($result->circuits as $circuit) {
+								if(!isset(circuit->chargers)) {
+									throw new Exception('Invalid data received from parent. Missing "Chargers"');
 								}
-								$products[$charger->id] = [
-									'Name' => $charger->name,
-									'Type' => "Charger"
-								];
+								foreach($circuit->chargers as $charger) {
+									if(!isset($charger->id) || !isset($charger->name)) {
+										throw new Exception('Invalid data received from parent. Missing chargers "Name" and/or "Id"');
+									}
+									$products[$charger->id] = [
+										'Name' => $charger->name,
+										'Type' => "Charger"
+									];
+								}
 							}
 							foreach($result->equalizers as $equalizer) {
 								if(!isset($equalizer->id) || !isset($equalizer->name)) {
