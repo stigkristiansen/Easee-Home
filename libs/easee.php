@@ -295,7 +295,7 @@ class Easee {
             $url = self::ENDPOINT . '/api/chargers/' . $ChargerId .'/config';
             $result = self::request('get', $url);
 
-            //IPS_LogMessage('Result from request '.$url, json_encode($result));
+            IPS_LogMessage('Result from request '.$url, json_encode($result));
 
             if($result->error) {
                 if($result->httpcode==429) {
