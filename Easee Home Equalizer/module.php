@@ -22,13 +22,13 @@ include __DIR__ . "/../libs/traits.php";
 			$this->RegisterVariableFloat('CurrentAvailable', 'Available', 'EHEQ.Watt', 2);
 			
 			$this->RegisterVariableFloat('VoltageNL1', 'Phase 1 (V)', '~Volt', 3);
-			$this->RegisterVariableFloat('CurrentL1', 'Phase 1 (A)', '~>Ampere', 4);
+			$this->RegisterVariableFloat('CurrentL1', 'Phase 1 (A)', '~Ampere', 4);
 
 			$this->RegisterVariableFloat('VoltageNL2', 'Phase 2 (V)', '~Volt', 5);
-			$this->RegisterVariableFloat('CurrentL2', 'Phase 3 (A)', '~>Ampere', 6);
+			$this->RegisterVariableFloat('CurrentL2', 'Phase 2 (A)', '~Ampere', 6);
 
 			$this->RegisterVariableFloat('VoltageNL3', 'Phase 3 (V)', '~Volt', 7);
-			$this->RegisterVariableFloat('CurrentL3', 'Phase 3 (A)', '~>Ampere', 8);
+			$this->RegisterVariableFloat('CurrentL3', 'Phase 3 (A)', '~Ampere', 8);
 
 			$this->RegisterTimer('EaseeEqualizerRefresh' . (string)$this->InstanceID, 0, 'IPS_RequestAction(' . (string)$this->InstanceID . ', "Refresh", 0);'); 
 
