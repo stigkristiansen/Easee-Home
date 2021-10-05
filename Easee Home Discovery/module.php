@@ -49,10 +49,65 @@ declare(strict_types=1);
 	
 			$values = [];
 
+			$this->SendDebug(IPS_GetName($this->InstanceID), 'Building Discovery form...', 0);
+	
+			// Add devices that are discovered
+			if(count($products)>0)
+				$this->SendDebug(IPS_GetName($this->InstanceID), 'Adding discovered products...', 0);
+			else
+				$this->SendDebug(IPS_GetName($this->InstanceID), 'No products discovered!', 0);
+
+			foreach ($products as $productId => $product) {
+				$value = [
+					'ProductId'	=> $productId,
+					'Type' => $product['Type'],
+					'Name' => $product['Name'],
+					'Site' => $product['Site'],
+					'instanceID' => 0
+				];
+
+				$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Added product with id "%s"', $productid), 0);
+				
+				// Check if discovered device has an instance that is created earlier. If found, set InstanceID
+				$instanceId = array_search($productId, $instances);
+				if ($instanceId !== false) {
+					$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('The product (%s) already has an instance (%s). Adding InstanceId...', $productId, $instanceId), 0);
+					unset($instancess[$instanceId]); // Remove from list to avoid duplicates
+					$value['instanceID'] = $instanceId;
+				} 
+				
+				$value['create'] = [
+					'moduleID'      => $product['Type']=='Charger'?'{B469F6F0-1DC2-04A4-F0BE-EB02323E319D}':'{A687CBDB-CC15-4891-CE4E-02154F0995B1}',
+					'name'			=> $product['Name'],
+					'configuration' => [
+						'ProductId' => $productId,
+						'Interval' 	 => 15
+					]
+				];
+			
+				$values[] = $value;
+
+				// Add devices that are not discovered, but created earlier
+				if(count($instances)>0) {
+					$this->SendDebug(IPS_GetName($this->InstanceID), 'Adding instances that are not discovered...', 0);
+				}
+				foreach ($instances as $instanceId => $productId) {
+					$values[] = [
+						'ProductId' => $productId, 
+						'Type' => '',
+						'Name' => IPS_GetName($instanceId),
+						'Site' => '',
+						'instanceID'   => $instanceId
+					];
+
+					$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Adding instance "%s" with InstanceID "%s"', IPS_GetName($instanceId), $instanceId), 0);
+				}
+			}
+
 			$form = json_decode(file_get_contents(__DIR__ . '/form.json'), true);
 			$form['actions'][0]['values'] = $values;
 
-			$this->SendDebug(IPS_GetName($this->InstanceID), 'GetConfigurationForm() completed', 0);
+			$this->SendDebug(IPS_GetName($this->InstanceID), 'Building form completed', 0);
 	
 			return json_encode($form);
 		}
@@ -171,6 +226,7 @@ declare(strict_types=1);
 		}
 
 		private function DiscoverEaseeProducts() : array {
+			$this->SendDebug(IPS_GetName($this->InstanceID), 'Discovering Easee products...', 0);
 			$request = $this->Discover();
 
 			if($request!=null) {
