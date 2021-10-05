@@ -144,7 +144,7 @@ declare(strict_types=1);
 									$products[$equalizer->id] = [
 										'Name' => $equalizer->name,
 										'Type' => 'Equalizer',
-										'Site' => $site->name;
+										'Site' => $site->name
 									];
 								}
 							}
