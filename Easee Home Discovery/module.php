@@ -179,6 +179,7 @@ declare(strict_types=1);
 			}
 
 			IPS_Sleep(5000);
+			
 
 			return $this->GetProductsFromBuffer();
 		}
