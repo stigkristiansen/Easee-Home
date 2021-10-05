@@ -50,7 +50,7 @@ declare(strict_types=1);
 			$values = [];
 
 			$form = json_decode(file_get_contents(__DIR__ . '/form.json'), true);
-			$form['actions'][0]['values'] = $values;
+			//$form['actions'][0]['values'] = $values;
 
 			$this->SendDebug(IPS_GetName($this->InstanceID), 'GetConfigurationForm() completed', 0);
 	
