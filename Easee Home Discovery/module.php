@@ -31,7 +31,7 @@ declare(strict_types=1);
 			$this->SetReceiveDataFilter('.*"ChildId":"' . (string)$this->InstanceID .'".*');
 
 			if (IPS_GetKernelRunlevel() == KR_READY) {
-				//$this->SetTimerInterval('EaseeDiscovery' . (string)$this->InstanceID, 1); 
+				$this->SetTimerInterval('EaseeDiscovery' . (string)$this->InstanceID, 100); 
 			}
 		}
 
@@ -39,7 +39,7 @@ declare(strict_types=1);
 			parent::MessageSink($TimeStamp, $SenderID, $Message, $Data);
 
 			if ($Message == IPS_KERNELMESSAGE && $Data[0] == KR_READY) {
-				//$this->SetTimerInterval('EaseeDiscovery' . (string)$this->InstanceID, 1); 
+				$this->SetTimerInterval('EaseeDiscovery' . (string)$this->InstanceID, 100); 
 			}
 		}
 
@@ -64,7 +64,7 @@ declare(strict_types=1);
 				$request = null;
 				switch (strtolower($Ident)) {
 					case 'discover':
-						$this->SetTimerInterval('EaseeDiscovery' . (string)$this->InstanceID, 0); 
+						$this->SetTimerInterval('EaseeDiscovery' . (string)$this->InstanceID, 15000); 
 						$request = $this->Discover();
 						break;
 					default:
@@ -151,11 +151,9 @@ declare(strict_types=1);
 
 							$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Got the following products from %s(): %s', $data->Buffer->Function, json_encode($products)), 0);	
 							
-							//$this->AddProductsToBuffer($products);
-							$this->SetBuffer('Products', json_encode($products));
+							$this->AddProductsToBuffer($products);
 							$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Added products "%s" to the buffer', json_encode($products)), 0);
-							$this->Unlock('Products');
-
+							
 							break;
 						default:
 							throw new Exception(sprintf('Unknown function "%s()" receeived in repsponse from gateway', $function));
@@ -173,26 +171,24 @@ declare(strict_types=1);
 		}
 
 		private function DiscoverEaseeProducts() : array {
-			$this->Lock('Products');
-			$this->SetTimerInterval('EaseeDiscovery' . (string)$this->InstanceID, 500);
-			return $this->GetProductsFromBuffer(2000);
+			return $this->GetProductsFromBuffer();
 		}
 
 		private function GetEaseeInstances () : array {
-			$devices = [];
+			$instances = [];
 
 			$this->SendDebug(IPS_GetName($this->InstanceID), 'Searching for existing instances of Easee modules...', 0);
 
 			$instanceIds = array_merge(IPS_GetInstanceListByModuleID('{B469F6F0-1DC2-04A4-F0BE-EB02323E319D}'), IPS_GetInstanceListByModuleID('{E2C80DF2-CE2D-DC47-ABD8-5D969C54129A}'));
         	
         	foreach ($instanceIds as $instanceId) {
-				$devices[$instanceId] = IPS_GetProperty($instanceId, 'ProductId');
+				$instances[$instanceId] = IPS_GetProperty($instanceId, 'ProductId');
 			}
 
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Found %d instances of Easee modules', count($devices)), 0);
 			$this->SendDebug(IPS_GetName($this->InstanceID), 'Finished searching for Easee modules', 0);	
 
-			return $devices;
+			return $instances;
 		}
 
 		//private function InitTimer(){
@@ -205,8 +201,8 @@ declare(strict_types=1);
 			return $request;
 		}
 
-		private function GetProductsFromBuffer(int $Loops = 500){
-			if($this->Lock('Products', $Loops)) {
+		private function GetProductsFromBuffer(){
+			if($this->Lock('Products')) {
 				$jsonProducts = $this->GetBuffer('Products');
 				
 				if(strlen($jsonToken)==0) {
@@ -236,9 +232,9 @@ declare(strict_types=1);
 			}
 		}
 
-		private function Lock(string $Id, int $Loops = 500){
-			for ($i=0;$i<$Loops;$i++){
-				if (IPS_SemaphoreEnter("EaseeHomeDiscovery", 1)){
+		private function Lock(string $Id){
+			for ($i=0;$i<500;$i++){
+				if (IPS_SemaphoreEnter("EaseeHome" . (string)$this->InstanceID . $Id, 1)){
 					if($i==0) {
 						$msg = sprintf('Created the Lock with id "%s"', $Id);
 					} else {
@@ -262,7 +258,7 @@ declare(strict_types=1);
 	
 		private function Unlock(string $Id)
 		{
-			IPS_SemaphoreLeave("EaseeHomeDiscovery");
+			IPS_SemaphoreLeave("EaseeHome" . (string)$this->InstanceID . $Id);
 	
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Removed the Lock with id "%s"', $Id), 0);
 		}
