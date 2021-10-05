@@ -6,9 +6,6 @@
         },
         {
             "type" :  "Label" ,  "caption" :  "DISCOVERY"
-        },
-        {
-            "type": "NumberSpinner", "name": "DiscoveryTimeout", "caption": "Discovery Timeout", "suffix": "second(s)"
         }
     ],
     "actions": [
