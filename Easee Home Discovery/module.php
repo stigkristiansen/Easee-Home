@@ -238,7 +238,7 @@ declare(strict_types=1);
 
 		private function Lock(string $Id, int $Loops = 500){
 			for ($i=0;$i<$Loops;$i++){
-				if (IPS_SemaphoreEnter("EaseeHomeDiscovery" . $Id, 1)){
+				if (IPS_SemaphoreEnter("EaseeHomeDiscovery", 1)){
 					if($i==0) {
 						$msg = sprintf('Created the Lock with id "%s"', $Id);
 					} else {
@@ -248,9 +248,9 @@ declare(strict_types=1);
 					return true;
 				} else {
 					if($i==0) {
-						$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Waiting for the Lock with id "%s" to be released', $Id), 0);
+						$this->SendDebug(IPS_GetName($this->InstanceID), 'Waiting for the Lock with "EaseeHomeDiscovery" to be released', 0);
 					}
-					IPS_Sleep(mt_rand(1, 5));
+					IPS_Sleep(1);
 				}
 			}
 			
@@ -262,7 +262,7 @@ declare(strict_types=1);
 	
 		private function Unlock(string $Id)
 		{
-			IPS_SemaphoreLeave("EaseeHomeDiscovery" . $Id);
+			IPS_SemaphoreLeave("EaseeHomeDiscovery");
 	
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Removed the Lock with id "%s"', $Id), 0);
 		}
