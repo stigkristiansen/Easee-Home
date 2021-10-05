@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 			$this->ConnectParent('{55B60EF1-A0FE-F43C-5CD2-1782E17ED9C6}');
 
-			$this->RegisterTimer('EaseeDiscoveryRefresh' . (string)$this->InstanceID, 0, 'IPS_RequestAction(' . (string)$this->InstanceID . ', "Refresh", 0);'); 
+			$this->RegisterTimer('EaseeDiscovery' . (string)$this->InstanceID, 0, 'IPS_RequestAction(' . (string)$this->InstanceID . ', "Discover", 0);'); 
 
 			$this->RegisterMessage(0, IPS_KERNELMESSAGE);
 		}
@@ -31,7 +31,7 @@ declare(strict_types=1);
 			$this->SetReceiveDataFilter('.*"ChildId":"' . (string)$this->InstanceID .'".*');
 
 			if (IPS_GetKernelRunlevel() == KR_READY) {
-				$this->InitTimer();
+				//$this->SetTimerInterval('EaseeDiscovery' . (string)$this->InstanceID, 1); 
 			}
 		}
 
@@ -39,8 +39,22 @@ declare(strict_types=1);
 			parent::MessageSink($TimeStamp, $SenderID, $Message, $Data);
 
 			if ($Message == IPS_KERNELMESSAGE && $Data[0] == KR_READY) {
-				$this->InitTimer();
+				//$this->SetTimerInterval('EaseeDiscovery' . (string)$this->InstanceID, 1); 
 			}
+		}
+
+		public function GetConfigurationForm() {
+			$products = $this->DiscoverEaseeProducts();
+			$instances = $this->GetEaseeInstances();
+	
+			$values = [];
+
+			$form = json_decode(file_get_contents(__DIR__ . '/form.json'), true);
+			$form['actions'][0]['values'] = $values;
+
+			$this->SendDebug(IPS_GetName($this->InstanceID), 'GetConfigurationForm() completed', 0);
+	
+			return json_encode($form);
 		}
 
 		public function RequestAction($Ident, $Value) {
@@ -49,8 +63,9 @@ declare(strict_types=1);
 					
 				$request = null;
 				switch (strtolower($Ident)) {
-					case 'refresh':
-						$request = $this->Refresh();
+					case 'discover':
+						$this->SetTimerInterval('EaseeDiscovery' . (string)$this->InstanceID, 0); 
+						$request = $this->Discover();
 						break;
 					default:
 						throw new Exception(sprintf('ReqestAction called with unkown Ident "%s"', $Ident));
@@ -104,8 +119,8 @@ declare(strict_types=1);
 					switch($function) {
 						case 'getproducts':  
 							foreach($result as $site) {
-								if(!isset($site->circuits) || !isset($site->equalizers)) {
-									throw new Exception('Invalid data received from parent. Missing "Circuits" and/or "Equalizers"');
+								if(!isset($site->circuits) || !isset($site->equalizers) || !isset($site->name)) {
+									throw new Exception('Invalid data received from parent. Missing "Circuits", "Equalizers" and/or "Site Name"');
 								}
 								foreach($site->circuits as $circuit) {
 									if(!isset($circuit->chargers)) {
@@ -117,7 +132,8 @@ declare(strict_types=1);
 										}
 										$products[$charger->id] = [
 											'Name' => $charger->name,
-											'Type' => "Charger"
+											'Type' => 'Charger',
+											'Site' => $site->name
 										];
 									}
 								}
@@ -127,14 +143,18 @@ declare(strict_types=1);
 									}
 									$products[$equalizer->id] = [
 										'Name' => $equalizer->name,
-										'Type' => 'Equalizer'
+										'Type' => 'Equalizer',
+										'Site' => $site->name;
 									];
 								}
 							}
 
 							$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Got the following products from %s(): %s', $data->Buffer->Function, json_encode($products)), 0);	
 							
-							$this->AddProductsToBuffer($products);
+							//$this->AddProductsToBuffer($products);
+							$this->SetBuffer('Products', $products);
+							$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Added products "%s" to the buffer', $products), 0);
+							$this->Unlock('Products');
 
 							break;
 						default:
@@ -150,6 +170,12 @@ declare(strict_types=1);
 				$this->LogMessage(sprintf('ReceiveData() failed. The error was "%s"',  $e->getMessage()), KL_ERROR);
 				$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('ReceiveData() failed. The error was "%s"',  $e->getMessage()), 0);
 			}
+		}
+
+		private function DiscoverEaseeProducts() : array {
+			$this->Lock('Products');
+			$this->SetTimerInterval('EaseeDiscovery' . (string)$this->InstanceID, 500);
+			return GetProductsFromBuffer(2000);
 		}
 
 		private function GetEaseeInstances () : array {
@@ -169,19 +195,18 @@ declare(strict_types=1);
 			return $devices;
 		}
 
-		private function InitTimer(){
-			$this->SetTimerInterval('EaseeDiscoveryRefresh' . (string)$this->InstanceID, 15000); 
-		}
+		//private function InitTimer(){
+		//	$this->SetTimerInterval('EaseeDiscovery' . (string)$this->InstanceID, 1); 
+		//}
 
-		private function Refresh(){
+		private function Discover(){
 			$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetProducts'];
 				
 			return $request;
-			
 		}
 
-		private function GetProductsFromBuffer(){
-			if($this->Lock('Products')) {
+		private function GetProductsFromBuffer(int $Loops = 500){
+			if($this->Lock('Products', $Loops)) {
 				$jsonProducts = $this->GetBuffer('Products');
 				
 				if(strlen($jsonToken)==0) {
@@ -211,8 +236,8 @@ declare(strict_types=1);
 			}
 		}
 
-		private function Lock(string $Id){
-			for ($i=0;$i<500;$i++){
+		private function Lock(string $Id, int $Loops = 500){
+			for ($i=0;$i<$Loops;$i++){
 				if (IPS_SemaphoreEnter("EaseeHome" . (string)$this->InstanceID . $Id, 1)){
 					if($i==0) {
 						$msg = sprintf('Created the Lock with id "%s"', $Id);
