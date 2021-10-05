@@ -298,7 +298,7 @@ class EaseeHomeGateway extends IPSModule
 		$this->SendDataToChildren(json_encode(["DataID" => "{47508B62-3B4E-67BE-0F29-0B82A2C62B58}", "ChildId" => $ChildId, "Buffer" => $return]));
 	}
 
-	private function GetTokenFromBuffer() : array {
+	private function GetTokenFromBuffer() : object {
 		if($this->Lock('Token')) {
 			$jsonToken = $this->GetBuffer('Token');
 			
