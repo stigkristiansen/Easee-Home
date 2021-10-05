@@ -172,7 +172,7 @@ include __DIR__ . "/../libs/traits.php";
 			$this->SetTimerInterval('EaseeEqualizerRefresh' . (string)$this->InstanceID, $this->ReadPropertyInteger('UpdateInterval')*1000); 
 		}
 
-		private function Refresh(string $EqualizerId){
+		private function Refresh(string $EqualizerId) : array {
 			if(strlen($EqualizerId)>0) {
 				$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetEqualizerState','EqualizerId'=>$EqualizerId];
 				

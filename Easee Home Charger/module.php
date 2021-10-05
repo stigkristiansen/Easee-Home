@@ -215,13 +215,11 @@ include __DIR__ . "/../libs/traits.php";
 			$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, $this->ReadPropertyInteger('UpdateInterval')*1000); 
 		}
 
-		private function Refresh(string $ChargerId){
+		private function Refresh(string $ChargerId) : array {
 			if(strlen($ChargerId)>0) {
 				$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerConfig','ChargerId'=>$ChargerId];
 				$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerState','ChargerId'=>$ChargerId];
-				
-				//$this->SendDataToParent(json_encode(['DataID' => '{B62C0F65-7B59-0CD8-8C92-5DA32FBBD317}', 'Buffer' => $request]));
-
+		
 				$this->SetValue('StartCharging', 0);
 
 				return $request;
