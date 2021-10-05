@@ -86,22 +86,22 @@ declare(strict_types=1);
 				];
 			
 				$values[] = $value;
+			}
 
-				// Add devices that are not discovered, but created earlier
-				if(count($instances)>0) {
-					$this->SendDebug(IPS_GetName($this->InstanceID), 'Adding instances that are not discovered...', 0);
-				}
-				foreach ($instances as $instanceId => $productId) {
-					$values[] = [
-						'ProductId' => $productId, 
-						'Type' => '',
-						'Name' => IPS_GetName($instanceId),
-						'Site' => '',
-						'instanceID'   => $instanceId
-					];
+			// Add devices that are not discovered, but created earlier
+			if(count($instances)>0) {
+				$this->SendDebug(IPS_GetName($this->InstanceID), 'Adding instances that are not discovered...', 0);
+			}
+			foreach ($instances as $instanceId => $productId) {
+				$values[] = [
+					'ProductId' => $productId, 
+					'Type' => '',
+					'Name' => IPS_GetName($instanceId),
+					'Site' => '',
+					'instanceID'   => $instanceId
+				];
 
-					$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Adding instance "%s" with InstanceID "%s"', IPS_GetName($instanceId), $instanceId), 0);
-				}
+				$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Adding instance "%s" with InstanceID "%s"', IPS_GetName($instanceId), $instanceId), 0);
 			}
 
 			$form = json_decode(file_get_contents(__DIR__ . '/form.json'), true);
