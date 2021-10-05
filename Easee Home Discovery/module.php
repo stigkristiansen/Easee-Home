@@ -185,7 +185,7 @@ declare(strict_types=1);
 				$instances[$instanceId] = IPS_GetProperty($instanceId, 'ProductId');
 			}
 
-			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Found %d instances of Easee modules', count($devices)), 0);
+			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Found %d instances of Easee modules', count($instances)), 0);
 			$this->SendDebug(IPS_GetName($this->InstanceID), 'Finished searching for Easee modules', 0);	
 
 			return $instances;
