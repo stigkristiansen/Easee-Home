@@ -191,10 +191,6 @@ declare(strict_types=1);
 			return $instances;
 		}
 
-		//private function InitTimer(){
-		//	$this->SetTimerInterval('EaseeDiscovery' . (string)$this->InstanceID, 1); 
-		//}
-
 		private function Discover(){
 			$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetProducts'];
 				
@@ -214,7 +210,7 @@ declare(strict_types=1);
 				$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Got the products "%s" from the buffer', $jsonProducts), 0);
 				$this->Unlock('Products');
 				
-				return json_decode($jsonProducts);
+				return json_decode($jsonProducts, true);
 			} 
 	
 			return [];
