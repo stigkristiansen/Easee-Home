@@ -31,7 +31,7 @@ declare(strict_types=1);
 			$this->SetReceiveDataFilter('.*"ChildId":"' . (string)$this->InstanceID .'".*');
 
 			if (IPS_GetKernelRunlevel() == KR_READY) {
-				$this->SetTimerInterval('EaseeDiscovery' . (string)$this->InstanceID, 100); 
+				//$this->SetTimerInterval('EaseeDiscovery' . (string)$this->InstanceID, 100); 
 			}
 		}
 
@@ -39,7 +39,7 @@ declare(strict_types=1);
 			parent::MessageSink($TimeStamp, $SenderID, $Message, $Data);
 
 			if ($Message == IPS_KERNELMESSAGE && $Data[0] == KR_READY) {
-				$this->SetTimerInterval('EaseeDiscovery' . (string)$this->InstanceID, 100); 
+				//$this->SetTimerInterval('EaseeDiscovery' . (string)$this->InstanceID, 100); 
 			}
 		}
 
@@ -64,7 +64,7 @@ declare(strict_types=1);
 				$request = null;
 				switch (strtolower($Ident)) {
 					case 'discover':
-						$this->SetTimerInterval('EaseeDiscovery' . (string)$this->InstanceID, 15000); 
+						//$this->SetTimerInterval('EaseeDiscovery' . (string)$this->InstanceID, 15000); 
 						$request = $this->Discover();
 						break;
 					default:
@@ -171,6 +171,15 @@ declare(strict_types=1);
 		}
 
 		private function DiscoverEaseeProducts() : array {
+			$request = $this->Discover();
+
+			if($request!=null) {
+				$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Sending a request to the gateway: %s', json_encode($request)), 0);
+				$this->SendDataToParent(json_encode(['DataID' => '{B62C0F65-7B59-0CD8-8C92-5DA32FBBD317}', 'Buffer' => $request]));
+			}
+
+			IPS_Sleep(5000);
+
 			return $this->GetProductsFromBuffer();
 		}
 
