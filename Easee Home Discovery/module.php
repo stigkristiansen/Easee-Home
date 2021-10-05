@@ -175,7 +175,7 @@ declare(strict_types=1);
 		private function DiscoverEaseeProducts() : array {
 			$this->Lock('Products');
 			$this->SetTimerInterval('EaseeDiscovery' . (string)$this->InstanceID, 500);
-			return GetProductsFromBuffer(2000);
+			return $this->GetProductsFromBuffer(2000);
 		}
 
 		private function GetEaseeInstances () : array {
