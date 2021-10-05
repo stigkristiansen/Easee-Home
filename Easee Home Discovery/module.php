@@ -132,7 +132,9 @@ declare(strict_types=1);
 								}
 							}
 
-							$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Got the following products from %s(): %s', $data->Buffer->Function, json_encode($products)), 0);							
+							$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Got the following products from %s(): %s', $data->Buffer->Function, json_encode($products)), 0);	
+							
+							$this->AddProductsToBuffer($products);
 
 							break;
 						default:
@@ -176,6 +178,37 @@ declare(strict_types=1);
 				
 			return $request;
 			
+		}
+
+		private function GetProductsFromBuffer(){
+			if($this->Lock('Products')) {
+				$jsonProducts = $this->GetBuffer('Products');
+				
+				if(strlen($jsonToken)==0) {
+					$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Missing token in the buffer', $jsonProducts), 0);
+					$this->Unlock('Products');
+					return null;
+				}
+	
+				$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Got the products "%s" from the buffer', $jsonProducts), 0);
+				$this->Unlock('Products');
+				
+				return = json_decode($jsonProducts);
+			} 
+	
+			return null;
+		}
+	
+		private function AddProductsToBuffer($Products) {
+			if($this->Lock('Products')) {
+				if($Token==null)
+					$products = '';
+				else
+					$products = json_encode($Token);
+				$this->SetBuffer('Products', $token);
+				$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Added products "%s" to the buffer', $products), 0);
+				$this->Unlock('Products');
+			}
 		}
 
 		private function Lock(string $Id){
