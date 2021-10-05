@@ -66,13 +66,13 @@ declare(strict_types=1);
 					'instanceID' => 0
 				];
 
-				$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Added product with id "%s"', $productid), 0);
+				$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Added product with id "%s"', $productId), 0);
 				
 				// Check if discovered device has an instance that is created earlier. If found, set InstanceID
 				$instanceId = array_search($productId, $instances);
 				if ($instanceId !== false) {
 					$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('The product (%s) already has an instance (%s). Adding InstanceId...', $productId, $instanceId), 0);
-					unset($instancess[$instanceId]); // Remove from list to avoid duplicates
+					unset($instances[$instanceId]); // Remove from list to avoid duplicates
 					$value['instanceID'] = $instanceId;
 				} 
 				
