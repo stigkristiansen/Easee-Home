@@ -185,7 +185,7 @@ declare(strict_types=1);
 				$jsonProducts = $this->GetBuffer('Products');
 				
 				if(strlen($jsonToken)==0) {
-					$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Missing token in the buffer', $jsonProducts), 0);
+					$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Missing products in the buffer', $jsonProducts), 0);
 					$this->Unlock('Products');
 					return null;
 				}
@@ -193,7 +193,7 @@ declare(strict_types=1);
 				$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Got the products "%s" from the buffer', $jsonProducts), 0);
 				$this->Unlock('Products');
 				
-				return = json_decode($jsonProducts);
+				return json_decode($jsonProducts);
 			} 
 	
 			return null;
@@ -204,8 +204,8 @@ declare(strict_types=1);
 				if($Token==null)
 					$products = '';
 				else
-					$products = json_encode($Token);
-				$this->SetBuffer('Products', $token);
+					$products = json_encode($Products);
+				$this->SetBuffer('Products', $products);
 				$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Added products "%s" to the buffer', $products), 0);
 				$this->Unlock('Products');
 			}
