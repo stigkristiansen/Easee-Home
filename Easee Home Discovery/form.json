@@ -23,20 +23,20 @@
             },
             "columns": [
                 {
-                    "caption": "Name",
-                    "name": "Name",
-                    "width": "auto"
-                },                
-                {
                     "caption": "Product Id",
                     "name": "ProductId",
-                    "width": "200px"
+                    "width": "auto"
                 },
                 {
                     "caption": "Type",
                     "name": "Type",
                     "width": "auto"
                 },
+                {
+                    "caption": "Name",
+                    "name": "Name",
+                    "width": "auto"
+                },                
                 {
                     "caption": "Site",
                     "name": "Site",
