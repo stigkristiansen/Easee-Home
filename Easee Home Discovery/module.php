@@ -95,11 +95,11 @@ declare(strict_types=1);
 			}
 			foreach ($instances as $instanceId => $productId) {
 				$values[] = [
-					'ProductId' => $productId, 
-					'Type' => IPS_GetInstance($instanceId)['ModuleInfo']['ModuleID']=='{B469F6F0-1DC2-04A4-F0BE-EB02323E319D}'?'Charger':'Equalizer',
-					'Name' => IPS_GetName($instanceId),
-					'Site' => '',
-					'instanceID'   => $instanceId
+					'ProductId'  => $productId, 
+					'Type' 		 => IPS_GetInstance($instanceId)['ModuleInfo']['ModuleID']=='{B469F6F0-1DC2-04A4-F0BE-EB02323E319D}'?'Charger':'Equalizer',
+					'Name' 		 => IPS_GetName($instanceId),
+					'Site' 		 => json_decode($instanceId,true)['Site'],
+					'instanceID' => $instanceId
 				];
 
 				$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Adding instance "%s" with InstanceID "%s"', IPS_GetName($instanceId), $instanceId), 0);
