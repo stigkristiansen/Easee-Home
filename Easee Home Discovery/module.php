@@ -77,7 +77,7 @@ declare(strict_types=1);
 				} 
 				
 				$value['create'] = [
-					'moduleID'       => $product['Type']=='Charger'?'{B469F6F0-1DC2-04A4-F0BE-EB02323E319D}':'{A687CBDB-CC15-4891-CE4E-02154F0995B1}',
+					'moduleID'       => $product['Type']=='Charger'?'{B469F6F0-1DC2-04A4-F0BE-EB02323E319D}':'{E2C80DF2-CE2D-DC47-ABD8-5D969C54129A}',  
 					'name'			 => $product['Name'],
 					'configuration'	 => [
 						'ProductId' 	 => $productId,
@@ -109,6 +109,8 @@ declare(strict_types=1);
 			$form['actions'][0]['values'] = $values;
 
 			$this->SendDebug(IPS_GetName($this->InstanceID), 'Building form completed', 0);
+
+
 	
 			return json_encode($form);
 		}
