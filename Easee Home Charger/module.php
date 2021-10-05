@@ -15,6 +15,7 @@ include __DIR__ . "/../libs/traits.php";
 
 			$this->RegisterPropertyInteger('UpdateInterval', 15);
 			$this->RegisterPropertyString('ProductId', '');
+			$this->RegisterPropertyString('Site', '');
 
 			$this->RegisterProfileIntegerEx('EHCH.ChargerOpMode', 'Electricity', '', '', [
 				[1, 'Disconnected', '', -1],

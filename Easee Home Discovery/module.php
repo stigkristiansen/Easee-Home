@@ -95,7 +95,7 @@ declare(strict_types=1);
 			foreach ($instances as $instanceId => $productId) {
 				$values[] = [
 					'ProductId' => $productId, 
-					'Type' => '',
+					'Type' => IPS_GetInstance($instanceId)['ModuleInfo']['ModuleID']=='{B469F6F0-1DC2-04A4-F0BE-EB02323E319D}'?'Charger':'Equalizer',
 					'Name' => IPS_GetName($instanceId),
 					'Site' => '',
 					'instanceID'   => $instanceId
