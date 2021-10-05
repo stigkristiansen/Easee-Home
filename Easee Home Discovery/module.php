@@ -205,7 +205,7 @@ declare(strict_types=1);
 			if($this->Lock('Products')) {
 				$jsonProducts = $this->GetBuffer('Products');
 				
-				if(strlen($jsonToken)==0) {
+				if(strlen($jsonProducts)==0) {
 					$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Missing products in the buffer', $jsonProducts), 0);
 					$this->Unlock('Products');
 					return [];
