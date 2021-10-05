@@ -77,12 +77,12 @@ declare(strict_types=1);
 				} 
 				
 				$value['create'] = [
-					'moduleID'      => $product['Type']=='Charger'?'{B469F6F0-1DC2-04A4-F0BE-EB02323E319D}':'{A687CBDB-CC15-4891-CE4E-02154F0995B1}',
-					'name'			=> $product['Name'],
-					'configuration' => [
-						'ProductId' => $productId,
-						'Interval' 	=> 15,
-						'Site' 		=> $product['Site']
+					'moduleID'      	 => $product['Type']=='Charger'?'{B469F6F0-1DC2-04A4-F0BE-EB02323E319D}':'{A687CBDB-CC15-4891-CE4E-02154F0995B1}',
+					'name'				 => $product['Name'],
+					'configuration' 	 => [
+						'ProductId' 	 => $productId,
+						'UpdateInterval' => 15,
+						'Site' 			 => $product['Site']
 					]
 				];
 			
