@@ -201,7 +201,7 @@ declare(strict_types=1);
 	
 		private function AddProductsToBuffer($Products) {
 			if($this->Lock('Products')) {
-				if($Token==null)
+				if($Products==null)
 					$products = '';
 				else
 					$products = json_encode($Products);
