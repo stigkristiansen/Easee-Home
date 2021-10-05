@@ -81,7 +81,8 @@ declare(strict_types=1);
 					'name'			=> $product['Name'],
 					'configuration' => [
 						'ProductId' => $productId,
-						'Interval' 	 => 15
+						'Interval' 	=> 15,
+						'Site' 		=> $product['Site']
 					]
 				];
 			
