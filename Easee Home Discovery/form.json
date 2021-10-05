@@ -25,17 +25,17 @@
                 {
                     "caption": "Product Id",
                     "name": "ProductId",
-                    "width": "200px"
+                    "width": "100px"
                 },
                 {
                     "caption": "Type",
                     "name": "Type",
-                    "width": "200px"
+                    "width": "100px"
                 },
                 {
                     "caption": "Name",
                     "name": "Name",
-                    "width": "auto"
+                    "width": "100px"
                 },                
                 {
                     "caption": "Site",
