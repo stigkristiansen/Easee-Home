@@ -77,9 +77,9 @@ declare(strict_types=1);
 				} 
 				
 				$value['create'] = [
-					'moduleID'      	 => $product['Type']=='Charger'?'{B469F6F0-1DC2-04A4-F0BE-EB02323E319D}':'{A687CBDB-CC15-4891-CE4E-02154F0995B1}',
-					'name'				 => $product['Name'],
-					'configuration' 	 => [
+					'moduleID'       => $product['Type']=='Charger'?'{B469F6F0-1DC2-04A4-F0BE-EB02323E319D}':'{A687CBDB-CC15-4891-CE4E-02154F0995B1}',
+					'name'			 => $product['Name'],
+					'configuration'	 => [
 						'ProductId' 	 => $productId,
 						'UpdateInterval' => 15,
 						'Site' 			 => $product['Site']
@@ -98,7 +98,7 @@ declare(strict_types=1);
 					'ProductId'  => $productId, 
 					'Type' 		 => IPS_GetInstance($instanceId)['ModuleInfo']['ModuleID']=='{B469F6F0-1DC2-04A4-F0BE-EB02323E319D}'?'Charger':'Equalizer',
 					'Name' 		 => IPS_GetName($instanceId),
-					'Site' 		 => json_decode($instanceId,true)['Site'],
+					'Site' 		 => json_decode(IPS_GetConfiguration($instanceId),true)['Site'],
 					'instanceID' => $instanceId
 				];
 
