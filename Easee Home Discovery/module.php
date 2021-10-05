@@ -212,7 +212,7 @@ declare(strict_types=1);
 				if(strlen($jsonToken)==0) {
 					$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Missing products in the buffer', $jsonProducts), 0);
 					$this->Unlock('Products');
-					return []];
+					return [];
 				}
 	
 				$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Got the products "%s" from the buffer', $jsonProducts), 0);
@@ -221,7 +221,7 @@ declare(strict_types=1);
 				return json_decode($jsonProducts);
 			} 
 	
-			return []];
+			return [];
 		}
 	
 		private function AddProductsToBuffer($Products) {
