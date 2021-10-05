@@ -11,10 +11,6 @@ declare(strict_types=1);
 			parent::Create();
 
 			$this->ConnectParent('{55B60EF1-A0FE-F43C-5CD2-1782E17ED9C6}');
-
-			$this->RegisterTimer('EaseeDiscovery' . (string)$this->InstanceID, 0, 'IPS_RequestAction(' . (string)$this->InstanceID . ', "Discover", 0);'); 
-
-			$this->RegisterMessage(0, IPS_KERNELMESSAGE);
 		}
 
 		public function Destroy()
@@ -29,18 +25,6 @@ declare(strict_types=1);
 			parent::ApplyChanges();
 
 			$this->SetReceiveDataFilter('.*"ChildId":"' . (string)$this->InstanceID .'".*');
-
-			if (IPS_GetKernelRunlevel() == KR_READY) {
-				//$this->SetTimerInterval('EaseeDiscovery' . (string)$this->InstanceID, 100); 
-			}
-		}
-
-		public function MessageSink($TimeStamp, $SenderID, $Message, $Data) {
-			parent::MessageSink($TimeStamp, $SenderID, $Message, $Data);
-
-			if ($Message == IPS_KERNELMESSAGE && $Data[0] == KR_READY) {
-				//$this->SetTimerInterval('EaseeDiscovery' . (string)$this->InstanceID, 100); 
-			}
 		}
 
 		public function GetConfigurationForm() {
@@ -110,34 +94,8 @@ declare(strict_types=1);
 
 			$this->SendDebug(IPS_GetName($this->InstanceID), 'Building form completed', 0);
 
-
 	
 			return json_encode($form);
-		}
-
-		public function RequestAction($Ident, $Value) {
-			try {
-				$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('ReqestAction called for Ident "%s" with Value %s', $Ident, (string)$Value), 0);
-					
-				$request = null;
-				switch (strtolower($Ident)) {
-					case 'discover':
-						//$this->SetTimerInterval('EaseeDiscovery' . (string)$this->InstanceID, 15000); 
-						$request = $this->Discover();
-						break;
-					default:
-						throw new Exception(sprintf('ReqestAction called with unkown Ident "%s"', $Ident));
-				}
-
-				if($request!=null) {
-					$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Sending a request to the gateway: %s', json_encode($request)), 0);
-					$this->SendDataToParent(json_encode(['DataID' => '{B62C0F65-7B59-0CD8-8C92-5DA32FBBD317}', 'Buffer' => $request]));
-				}
-
-			} catch(Exception $e) {
-				$this->LogMessage(sprintf('RequestAction failed. The error was "%s"',  $e->getMessage()), KL_ERROR);
-				$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('RequestAction failed. The error was "%s"', $e->getMessage()), 0);
-			}
 		}
 
 		public function ReceiveData($JSONString) {
@@ -257,13 +215,13 @@ declare(strict_types=1);
 			return $instances;
 		}
 
-		private function Discover(){
+		private function Discover() : array {
 			$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetProducts'];
 				
 			return $request;
 		}
 
-		private function GetProductsFromBuffer(){
+		private function GetProductsFromBuffer() : array{
 			if($this->Lock('Products')) {
 				$jsonProducts = $this->GetBuffer('Products');
 				
@@ -294,7 +252,7 @@ declare(strict_types=1);
 			}
 		}
 
-		private function Lock(string $Id){
+		private function Lock(string $Id) : bool {
 			for ($i=0;$i<500;$i++){
 				if (IPS_SemaphoreEnter("EaseeHome" . (string)$this->InstanceID . $Id, 1)){
 					if($i==0) {
