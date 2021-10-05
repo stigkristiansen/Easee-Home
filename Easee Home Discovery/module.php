@@ -43,19 +43,19 @@ declare(strict_types=1);
 			}
 		}
 
-		/*public function GetConfigurationForm() {
+		public function GetConfigurationForm() {
 			$products = $this->DiscoverEaseeProducts();
 			$instances = $this->GetEaseeInstances();
 	
 			$values = [];
 
 			$form = json_decode(file_get_contents(__DIR__ . '/form.json'), true);
-			//$form['actions'][0]['values'] = $values;
+			$form['actions'][0]['values'] = $values;
 
 			$this->SendDebug(IPS_GetName($this->InstanceID), 'GetConfigurationForm() completed', 0);
 	
 			return json_encode($form);
-		}*/
+		}
 
 		public function RequestAction($Ident, $Value) {
 			try {
@@ -238,7 +238,7 @@ declare(strict_types=1);
 
 		private function Lock(string $Id, int $Loops = 500){
 			for ($i=0;$i<$Loops;$i++){
-				if (IPS_SemaphoreEnter("EaseeHome" . (string)$this->InstanceID . $Id, 1)){
+				if (IPS_SemaphoreEnter("EaseeHomeDiscovery" . $Id, 1)){
 					if($i==0) {
 						$msg = sprintf('Created the Lock with id "%s"', $Id);
 					} else {
@@ -262,7 +262,7 @@ declare(strict_types=1);
 	
 		private function Unlock(string $Id)
 		{
-			IPS_SemaphoreLeave("EaseeHome" . (string)$this->InstanceID . $Id);
+			IPS_SemaphoreLeave("EaseeHomeDiscovery" . $Id);
 	
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Removed the Lock with id "%s"', $Id), 0);
 		}
