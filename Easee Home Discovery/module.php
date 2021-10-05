@@ -43,7 +43,7 @@ declare(strict_types=1);
 			}
 		}
 
-		public function GetConfigurationForm() {
+		/*public function GetConfigurationForm() {
 			$products = $this->DiscoverEaseeProducts();
 			$instances = $this->GetEaseeInstances();
 	
@@ -55,7 +55,7 @@ declare(strict_types=1);
 			$this->SendDebug(IPS_GetName($this->InstanceID), 'GetConfigurationForm() completed', 0);
 	
 			return json_encode($form);
-		}
+		}*/
 
 		public function RequestAction($Ident, $Value) {
 			try {
