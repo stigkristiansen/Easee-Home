@@ -298,7 +298,7 @@ class EaseeHomeGateway extends IPSModule
 		$this->SendDataToChildren(json_encode(["DataID" => "{47508B62-3B4E-67BE-0F29-0B82A2C62B58}", "ChildId" => $ChildId, "Buffer" => $return]));
 	}
 
-	private function GetTokenFromBuffer() : object {
+	private function GetTokenFromBuffer() {
 		if($this->Lock('Token')) {
 			$jsonToken = $this->GetBuffer('Token');
 			
@@ -333,7 +333,7 @@ class EaseeHomeGateway extends IPSModule
 		}
 	}
 
-	private function Lock(string $Id) : bool{
+	private function Lock(string $Id) : bool {
 		for ($i=0;$i<500;$i++){
 			if (IPS_SemaphoreEnter("EaseeHome" . (string)$this->InstanceID . $Id, 1)){
 				if($i==0) {
@@ -363,4 +363,6 @@ class EaseeHomeGateway extends IPSModule
 
 		$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Removed the Lock with id "%s"', $Id), 0);
     }
+
+
 }
