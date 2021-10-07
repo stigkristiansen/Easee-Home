@@ -215,7 +215,7 @@ include __DIR__ . "/../libs/traits.php";
 			$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, $this->ReadPropertyInteger('UpdateInterval')*1000); 
 		}
 
-		private function Refresh(string $ChargerId) : array {
+		private function Refresh(string $ChargerId) : array{
 			if(strlen($ChargerId)>0) {
 				$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerConfig','ChargerId'=>$ChargerId];
 				$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerState','ChargerId'=>$ChargerId];
