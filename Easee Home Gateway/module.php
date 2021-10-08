@@ -171,7 +171,7 @@ class EaseeHomeGateway extends IPSModule
 		foreach($requests as $request) {
 		
 			if(!isset($request->Function)||!isset($request->ChildId)) {
-				throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "Function" and/or "ChildId" is missing. The request was "%s"', $Request));
+				throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "Function" and/or "ChildId" is missing. The request was "%s"', $request));
 			}
 
 			$function = strtolower($request->Function);
@@ -183,54 +183,54 @@ class EaseeHomeGateway extends IPSModule
 					break;
 				case 'getchargerstate':
 					if(!isset($request->ChargerId)) {
-						throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "ChargerId" is missing. The request was "%s"', $Request));
+						throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "ChargerId" is missing. The request was "%s"', $request));
 					}
 					
 					$this->ExecuteEaseeRequest($childId, 'GetChargerState', array($request->ChargerId));
 					break;
 				case 'getchargerconfig':
 					if(!isset($request->ChargerId)) {
-						throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "ChargerId" is missing. The request was "%s"', $Request));
+						throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "ChargerId" is missing. The request was "%s"', $request));
 					}
 					
 					$this->ExecuteEaseeRequest($childId, 'GetChargerConfig', array($request->ChargerId));
 					break;
 				case 'setchargerlockstate':
 					if(!isset($request->ChargerId)) {
-						throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "ChargerId" is missing. The request was "%s"', $Request));
+						throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "ChargerId" is missing. The request was "%s"', $request));
 					}
 
 					if(!(isset($request->State) && is_bool($request->State))) {
-						throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "State" is missing or is a invalid type. The request was "%s"', $Request));
+						throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "State" is missing or is a invalid type. The request was "%s"', $request));
 					}
 
 					$this->ExecuteEaseeRequest($childId, 'SetChargerLockState', array($request->ChargerId, $request->State));
 					break;
 				case 'setchargeraccesslevel':
 					if(!isset($request->ChargerId)) {
-						throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "ChargerId" is missing. The request was "%s"', $Request));
+						throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "ChargerId" is missing. The request was "%s"', $request));
 					}
 
 					if(!(isset($request->UseKey) && is_bool($request->UseKey))) {
-						throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "UseKey" is missing or is a invalid type. The request was "%s"', $Request));
+						throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "UseKey" is missing or is a invalid type. The request was "%s"', $request));
 					}
 
 					$this->ExecuteEaseeRequest($childId, 'SetChargerAccessLevel', array($request->ChargerId, $request->UseKey));
 					break;
 				case 'setchargingstate':
 					if(!isset($request->ChargerId)) {
-						throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "ChargerId" is missing. The request was "%s"', $Request));
+						throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "ChargerId" is missing. The request was "%s"', $request));
 					}
 
 					if(!(isset($request->State) && is_bool($request->State))) {
-						throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "Status" is missing or is a invalid type. The request was "%s"', $Request));
+						throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "Status" is missing or is a invalid type. The request was "%s"', $request));
 					}
 
 					$this->ExecuteEaseeRequest($childId, 'SetChargingState', array($request->ChargerId, $request->State));
 					break;
 				case 'getequalizerstate':
 					if(!isset($request->EqualizerId)) {
-						throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "EqualizerId" is missing. The request was "%s"', $Request));
+						throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "EqualizerId" is missing. The request was "%s"', $request));
 					}
 					
 					$this->ExecuteEaseeRequest($childId, 'GetEqualizerState', array($request->EqualizerId));
