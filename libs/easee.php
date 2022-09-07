@@ -90,7 +90,7 @@ class Easee {
         if (strlen($this->accessToken) == 0) {
             if(strlen($this->username)>0 && strlen($this->password)>0) {
                 //$url = self::ENDPOINT . '/api/accounts/token';
-                $url = self::ENDPOINT . 'api/accounts/login';
+                $url = self::ENDPOINT . '/api/accounts/login';
                 //$body = array('username' => $this->username); 
                 $body = array('userName' => $this->username); 
                 $body['password'] = $this->password;
