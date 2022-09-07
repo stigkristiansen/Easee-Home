@@ -123,7 +123,7 @@ class EaseeHomeGateway extends IPSModule
 		}
 	}
 
-	private function InitEasee() : object {
+	private function InitEasee() : ?object {
 		$this->SendDebug(IPS_GetName($this->InstanceID), 'Initializing the Easee Class...', 0);
 
 		$this->SetTimerInterval('EaseeHomeRefreshToken' . (string)$this->InstanceID, 0); // Disable the timer
