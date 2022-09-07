@@ -89,8 +89,10 @@ class Easee {
     public function Connect() {
         if (strlen($this->accessToken) == 0) {
             if(strlen($this->username)>0 && strlen($this->password)>0) {
-                $url = self::ENDPOINT . '/api/accounts/token';
-                $body = array('username' => $this->username); 
+                //$url = self::ENDPOINT . '/api/accounts/token';
+                $url = self::ENDPOINT . 'api/accounts/login';
+                //$body = array('username' => $this->username); 
+                $body = array('userName' => $this->username); 
                 $body['password'] = $this->password;
             } else {
                 throw new Exception('Error: Missing username and/or password');
@@ -99,7 +101,8 @@ class Easee {
             if($this->expires < new DateTime('now')) {
                 if(strlen($this->username)>0 && strlen($this->password)>0) {
                     $url = self::ENDPOINT . '/api/accounts/token';
-                    $body = array('username' => $this->username); 
+                    //$body = array('username' => $this->username); 
+                    $body = array('userName' => $this->username); 
                     $body['password'] = $this->password;
                 } else {
                     throw new Exception('Error: Expirered access token and missing username and/or password');
@@ -309,13 +312,15 @@ class Easee {
 
         $headers = array(
             'User-Agent: Symcon',
-            'Content-Type: application/json;charset=UTF-8',
-            'Accept: application/json'
+            'Content-Type: application/json;charset=UTF-8'
+            
             );
 
         if(strlen($this->accessToken)>0 && $this->expires > new DateTime('now')) {
+            $headers[] = 'Accept: application/json';
             $headers[] = 'Authorization: Bearer '. $this->accessToken;
         } else {
+            $headers[] = 'Accept: application/*+json';
             $headers[] = 'Authorization: Bearer '. $this->apiKey;
         }
 
