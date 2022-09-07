@@ -89,9 +89,7 @@ class Easee {
     public function Connect() {
         if (strlen($this->accessToken) == 0) {
             if(strlen($this->username)>0 && strlen($this->password)>0) {
-                //$url = self::ENDPOINT . '/api/accounts/token';
                 $url = self::ENDPOINT . '/api/accounts/login';
-                //$body = array('username' => $this->username); 
                 $body = array('userName' => $this->username); 
                 $body['password'] = $this->password;
             } else {
@@ -101,7 +99,6 @@ class Easee {
             if($this->expires < new DateTime('now')) {
                 if(strlen($this->username)>0 && strlen($this->password)>0) {
                     $url = self::ENDPOINT . '/api/accounts/token';
-                    //$body = array('username' => $this->username); 
                     $body = array('userName' => $this->username); 
                     $body['password'] = $this->password;
                 } else {
