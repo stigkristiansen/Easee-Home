@@ -13,6 +13,7 @@ class EaseeHomeGateway extends IPSModule
 
 		$this->RegisterPropertyString ('Username', '');
 		$this->RegisterPropertyString ('Password', '');
+		$this->RegisterPropertyString ('APIKey', '');
 		$this->RegisterPropertyBoolean('SkipSSLCheck', true);
 
 		$this->RegisterTimer('EaseeHomeRefreshToken' . (string)$this->InstanceID, 0, 'IPS_RequestAction(' . (string)$this->InstanceID . ', "RefreshToken", 0);'); 
@@ -92,9 +93,10 @@ class EaseeHomeGateway extends IPSModule
 			$easee = $this->InitEasee();
 		} else {
 			$username = $this->ReadPropertyString('Username');
-			$password = $this->ReadPropertyString('Password');	
+			$password = $this->ReadPropertyString('Password');
+			$apiKey = $this->ReadPropertyString('APIKey');	
 
-			$easee = new Easee($username, $password, $token->AccessToken, $token->RefreshToken, $token->Expires);
+			$easee = new Easee($username, $password, $apiKey, $token->AccessToken, $token->RefreshToken, $token->Expires);
 		}
 
 		try {
@@ -130,15 +132,16 @@ class EaseeHomeGateway extends IPSModule
 
 		$username = $this->ReadPropertyString('Username');
 		$password = $this->ReadPropertyString('Password');
+		$apiKey = $this->ReadPropertyString('APIKey');
 
-		if(strlen($username)==0) {
-			$this->LogMessage(sprintf('InitEasee(): Missing property "Username" in module "%s"', IPS_GetName($this->InstanceID)), KL_ERROR);
+		if(strlen($username)==0 || strlen($apiKey)==0) {
+			$this->LogMessage(sprintf('InitEasee(): Missing property "Username" and/or "API Key" in module "%s"', IPS_GetName($this->InstanceID)), KL_ERROR);
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('InitEasee(): Missing property "Username" in module "%s"', IPS_GetName($this->InstanceID)), 0);
 			
 			return null;
 		}
 
-		$easee = new Easee($username, $password);
+		$easee = new Easee($username, $password, $apiKey);
 		
 		if($this->ReadPropertyBoolean('SkipSSLCheck')) {
 			$easee->DisableSSLCheck();
@@ -159,6 +162,7 @@ class EaseeHomeGateway extends IPSModule
 		} catch(Exception $e) {
 			$this->LogMessage(sprintf('Failed to connect to Easee Cloud API. The error was "%s"',  $e->getMessage()), KL_ERROR);
 			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Failed to connec to Easee Cloud API. The error was "%s"', $e->getMessage()), 0);
+			
 			return null;
 		}
 
@@ -253,8 +257,9 @@ class EaseeHomeGateway extends IPSModule
 		} else {
 			$username = $this->ReadPropertyString('Username');
 			$password = $this->ReadPropertyString('Password');
+			$apiKey = $this->ReadPropertyString('APIKey');
 
-			$easee = new Easee($username, $password, $token->AccessToken, $token->RefreshToken, $token->Expires);
+			$easee = new Easee($username, $password, $apiKey, $token->AccessToken, $token->RefreshToken, $token->Expires);
 		}
 
 		$return['Function'] = $Function;

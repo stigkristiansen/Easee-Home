@@ -5,6 +5,7 @@ declare(strict_types=1);
 class Easee {
     private $username;
     private $password;
+    private $apiKey;
     private $accessToken;
     private $refresToken; 
     private $expires;
@@ -14,9 +15,10 @@ class Easee {
 
     const ENDPOINT = 'https://api.easee.cloud';
 
-    public function __construct(String $Username='', string $Password='', string $AccessToken='', string $RefreshToken='', DateTime $Expires = null) {
+    public function __construct(String $Username='', string $Password='', string $ApiKey = '', string $AccessToken='', string $RefreshToken='', DateTime $Expires = null) {
         $this->username = $Username;
         $this->password = $Password;
+        $this->apiKey = $ApiKey;
         $this->accessToken =$AccessToken;
         $this->refreshToken = $RefreshToken;
         if($Expires==null)
@@ -313,6 +315,8 @@ class Easee {
 
         if(strlen($this->accessToken)>0 && $this->expires > new DateTime('now')) {
             $headers[] = 'Authorization: Bearer '. $this->accessToken;
+        } else {
+            $headers[] = 'Authorization: Bearer '. $this->apiKey;
         }
 
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
@@ -325,8 +329,6 @@ class Easee {
 		curl_setopt($ch, CURLOPT_URL, $Url);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1 );
 		
-
-
 		if($Data!=NULL)
 			curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($Data)); 
 

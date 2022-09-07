@@ -17,6 +17,9 @@
             "type": "PasswordTextBox", "name": "Password", "caption": "Password"
         },
         {
+            "type" :  "ValidationTextBox" ,  "name" :  "APIKey" ,  "caption" :  "API Key"
+        },
+        {
             "type": "CheckBox", "name": "SkipSSLCheck", "caption": "Skip SSL Check"
         }
     ],
