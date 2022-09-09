@@ -96,26 +96,25 @@ include __DIR__ . "/../libs/traits.php";
 				$chargerId = $this->ReadPropertyString('ProductId');
 
 				$request = null;
-				$id = $this->GetIDForIdent($Ident);
-
+				
 				switch (strtolower($Ident)) {
 					case 'refresh':
 						$request = $this->Refresh($chargerId);
 						$this->InitTimer(); // Reset timer back to configured interval
 						break;
 					case 'lockcable':
-						IPS_SetVariableCustomProfile($id, ''); // Disable variable in GUI
+						$this->DisableAction($Ident); // Disable variable in GUI
 						$this->SetValue($Ident, $Value);
 						$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargerLockState','ChargerId'=>$chargerId, 'State' => $Value];
 						break;
 					case 'protectaccess':
-						IPS_SetVariableCustomProfile($id, ''); // Disable variable in GUI
+						$this->DisableAction($Ident); // Disable variable in GUI
 						$this->SetValue($Ident, $Value);
 						$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargerAccessLevel','ChargerId'=>$chargerId, 'UseKey' => $Value];
 						break;
 					case 'startcharging':
 						if($Value>0){
-							IPS_SetVariableCustomProfile($id, ''); // Disable variable in GUI
+							$this->DisableAction($Ident); // Disable variable in GUI
 							$this->SetValue($Ident, $Value);
 							$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargingState','ChargerId'=>$chargerId, 'State' => $Value==1?true:false];
 						}
@@ -174,9 +173,8 @@ include __DIR__ . "/../libs/traits.php";
 					$function = strtolower($data->Buffer->Function);
 					switch($function) {
 						case 'getchargerstate':
-							$id = $this->GetIDForIdent('StartCharging');
-							IPS_SetVariableCustomProfile($id, 'EHCH.StartCharging'); // Enable GUI
-
+							$id = $this->EnableAction('StartCharging');
+							
 							if(isset($result->chargerOpMode)) {
 								$this->SetValueEx('Status', $result->chargerOpMode);
 							}
@@ -194,12 +192,9 @@ include __DIR__ . "/../libs/traits.php";
 						case 'getproducts':
 							break;
 						case 'getchargerconfig':
-							$id = $this->GetIDForIdent('LockCable');  
-							IPS_SetVariableCustomProfile($id, 'EHCH.LockCable'); // Enable GUI
-
-							$id = $this->GetIDForIdent('ProtectAccess'); 
-							IPS_SetVariableCustomProfile($id, 'EHCH.ProtectAccess'); // Enable GUI
-
+							$id = $this->EnableAction('LockCable');  
+							$id = $this->EnableAction('ProtectAccess'); 
+							
 							if(isset($result->lockCablePermanently)) {
 								$this->SetValueEx('LockCable', $result->lockCablePermanently);
 							}
