@@ -221,13 +221,14 @@ include __DIR__ . "/../libs/traits.php";
 						default:
 							throw new Exception(sprintf('Unknown function "%s()" receeived in repsponse from gateway', $function));
 					}
-					
+
 					$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Processed the result from %s(): %s...', $data->Buffer->Function, json_encode($result)), 0);
 				} else {
 					throw new Exception(sprintf('The gateway returned an error: %s',$result));
 				}
 				
 			} catch(Exception $e) {
+				$this->InitTimer();
 				$this->LogMessage(sprintf('ReceiveData() failed. The error was "%s"',  $e->getMessage()), KL_ERROR);
 				$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('ReceiveData() failed. The error was "%s"',  $e->getMessage()), 0);
 			}
