@@ -128,7 +128,7 @@ include __DIR__ . "/../libs/traits.php";
 					if(strtolower($Ident)!='refresh') {
 						$this->PauseTimer();
 					}
-					
+
 					$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Sending a request to the gateway: %s', json_encode($request)), 0);
 					$this->SendDataToParent(json_encode(['DataID' => '{B62C0F65-7B59-0CD8-8C92-5DA32FBBD317}', 'Buffer' => $request]));
 				}
@@ -174,7 +174,7 @@ include __DIR__ . "/../libs/traits.php";
 					$function = strtolower($data->Buffer->Function);
 					switch($function) {
 						case 'getchargerstate':
-							$id = this->GetIDForIdent('StartCharging');
+							$id = $this->GetIDForIdent('StartCharging');
 							IPS_SetVariableCustomProfile($id, 'EHCH.StartCharging'); // Enable GUI
 
 							if(isset($result->chargerOpMode)) {
