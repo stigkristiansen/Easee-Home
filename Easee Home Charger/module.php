@@ -194,7 +194,7 @@ include __DIR__ . "/../libs/traits.php";
 						case 'getproducts':
 							break;
 						case 'getchargerconfig':
-							$id = $this->GetIDForIdent('LockCable');  ***
+							$id = $this->GetIDForIdent('LockCable');  
 							IPS_SetVariableCustomProfile($id, 'EHCH.LockCable'); // Enable GUI
 
 							$id = $this->GetIDForIdent('ProtectAccess'); 
