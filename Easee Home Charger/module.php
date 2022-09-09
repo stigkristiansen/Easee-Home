@@ -96,21 +96,26 @@ include __DIR__ . "/../libs/traits.php";
 				$chargerId = $this->ReadPropertyString('ProductId');
 
 				$request = null;
+				$id = $this->GetIDForIdent($Ident);
+
 				switch (strtolower($Ident)) {
 					case 'refresh':
 						$request = $this->Refresh($chargerId);
 						$this->InitTimer(); // Reset timer back to configured interval
 						break;
 					case 'lockcable':
+						IPS_SetVariableCustomProfile($id, ''); // Disable variable in GUI
 						$this->SetValue($Ident, $Value);
 						$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargerLockState','ChargerId'=>$chargerId, 'State' => $Value];
 						break;
 					case 'protectaccess':
+						IPS_SetVariableCustomProfile($id, ''); // Disable variable in GUI
 						$this->SetValue($Ident, $Value);
 						$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargerAccessLevel','ChargerId'=>$chargerId, 'UseKey' => $Value];
 						break;
 					case 'startcharging':
 						if($Value>0){
+							IPS_SetVariableCustomProfile($id, ''); // Disable variable in GUI
 							$this->SetValue($Ident, $Value);
 							$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargingState','ChargerId'=>$chargerId, 'State' => $Value==1?true:false];
 						}
@@ -120,6 +125,10 @@ include __DIR__ . "/../libs/traits.php";
 				}
 
 				if($request!=null) {
+					if(strtolower($Ident)!='refresh') {
+						$this->PauseTimer();
+					}
+					
 					$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Sending a request to the gateway: %s', json_encode($request)), 0);
 					$this->SendDataToParent(json_encode(['DataID' => '{B62C0F65-7B59-0CD8-8C92-5DA32FBBD317}', 'Buffer' => $request]));
 				}
@@ -165,6 +174,9 @@ include __DIR__ . "/../libs/traits.php";
 					$function = strtolower($data->Buffer->Function);
 					switch($function) {
 						case 'getchargerstate':
+							$id = this->GetIDForIdent('StartCharging');
+							IPS_SetVariableCustomProfile($id, 'EHCH.StartCharging'); // Enable GUI
+
 							if(isset($result->chargerOpMode)) {
 								$this->SetValueEx('Status', $result->chargerOpMode);
 							}
@@ -182,6 +194,12 @@ include __DIR__ . "/../libs/traits.php";
 						case 'getproducts':
 							break;
 						case 'getchargerconfig':
+							$id = this->GetIDForIdent('LockCable');  ***
+							IPS_SetVariableCustomProfile($id, 'EHCH.LockCable'); // Enable GUI
+
+							$id = this->GetIDForIdent('ProtectAccess'); 
+							IPS_SetVariableCustomProfile($id, 'EHCH.ProtectAccess'); // Enable GUI
+
 							if(isset($result->lockCablePermanently)) {
 								$this->SetValueEx('LockCable', $result->lockCablePermanently);
 							}
@@ -193,7 +211,7 @@ include __DIR__ . "/../libs/traits.php";
 						case 'setchargerlockstate':
 						case 'setchargeraccesslevel':
 						case 'setchargingstate':
-							$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, 5000); // Do a extra refresh after a change in configuration
+							$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, 10000); // Do a extra refresh after a change in configuration
 							
 							break;
 						default:
@@ -213,6 +231,10 @@ include __DIR__ . "/../libs/traits.php";
 
 		private function InitTimer(){
 			$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, $this->ReadPropertyInteger('UpdateInterval')*1000); 
+		}
+
+		private function PauseTimer(){
+			$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, 0); 
 		}
 
 		private function Refresh(string $ChargerId) : array{
