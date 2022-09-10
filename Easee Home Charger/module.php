@@ -235,7 +235,7 @@ include __DIR__ . "/../libs/traits.php";
 							$value = ['CommandId'=>$result->commandId, 'Ticks'=>$result->ticks];
 							$script = "IPS_RequestAction(" . (string)$this->InstanceID . " ,'GetCommandState', '" . json_encode($value) . "');";
 
-							IPS_RunScriptText($script); // Call GetCommandState in new thread
+							//IPS_RunScriptText($script); // Call GetCommandState in new thread
 							
 							break;
 						case 'getcommandstate':
