@@ -238,7 +238,7 @@ include __DIR__ . "/../libs/traits.php";
 							IPS_RunScriptText($script); // Call GetCommandState in new thread
 							
 							break;
-						'getcommandstate':
+						case 'getcommandstate':
 							break;
 						default:
 							throw new Exception(sprintf('Unknown function "%s()" receeived in repsponse from gateway', $function));
