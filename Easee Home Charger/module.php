@@ -103,7 +103,7 @@ include __DIR__ . "/../libs/traits.php";
 						'Function'=>'GetCommandState',
 						'ChargerId'=>$ChargerId,
 						'CommandId'=>$jsonValue->CommandId,
-						'Ticks'=>($jsonValue->Ticks)+1
+						'Ticks'=>$jsonValue->Ticks
 					   ];
 
 			return $request;
@@ -237,6 +237,8 @@ include __DIR__ . "/../libs/traits.php";
 
 							IPS_RunScriptText($script); // Call GetCommandState in new thread
 							
+							break;
+						'getcommandstate':
 							break;
 						default:
 							throw new Exception(sprintf('Unknown function "%s()" receeived in repsponse from gateway', $function));
