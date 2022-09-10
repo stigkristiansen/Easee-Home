@@ -96,6 +96,19 @@ include __DIR__ . "/../libs/traits.php";
 			}
 		}
 
+		private function GetCommandStateReqest(string $ChargerId, string $Value) {
+			$jsonValue = json_decode($Value, true);
+
+			$request = ['ChildId'=>(string)$this->InstanceID,
+						'Function'=>'GetCommandState',
+						'ChargerId'=>$ChargerId,
+						'CommandId'=>$jsonValue->CommandId,
+						'Ticks'=>$jsonValue->Ticks+1
+					   ];
+
+			return $request;
+		}
+
 		public function RequestAction($Ident, $Value) {
 			try {
 				$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('ReqestAction called for Ident "%s" with Value %s', $Ident, (string)$Value), 0);
@@ -106,8 +119,8 @@ include __DIR__ . "/../libs/traits.php";
 				
 				switch (strtolower($Ident)) {
 					case 'getcommandstate':
-						//$request = $this->GetCommandStateReqest($chargerId, $Value);
-						$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('RequestAction:GetCommandState: %s', $Value), 0);
+						$request = $this->GetCommandStateReqest($chargerId, $Value);
+						//$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('RequestAction:GetCommandState: %s', $Value), 0);
 						break;
 					case 'refresh':
 						$request = $this->Refresh($chargerId);
@@ -218,6 +231,14 @@ include __DIR__ . "/../libs/traits.php";
 						case 'setchargeraccesslevel':
 						case 'setchargingstate':
 							$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, 10000); // Do a extra refresh after a change in configuration
+
+							$chargerId = 'JGKDFGJD';
+							$commandId = 30;
+							$ticks = 4893275834538;
+							$value = ['CommandId'=>$result>commandId, 'Ticks'=>$$result->ticks];
+							$script = "IPS_RequestAction(" . (string)$this->InstanceID . " ,'GetCommandState', '" . json_encode($value) . "');";
+
+							IPS_RunScriptText($script); // Call GetCommandState in new thread
 							
 							break;
 						default:
