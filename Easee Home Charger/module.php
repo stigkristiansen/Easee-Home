@@ -232,10 +232,7 @@ include __DIR__ . "/../libs/traits.php";
 						case 'setchargingstate':
 							$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, 10000); // Do a extra refresh after a change in configuration
 
-							$chargerId = 'JGKDFGJD';
-							$commandId = 30;
-							$ticks = 4893275834538;
-							$value = ['CommandId'=>$result>commandId, 'Ticks'=>$$result->ticks];
+							$value = ['CommandId'=>$result>commandId, 'Ticks'=>$result->ticks];
 							$script = "IPS_RequestAction(" . (string)$this->InstanceID . " ,'GetCommandState', '" . json_encode($value) . "');";
 
 							IPS_RunScriptText($script); // Call GetCommandState in new thread
