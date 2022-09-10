@@ -176,6 +176,20 @@ class Easee {
         }
     }
 
+    public function GetCommandState(string $ChargerId, int $CommandId, int $Ticks) {
+        try {
+            $this->Connect();
+            
+            $url = self::ENDPOINT . '/api/commands/' . $ChargerId .'/' . (string)$CommandId . '/' . (string)$Ticks;
+            $result = self::EvaluateResult(self::request('get', $url), $url);
+            
+            return $result;
+
+        } catch(Exception $e) {
+            throw new Exception($e->getMessage(), $e->getCode());
+        }
+    }
+
     public function GetChargerState(string $ChargerId) {
         
         try{
