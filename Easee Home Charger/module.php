@@ -107,7 +107,7 @@ include __DIR__ . "/../libs/traits.php";
 				switch (strtolower($Ident)) {
 					case 'getcommandstate':
 						//$request = $this->GetCommandStateReqest($chargerId, $Value);
-						$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('RequestAction:GetCommandState: %s', json_encode($Value)), 0);
+						$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('RequestAction:GetCommandState: %s', $Value), 0);
 						break;
 					case 'refresh':
 						$request = $this->Refresh($chargerId);
