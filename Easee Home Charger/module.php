@@ -13,7 +13,7 @@ include __DIR__ . "/../libs/traits.php";
 
 			$this->ConnectParent('{55B60EF1-A0FE-F43C-5CD2-1782E17ED9C6}');
 
-			$this->RegisterPropertyInteger('UpdateInterval', 15);
+			$this->RegisterPropertyInteger('UpdateInterval', 30);
 			$this->RegisterPropertyString('ProductId', '');
 			$this->RegisterPropertyString('Site', '');
 
