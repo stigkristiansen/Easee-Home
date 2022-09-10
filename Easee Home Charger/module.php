@@ -105,6 +105,10 @@ include __DIR__ . "/../libs/traits.php";
 				$request = null;
 				
 				switch (strtolower($Ident)) {
+					case 'getcommandstate':
+						//$request = $this->GetCommandStateReqest($chargerId, $Value);
+						$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('RequestAction:GetCommandState: %s', json_encode($Value)), 0);
+						break;
 					case 'refresh':
 						$request = $this->Refresh($chargerId);
 						$this->InitTimer(); // Reset timer back to configured interval
