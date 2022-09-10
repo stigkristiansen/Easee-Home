@@ -99,7 +99,7 @@ include __DIR__ . "/../libs/traits.php";
 		private function GetCommandStateReqest(string $ChargerId, string $Value) {
 			$jsonValue = json_decode($Value);
 
-			$request = ['ChildId'=>(string)$this->InstanceID,
+			$request[] = ['ChildId'=>(string)$this->InstanceID,
 						'Function'=>'GetCommandState',
 						'ChargerId'=>$ChargerId,
 						'CommandId'=>$jsonValue->CommandId,
