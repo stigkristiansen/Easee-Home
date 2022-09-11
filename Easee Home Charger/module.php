@@ -146,7 +146,7 @@ include __DIR__ . "/../libs/traits.php";
 						break;
 					case 'startcharging':
 						if($Value>0){
-							IPS_SetVariableCustomProfile($this->GetIDForIdent($Ident), 'EHCH.StartCharging.Processing');
+							//IPS_SetVariableCustomProfile($this->GetIDForIdent($Ident), 'EHCH.StartCharging.Processing');
 							$this->SetValue($Ident, $Value);
 							$this->DisableAction($Ident); // Disable variable in GUI
 							
@@ -208,7 +208,7 @@ include __DIR__ . "/../libs/traits.php";
 					switch($function) {
 						case 'getchargerstate':
 							$this->SetValue('StartCharging', 0);
-							IPS_SetVariableCustomProfile($this->GetIDForIdent('StartCharging'), 'EHCH.StartCharging'); 
+							//IPS_SetVariableCustomProfile($this->GetIDForIdent('StartCharging'), 'EHCH.StartCharging'); 
 							$this->EnableAction('StartCharging');
 							
 							if(isset($result->chargerOpMode)) {
