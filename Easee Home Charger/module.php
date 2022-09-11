@@ -32,14 +32,20 @@ include __DIR__ . "/../libs/traits.php";
 				[2, 'Stop ', '', -1]
 			]);
 
+			$this->RegisterProfileIntegerEx('EHCH.StartCharging.Processing', 'Power', '', '', [
+				[0, ' ', '', -1],
+				[1, 'Starting...', '', -1],
+				[2, 'Stopping... ', '', -1]
+			]);
+
 			$this->RegisterProfileBooleanEx('EHCH.LockCable', 'Lock', '', '', [
-				[true, 'Locked', '', -1],
-				[false, 'Unlocked', '', -1]
+				[true, 'Locking...', '', -1],
+				[false, 'Unlocking...', '', -1]
 			]);
 
 			$this->RegisterProfileBooleanEx('EHCH.ProtectAccess', 'Lock', '', '', [
-				[true, 'Protected', '', -1],
-				[false, 'Unprotected', '', -1]
+				[true, 'Protecting...', '', -1],
+				[false, 'Unprotecting...', '', -1]
 			]);
 
 			$this->RegisterVariableInteger('StartCharging', 'Charging', 'EHCH.StartCharging', 1);
