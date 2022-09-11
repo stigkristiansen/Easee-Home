@@ -207,7 +207,9 @@ include __DIR__ . "/../libs/traits.php";
 					$function = strtolower($data->Buffer->Function);
 					switch($function) {
 						case 'getchargerstate':
-							$id = $this->EnableAction('StartCharging');
+							$this->SetValue('StartCharging', 0);
+							IPS_SetVariableCustomProfile($this->GetIDForIdent('StartCharging'), 'EHCH.StartCharging'); 
+							$this->EnableAction('StartCharging');
 							
 							if(isset($result->chargerOpMode)) {
 								$this->SetValueEx('Status', $result->chargerOpMode);
@@ -226,8 +228,8 @@ include __DIR__ . "/../libs/traits.php";
 						case 'getproducts':
 							break;
 						case 'getchargerconfig':
-							$id = $this->EnableAction('LockCable');  
-							$id = $this->EnableAction('ProtectAccess'); 
+							$this->EnableAction('LockCable');  
+							$this->EnableAction('ProtectAccess'); 
 							
 							if(isset($result->lockCablePermanently)) {
 								$this->SetValueEx('LockCable', $result->lockCablePermanently);
@@ -278,10 +280,7 @@ include __DIR__ . "/../libs/traits.php";
 			if(strlen($ChargerId)>0) {
 				$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerConfig','ChargerId'=>$ChargerId];
 				$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerState','ChargerId'=>$ChargerId];
-		
-				$this->SetValue('StartCharging', 0);
-				IPS_SetVariableCustomProfile($this->GetIDForIdent('StartCharging'), 'EHCH.StartCharging'); 
-
+					
 				return $request;
 			}
 		}
