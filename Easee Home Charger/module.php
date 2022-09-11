@@ -133,19 +133,23 @@ include __DIR__ . "/../libs/traits.php";
 						$this->InitTimer(); // Reset timer back to configured interval
 						break;
 					case 'lockcable':
-						$this->DisableAction($Ident); // Disable variable in GUI
 						$this->SetValue($Ident, $Value);
+						$this->DisableAction($Ident); // Disable variable in GUI
+						
 						$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargerLockState','ChargerId'=>$chargerId, 'State' => $Value];
 						break;
 					case 'protectaccess':
-						$this->DisableAction($Ident); // Disable variable in GUI
 						$this->SetValue($Ident, $Value);
+						$this->DisableAction($Ident); // Disable variable in GUI
+						
 						$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargerAccessLevel','ChargerId'=>$chargerId, 'UseKey' => $Value];
 						break;
 					case 'startcharging':
 						if($Value>0){
-							$this->DisableAction($Ident); // Disable variable in GUI
+							IPS_SetVariableCustomProfile($this->GetIDForIdent($Ident), 'EHCH.StartCharging.Processing');
 							$this->SetValue($Ident, $Value);
+							$this->DisableAction($Ident); // Disable variable in GUI
+							
 							$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargingState','ChargerId'=>$chargerId, 'State' => $Value==1?true:false];
 						}
 						break;
@@ -276,6 +280,7 @@ include __DIR__ . "/../libs/traits.php";
 				$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerState','ChargerId'=>$ChargerId];
 		
 				$this->SetValue('StartCharging', 0);
+				IPS_SetVariableCustomProfile($this->GetIDForIdent('StartCharging'), 'EHCH.StartCharging'); 
 
 				return $request;
 			}
