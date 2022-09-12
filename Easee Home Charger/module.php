@@ -33,8 +33,8 @@ include __DIR__ . "/../libs/traits.php";
 			]);
 
 			$this->RegisterProfileIntegerEx('EHCH.StartCharging.Processing', 'Power', '', '', [
-				[1+2, 'Starting...', '', -1],
-				[2+2, 'Stopping... ', '', -1]
+				[1, 'Starting...', '', -1],
+				[2, 'Stopping... ', '', -1]
 			]);
 
 			$this->RegisterProfileBooleanEx('EHCH.LockCable', 'Lock', '', '', [
@@ -145,8 +145,8 @@ include __DIR__ . "/../libs/traits.php";
 						break;
 					case 'startcharging':
 						if($Value>0){
-							IPS_SetVariableCustomProfile($this->GetIDForIdent($Ident), 'EHCH.StartCharging.Processing');
-							$this->SetValue($Ident, $Value+2);
+							//IPS_SetVariableCustomProfile($this->GetIDForIdent($Ident), 'EHCH.StartCharging.Processing');
+							$this->SetValue($Ident, $Value);
 							$this->DisableAction($Ident); // Disable variable in GUI
 							
 							$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargingState','ChargerId'=>$chargerId, 'State' => $Value==1?true:false];
@@ -206,7 +206,7 @@ include __DIR__ . "/../libs/traits.php";
 					$function = strtolower($data->Buffer->Function);
 					switch($function) {
 						case 'getchargerstate':
-							IPS_SetVariableCustomProfile($this->GetIDForIdent('StartCharging'), 'EHCH.StartCharging'); 
+							//IPS_SetVariableCustomProfile($this->GetIDForIdent('StartCharging'), 'EHCH.StartCharging'); 
 							$this->SetValue('StartCharging', 0);
 							$this->EnableAction('StartCharging');
 							
