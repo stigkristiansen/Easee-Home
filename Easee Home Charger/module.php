@@ -322,6 +322,9 @@ include __DIR__ . "/../libs/traits.php";
 											
 											$value = ['CommandId'=>$commandId, 'Ticks'=>$ticks];
 											$script = "IPS_RequestAction(" . (string)$this->InstanceID . " ,'GetCommandState', '" . json_encode($value) . "');";
+
+											$this->SendDebug(IPS_GetName($this->InstanceID), 'Waiting for 1s to throttle down the queries');
+											sleep(1):
 											
 											$this->RegisterOnceTimer('EaseeChargerGetCommandState' . (string)$this->InstanceID, $script); 
 										} else {
