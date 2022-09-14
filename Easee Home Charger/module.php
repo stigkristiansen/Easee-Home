@@ -6,6 +6,7 @@ include __DIR__ . "/../libs/traits.php";
 
 	class EaseeHomeCharger extends IPSModule {
 		use Profiles;
+		use Buffer;
 
 		public function Create(){
 			//Never delete this line!
@@ -97,6 +98,8 @@ include __DIR__ . "/../libs/traits.php";
 			parent::MessageSink($TimeStamp, $SenderID, $Message, $Data);
 
 			if ($Message == IPS_KERNELMESSAGE && $Data[0] == KR_READY) {
+				$ticksTable[];
+				$this->UpdateBuffer('Ticks', $ticksTable);
 				$this->InitTimer();
 			}
 		}
@@ -240,10 +243,33 @@ include __DIR__ . "/../libs/traits.php";
 							break;
 						case 'setchargerlockstate':
 						case 'setchargingstate':
-							$value = ['CommandId'=>$result->commandId, 'Ticks'=>$result->ticks];
-							$script = "IPS_RequestAction(" . (string)$this->InstanceID . " ,'GetCommandState', '" . json_encode($value) . "');";
+							$commandId = -1;
+							if(isset($result->commandId)) {
+								$commandId =  $result->commandId;
+							}
 
-							$this->RegisterOnceTimer('EaseeChargerGetCommandState' . (string)$this->InstanceID, $script); // Call GetCommandState in A new thread
+							$ticks = -1;
+							if(isset($result->ticks)) {
+								$ticks = $result->ticks;
+							}
+
+							if($commandId>=0 && $ticks>=0) {
+								$value = ['CommandId'=>$commandId, 'Ticks'=>$ticks];
+								$script = "IPS_RequestAction(" . (string)$this->InstanceID . " ,'GetCommandState', '" . json_encode($value) . "');";
+								
+								$ticksTable = $this->FetchBuffer('Ticks');
+								$ticksTable[(string)$ticks] = 1;
+								$this->UpdateBuffer('Ticks', $ticksTable);
+
+								$this->RegisterOnceTimer('EaseeChargerGetCommandState' . (string)$this->InstanceID, $script); // Call GetCommandState in A new thread	
+							} else {
+								throw new Exception('Invalid data receieved from parent. Missing or invalid CommandId of Ticks');
+							}
+
+							//$value = ['CommandId'=>$result->commandId, 'Ticks'=>$result->ticks];
+							//$script = "IPS_RequestAction(" . (string)$this->InstanceID . " ,'GetCommandState', '" . json_encode($value) . "');";
+
+							//$this->RegisterOnceTimer('EaseeChargerGetCommandState' . (string)$this->InstanceID, $script); // Call GetCommandState in A new thread
 
 							break;
 						case 'setchargeraccesslevel':
@@ -252,6 +278,68 @@ include __DIR__ . "/../libs/traits.php";
 							
 							break;
 						case 'getcommandstate':
+							$commandId = -1;
+							if(isset($result->id)) {
+								$commandId =  $result->id;
+							}
+
+							$ticks = -1;
+							if(isset($result->ticks)) {
+								$ticks = $result->ticks;
+							}
+
+							$resultCode = -1;
+							if(isset($result->resultCode)) {
+								$resultCode = $result->resultCode;
+							}
+
+							if($commandId>=0 && $ticks>=0 && $resultCode>=0) {
+								$ticksTable = $this->FetchBuffer('Ticks');
+								if(array_key_exists((string)$ticks, $ticksTable)) {
+									$count = $ticksTable[(string)$ticks];
+								} else {
+									$count = 0;
+								}
+
+								switch($resultCode) {
+									case 2:
+									case 3:
+									case 4:
+										if($count>0) {
+											unset($ticksTable[(string)$ticks]);
+											$this->UpdateBuffer('Ticks', $ticksTable);
+										}
+										
+										$this->SendDebug(IPS_GetName($this->InstanceID), 'Quering for new charging state in 1s', 0);
+										$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, 1000); 
+
+										break;
+									default:
+										if($count<10) {
+											$count++;
+											$ticksTable[(string)$ticks] = $count;
+											$this->UpdateBuffer('Ticks', $ticksTable);
+											
+											$value = ['CommandId'=>$commandId, 'Ticks'=>$ticks];
+											$script = "IPS_RequestAction(" . (string)$this->InstanceID . " ,'GetCommandState', '" . json_encode($value) . "');";
+							
+											$this->RegisterOnceTimer('EaseeChargerGetCommandState' . (string)$this->InstanceID, $script); 
+										} else {
+											if(count>0) {
+												unset($ticksTable[(string)$ticks]);
+												$this->UpdateBuffer('Ticks', $ticksTable);
+											}
+
+											$this->SendDebug(IPS_GetName($this->InstanceID), 'Quering for new charging state in 1s', 0);
+											$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, 1000); 
+										}
+
+										break;
+								}
+							} else {
+								throw new Exception('Invalid data receieved from parent. Missing or invalid CommandId, Ticks or ResultCode');
+							}
+
 							break;
 						default:
 							throw new Exception(sprintf('Unknown function "%s()" receeived in repsponse from gateway', $function));
