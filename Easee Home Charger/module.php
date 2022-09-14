@@ -257,7 +257,7 @@ include __DIR__ . "/../libs/traits.php";
 								$value = ['CommandId'=>$commandId, 'Ticks'=>$ticks];
 								$script = "IPS_RequestAction(" . (string)$this->InstanceID . " ,'GetCommandState', '" . json_encode($value) . "');";
 								
-								$ticksTable = $this->FetchBuffer('Ticks');
+								$ticksTable = $this->FetchBuffer('Ticks', true);
 								$ticksTable[(string)$ticks] = 1;
 								$this->UpdateBuffer('Ticks', $ticksTable);
 
@@ -294,7 +294,7 @@ include __DIR__ . "/../libs/traits.php";
 							}
 
 							if($commandId>=0 && $ticks>=0 && $resultCode>=0) {
-								$ticksTable = $this->FetchBuffer('Ticks');
+								$ticksTable = $this->FetchBuffer('Ticks', true);
 								if(array_key_exists((string)$ticks, $ticksTable)) {
 									$count = $ticksTable[(string)$ticks];
 								} else {

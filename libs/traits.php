@@ -24,9 +24,9 @@ trait Buffer {
 		$this->UpdateBufferRaw($Name, json_encode($Value));
 	}
 
-	private function FetchBuffer(string $Name) {
+	private function FetchBuffer(string $Name, bool $AsArrays=false) {
 		$value = $this->FetchBufferRaw($Name);
-		return json_decode($value);
+		return json_decode($value, $AsArrays);
 	}
 
 	private function FetchBufferRaw(string $Name) {
