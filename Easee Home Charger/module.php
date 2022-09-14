@@ -310,7 +310,7 @@ include __DIR__ . "/../libs/traits.php";
 									case 4:
 										if($count>0) {
 											unset($ticksTable[(string)$ticks]);
-											$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('This was the last call for GetCommandState for now. Updated TicksTable is: %s', json_encode($ticksTable)), 0);
+											$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('This was the last call to GetCommandState for now. Updated TicksTable is: %s', json_encode($ticksTable)), 0);
 											$this->UpdateBuffer('Ticks', $ticksTable);
 										}
 										
@@ -319,7 +319,7 @@ include __DIR__ . "/../libs/traits.php";
 
 										break;
 									default:
-										if($count<10) {
+										if($count<30) {
 											$count++;
 											$ticksTable[(string)$ticks] = $count;
 											$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Recalling GetCommandState. Updated TicksTable is: %s', json_encode($ticksTable)), 0);
@@ -338,6 +338,8 @@ include __DIR__ . "/../libs/traits.php";
 												$this->UpdateBuffer('Ticks', $ticksTable);
 											}
 
+											$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('This was the last call to GetCommandState for now. Updated TicksTable is: %s', json_encode($ticksTable)), 0);
+											
 											$this->SendDebug(IPS_GetName($this->InstanceID), 'Quering for new charging state in 1s', 0);
 											$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, 1000); 
 										}
