@@ -98,7 +98,7 @@ include __DIR__ . "/../libs/traits.php";
 			parent::MessageSink($TimeStamp, $SenderID, $Message, $Data);
 
 			if ($Message == IPS_KERNELMESSAGE && $Data[0] == KR_READY) {
-				$ticksTable[];
+				$ticksTable = [];
 				$this->UpdateBuffer('Ticks', $ticksTable);
 				$this->InitTimer();
 			}
