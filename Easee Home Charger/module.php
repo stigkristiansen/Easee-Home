@@ -241,12 +241,13 @@ include __DIR__ . "/../libs/traits.php";
 						case 'setchargerlockstate':
 						case 'setchargeraccesslevel':
 						case 'setchargingstate':
+							$this->SendDebug(IPS_GetName($this->InstanceID), 'Setting timer EaseeChargerRefresh to 10 000 ms', 0);
 							$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, 10000); // Do a extra refresh after a change in configuration
 
 							$value = ['CommandId'=>$result->commandId, 'Ticks'=>$result->ticks];
 							$script = "IPS_RequestAction(" . (string)$this->InstanceID . " ,'GetCommandState', '" . json_encode($value) . "');";
 
-							$this->RegisterOnceTimer('EaseeChargerGetCommandState', $script); // Call GetCommandState in new thread
+							$this->RegisterOnceTimer('EaseeChargerGetCommandState' . (string)$this->InstanceID, $script); // Call GetCommandState in A new thread
 							
 							break;
 						case 'getcommandstate':
