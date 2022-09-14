@@ -296,7 +296,7 @@ include __DIR__ . "/../libs/traits.php";
 							if($commandId>=0 && $ticks>=0 && $resultCode>=0) {
 								$ticksTable = $this->FetchBuffer('Ticks', true);
 
-								$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('TicksTable is: %s', json_encode($ticksTable)), 0);
+								$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Fetch the TicksTable. The table is: %s', json_encode($ticksTable)), 0);
 
 								if(array_key_exists((string)$ticks, $ticksTable)) {
 									$count = $ticksTable[(string)$ticks];
@@ -310,7 +310,7 @@ include __DIR__ . "/../libs/traits.php";
 									case 4:
 										if($count>0) {
 											unset($ticksTable[(string)$ticks]);
-											$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Updated TicksTable is: %s', json_encode($ticksTable)), 0);
+											$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('This was the last call for GetCommandState for now. Updated TicksTable is: %s', json_encode($ticksTable)), 0);
 											$this->UpdateBuffer('Ticks', $ticksTable);
 										}
 										
@@ -322,7 +322,7 @@ include __DIR__ . "/../libs/traits.php";
 										if($count<10) {
 											$count++;
 											$ticksTable[(string)$ticks] = $count;
-											$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Updated TicksTable is: %s', json_encode($ticksTable)), 0);
+											$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Recalling GetCommandState. Updated TicksTable is: %s', json_encode($ticksTable)), 0);
 											$this->UpdateBuffer('Ticks', $ticksTable);
 											
 											usleep(1000);
