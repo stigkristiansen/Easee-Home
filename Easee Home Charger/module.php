@@ -320,10 +320,11 @@ include __DIR__ . "/../libs/traits.php";
 											$ticksTable[(string)$ticks] = $count;
 											$this->UpdateBuffer('Ticks', $ticksTable);
 											
-											usleep(500);
+											usleep(1000);
 
 											$value = ['CommandId'=>$commandId, 'Ticks'=>$ticks];
 											$script = "IPS_RequestAction(" . (string)$this->InstanceID . " ,'GetCommandState', '" . json_encode($value) . "');";
+											
 											$this->RegisterOnceTimer('EaseeChargerGetCommandState' . (string)$this->InstanceID, $script); 
 										} else {
 											if(count>0) {
