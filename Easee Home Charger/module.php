@@ -310,6 +310,7 @@ include __DIR__ . "/../libs/traits.php";
 									case 4:
 										if($count>0) {
 											unset($ticksTable[(string)$ticks]);
+											$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Updated TicksTable is: %s', json_encode($ticksTable)), 0);
 											$this->UpdateBuffer('Ticks', $ticksTable);
 										}
 										
@@ -321,6 +322,7 @@ include __DIR__ . "/../libs/traits.php";
 										if($count<10) {
 											$count++;
 											$ticksTable[(string)$ticks] = $count;
+											$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Updated TicksTable is: %s', json_encode($ticksTable)), 0);
 											$this->UpdateBuffer('Ticks', $ticksTable);
 											
 											usleep(1000);
