@@ -239,16 +239,16 @@ include __DIR__ . "/../libs/traits.php";
 							}
 							break;
 						case 'setchargerlockstate':
-						case 'setchargeraccesslevel':
+						case 'setchargingstate':
 							$value = ['CommandId'=>$result->commandId, 'Ticks'=>$result->ticks];
 							$script = "IPS_RequestAction(" . (string)$this->InstanceID . " ,'GetCommandState', '" . json_encode($value) . "');";
 
 							$this->RegisterOnceTimer('EaseeChargerGetCommandState' . (string)$this->InstanceID, $script); // Call GetCommandState in A new thread
 
 							break;
-						case 'setchargingstate':
-							$this->SendDebug(IPS_GetName($this->InstanceID), 'Quering for new charging state in 10s', 0);
-							$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, 10000); // Do a extra refresh after a change in configuration
+						case 'setchargeraccesslevel':
+							$this->SendDebug(IPS_GetName($this->InstanceID), 'Quering for new charging state in 15s', 0);
+							$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, 15000); // Do a extra refresh after a change in configuration
 							
 							break;
 						case 'getcommandstate':
