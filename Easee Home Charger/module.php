@@ -326,7 +326,7 @@ include __DIR__ . "/../libs/traits.php";
 											$this->UpdateBuffer('Ticks', $ticksTable);
 											
 											$this->SendDebug(IPS_GetName($this->InstanceID), 'Waiting 1s to throttle down the requests', 0);
-											sleep(1000);
+											sleep(1);
 
 											$value = ['CommandId'=>$commandId, 'Ticks'=>$ticks];
 											$script = "IPS_RequestAction(" . (string)$this->InstanceID . " ,'GetCommandState', '" . json_encode($value) . "');";
