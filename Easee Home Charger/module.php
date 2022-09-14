@@ -295,7 +295,7 @@ include __DIR__ . "/../libs/traits.php";
 
 							if($commandId>=0 && $ticks>=0 && $resultCode>=0) {
 								$ticksTable = $this->FetchBuffer('Ticks');
-								if(isset($ticksTable[(string)$ticks])) {
+								if(array_key_exists((string)$ticks, $ticksTable)) {
 									$count = $ticksTable[(string)$ticks];
 								} else {
 									$count = 0;
