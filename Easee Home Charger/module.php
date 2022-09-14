@@ -309,8 +309,8 @@ include __DIR__ . "/../libs/traits.php";
 											$this->UpdateBuffer('Ticks', $ticksTable);
 										}
 										
-										$this->SendDebug(IPS_GetName($this->InstanceID), 'Quering for new charger status in 5s', 0);
-										$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, 5000); 
+										$this->SendDebug(IPS_GetName($this->InstanceID), 'Quering for new charger status in 15s', 0);
+										$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, 15000); 
 
 										break;
 									default:
@@ -320,9 +320,6 @@ include __DIR__ . "/../libs/traits.php";
 											$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Recalling GetCommandState. Updated TicksTable is: %s', json_encode($ticksTable)), 0);
 											$this->UpdateBuffer('Ticks', $ticksTable);
 											
-											//$this->SendDebug(IPS_GetName($this->InstanceID), 'Waiting 1s to throttle down the requests', 0);
-											///sleep(1);
-
 											$value = ['CommandId'=>$commandId, 'Ticks'=>$ticks];
 											$script = "IPS_RequestAction(" . (string)$this->InstanceID . " ,'GetCommandState', '" . json_encode($value) . "');";
 											
@@ -335,8 +332,8 @@ include __DIR__ . "/../libs/traits.php";
 
 											$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('This was the last call to GetCommandState for now. Updated TicksTable is: %s', json_encode($ticksTable)), 0);
 											
-											$this->SendDebug(IPS_GetName($this->InstanceID), 'Quering for new charger status in 5s', 0);
-											$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID,5000); 
+											$this->SendDebug(IPS_GetName($this->InstanceID), 'Quering for new charger status in 15s', 0);
+											$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID,15000); 
 										}
 
 										break;
