@@ -335,8 +335,8 @@ include __DIR__ . "/../libs/traits.php";
 
 											$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('This was the last call to GetCommandState for now. Updated TicksTable is: %s', json_encode($ticksTable)), 0);
 											
-											$this->SendDebug(IPS_GetName($this->InstanceID), 'Quering for new charger status in 1s', 0);
-											$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, 1000); 
+											$this->SendDebug(IPS_GetName($this->InstanceID), 'Quering for new charger status in 5s', 0);
+											$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, 5000); 
 										}
 
 										break;
