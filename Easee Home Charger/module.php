@@ -266,14 +266,9 @@ include __DIR__ . "/../libs/traits.php";
 								throw new Exception('Invalid data receieved from parent. Missing or invalid CommandId of Ticks');
 							}
 
-							//$value = ['CommandId'=>$result->commandId, 'Ticks'=>$result->ticks];
-							//$script = "IPS_RequestAction(" . (string)$this->InstanceID . " ,'GetCommandState', '" . json_encode($value) . "');";
-
-							//$this->RegisterOnceTimer('EaseeChargerGetCommandState' . (string)$this->InstanceID, $script); // Call GetCommandState in A new thread
-
 							break;
 						case 'setchargeraccesslevel':
-							$this->SendDebug(IPS_GetName($this->InstanceID), 'Quering for new charging state in 15s', 0);
+							$this->SendDebug(IPS_GetName($this->InstanceID), 'Quering for new charger status in 15s', 0);
 							$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, 15000); // Do a extra refresh after a change in configuration
 							
 							break;
@@ -314,7 +309,7 @@ include __DIR__ . "/../libs/traits.php";
 											$this->UpdateBuffer('Ticks', $ticksTable);
 										}
 										
-										$this->SendDebug(IPS_GetName($this->InstanceID), 'Quering for new charging state in 1s', 0);
+										$this->SendDebug(IPS_GetName($this->InstanceID), 'Quering for new charger status in 1s', 0);
 										$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, 1000); 
 
 										break;
@@ -340,7 +335,7 @@ include __DIR__ . "/../libs/traits.php";
 
 											$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('This was the last call to GetCommandState for now. Updated TicksTable is: %s', json_encode($ticksTable)), 0);
 											
-											$this->SendDebug(IPS_GetName($this->InstanceID), 'Quering for new charging state in 1s', 0);
+											$this->SendDebug(IPS_GetName($this->InstanceID), 'Quering for new charger status in 1s', 0);
 											$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, 1000); 
 										}
 
