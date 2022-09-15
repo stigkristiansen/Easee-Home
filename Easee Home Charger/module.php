@@ -113,7 +113,7 @@ include __DIR__ . "/../libs/traits.php";
 						
 						break;
 					case 'refresh':
-						if($Value===0) {
+						if($Value==0) {
 							$request = $this->Refresh($chargerId);							
 						} else {
 							$request = $this->Refresh($chargerId, $Value);
