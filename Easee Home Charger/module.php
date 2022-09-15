@@ -291,7 +291,7 @@ include __DIR__ . "/../libs/traits.php";
 										$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, 10000); 
 
 										$value = ['Ident'=> $ident];
-										$script = "sleep(10);IPS_RequestAction(" . (string)$this->InstanceID . " ,'Refresh', '" . json_encode($value) . "');";
+										$script = "sleep(10);IPS_RequestAction(" . (string)$this->InstanceID . " ,'Refresh', '" . $ident . "');";
 
 										$this->RegisterOnceTimer('EaseeChargerRefreshOnce' . (string)$this->InstanceID, $script); 
 										//$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID,10000); 
@@ -314,8 +314,7 @@ include __DIR__ . "/../libs/traits.php";
 											$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('This was the last call to GetCommandState for now. Count is %d', $count), 0);
 											$this->SendDebug(IPS_GetName($this->InstanceID), 'Quering for new charger status in 10s', 0);
 
-											$value = ['Ident'=> $ident];
-											$script = "sleep(10);IPS_RequestAction(" . (string)$this->InstanceID . " ,'Refresh', '" . json_encode($value) . "');";
+											$script = "sleep(10);IPS_RequestAction(" . (string)$this->InstanceID . " ,'Refresh', '" . $ident . "');";
 
 											$this->RegisterOnceTimer('EaseeChargerRefreshOnce' . (string)$this->InstanceID, $script); 
 											//$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID,10000); 
