@@ -322,7 +322,7 @@ include __DIR__ . "/../libs/traits.php";
 											$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Recalling GetCommandState. Updated TicksTable is: %s', json_encode($ticksTable)), 0);
 											$this->UpdateBuffer('Ticks', $ticksTable);
 											
-											$value = ['CommandId'=>$commandId, 'Ticks'=>$ticks];
+											$value = ['CommandId'=>$commandId, 'Ticks'=>$ticks, 'Ident'=> $data->Buffer->Ident, 'Count'=>$data->Buffer->Count+1];
 											$script = "IPS_RequestAction(" . (string)$this->InstanceID . " ,'GetCommandState', '" . json_encode($value) . "');";
 
 											$this->SendDebug(IPS_GetName($this->InstanceID), 'Waiting 1s to throttle down the queries', 0);
