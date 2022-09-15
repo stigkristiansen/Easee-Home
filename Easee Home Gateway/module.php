@@ -318,17 +318,17 @@ class EaseeHomeGateway extends IPSModule
 				$this->AddTokenToBuffer(null);	
 			}
 
-			$return['Success'] = false;
-			$return['Result'] = $e->getMessage();
 			$return['Ident'] = $Ident;
 			$return['Count'] = $Count;
+			$return['Success'] = false;
+			$return['Result'] = $e->getMessage();
 		}
 
 		if(!isset($return['Success'])) {
-			$return['Success'] = true;
-			$return['Result'] = $result;
 			$return['Ident'] = $Ident;
 			$return['Count'] = $Count;
+			$return['Success'] = true;
+			$return['Result'] = $result;
 		}
 		
 		$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Sending the result back to the child with Id %s', (string)$ChildId), 0);
