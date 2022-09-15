@@ -93,26 +93,11 @@ include __DIR__ . "/../libs/traits.php";
 			parent::MessageSink($TimeStamp, $SenderID, $Message, $Data);
 
 			if ($Message == IPS_KERNELMESSAGE && $Data[0] == KR_READY) {
-				//$ticksTable = [];
-				//$this->UpdateBuffer('Ticks', $ticksTable);
 				$this->InitTimer();
 			}
 		}
 
-		private function GetCommandStateReqest(string $ChargerId, string $Value) {
-			$jsonValue = json_decode($Value);
 
-			$request[] = ['ChildId'=>(string)$this->InstanceID,
-						'Function'=>'GetCommandState',
-						'ChargerId'=>$ChargerId,
-						'CommandId'=>$jsonValue->CommandId,
-						'Ticks'=>$jsonValue->Ticks,
-						'Ident'=>$jsonValue->Ident,
-						'Count'=>$jsonValue->Count 
-					   ];
-
-			return $request;
-		}
 
 		public function RequestAction($Ident, $Value) {
 			try {
@@ -128,7 +113,12 @@ include __DIR__ . "/../libs/traits.php";
 						//$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('RequestAction:GetCommandState: %s', $Value), 0);
 						break;
 					case 'refresh':
-						$request = $this->Refresh($chargerId);
+						if(is_string($Value)) {
+							$request = $this->Refresh($chargerId, $Value);
+						} else {
+							$request = $this->Refresh($chargerId);
+						}
+						
 						$this->InitTimer(); // Reset timer back to configured interval
 						break;
 					case 'lockcable':
@@ -300,29 +290,11 @@ include __DIR__ . "/../libs/traits.php";
 								$count = $data->Buffer->Count;
 							}
 
-
-
 							if($commandId>=0 && $ticks>=0 && $resultCode>=0 && strlen($ident)>0 && $count>=0) {
-								//$ticksTable = $this->FetchBuffer('Ticks', true);
-
-								$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Fetched the TicksTable. The table is: %s', json_encode($ticksTable)), 0);
-
-								/*if(array_key_exists((string)$ticks, $ticksTable)) {
-									$count = $ticksTable[(string)$ticks];
-								} else {
-									$count = 0;
-								}*/
-
 								switch($resultCode) {
 									case 2:
 									case 3:
 									case 4:
-										/*if($count>0) {
-											unset($ticksTable[(string)$ticks]);
-											$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('This was the last call to GetCommandState for now. Updated TicksTable is: %s', json_encode($ticksTable)), 0);
-											$this->UpdateBuffer('Ticks', $ticksTable);
-										}*/
-
 										$this->SendDebug(IPS_GetName($this->InstanceID), 'Quering for new charger status in 10s', 0);
 										$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, 10000); 
 
@@ -330,9 +302,6 @@ include __DIR__ . "/../libs/traits.php";
 									default:
 										if($count<30) {
 											$count++;
-											//$ticksTable[(string)$ticks] = $count;
-											//$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Recalling GetCommandState. Updated TicksTable is: %s', json_encode($ticksTable)), 0);
-											//$this->UpdateBuffer('Ticks', $ticksTable);
 
 											$value = ['CommandId'=>$commandId, 'Ticks'=>$ticks, 'Ident'=> $data->Buffer->Ident, 'Count'=>$count];
 											$script = "IPS_RequestAction(" . (string)$this->InstanceID . " ,'GetCommandState', '" . json_encode($value) . "');";
@@ -344,13 +313,6 @@ include __DIR__ . "/../libs/traits.php";
 
 											$this->RegisterOnceTimer('EaseeChargerGetCommandState' . (string)$this->InstanceID, $script); 
 										} else {
-											/*if(count>0) {
-												unset($ticksTable[(string)$ticks]);
-												$this->UpdateBuffer('Ticks', $ticksTable);
-											}*/
-
-											//$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('This was the last call to GetCommandState for now. Updated TicksTable is: %s', json_encode($ticksTable)), 0);
-																					
 											$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('This was the last call to GetCommandState for now. Count is %d', $count), 0);
 											$this->SendDebug(IPS_GetName($this->InstanceID), 'Quering for new charger status in 10s', 0);
 
@@ -388,13 +350,35 @@ include __DIR__ . "/../libs/traits.php";
 			$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, 0); 
 		}
 
-		private function Refresh(string $ChargerId) : array{
+		private function Refresh(string $ChargerId, $Value=null) : array{
 			if(strlen($ChargerId)>0) {
-				$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerConfig','ChargerId'=>$ChargerId];
+				if($Value!==null) {
+					$jsonValue = json_decode($Value);
+
+					$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerConfig','ChargerId'=>$ChargerId, 'Ident'=>$jsonValue->Ident];
+				} else {
+					$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerConfig','ChargerId'=>$ChargerId];
+				}
+				
 				$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerState','ChargerId'=>$ChargerId];
 					
 				return $request;
 			}
+		}
+
+		private function GetCommandStateReqest(string $ChargerId, string $Value) {
+			$jsonValue = json_decode($Value);
+
+			$request[] = ['ChildId'=>(string)$this->InstanceID,
+						'Function'=>'GetCommandState',
+						'ChargerId'=>$ChargerId,
+						'CommandId'=>$jsonValue->CommandId,
+						'Ticks'=>$jsonValue->Ticks,
+						'Ident'=>$jsonValue->Ident,
+						'Count'=>$jsonValue->Count 
+					   ];
+
+			return $request;
 		}
 
 		private function SetValueEx(string $Ident, $Value) {
