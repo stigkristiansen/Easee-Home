@@ -113,11 +113,7 @@ include __DIR__ . "/../libs/traits.php";
 						
 						break;
 					case 'refresh':
-						if($Value==0) {
-							$request = $this->Refresh($chargerId);							
-						} else {
-							$request = $this->Refresh($chargerId, $Value);
-						}
+						$request = $this->Refresh($chargerId, $Value);
 						
 						$this->InitTimer(); // Reset timer back to configured interval
 						break;
@@ -356,12 +352,12 @@ include __DIR__ . "/../libs/traits.php";
 			$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, 0); 
 		}
 
-		private function Refresh(string $ChargerId, $Ident=null) : array{
+		private function Refresh(string $ChargerId, $Ident) : array{
 			if(strlen($ChargerId)>0) {
-				if($Ident===null) {
-					$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerConfig','ChargerId'=>$ChargerId];
-				} else {
+				if(is_string($Ident)) {
 					$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerConfig','ChargerId'=>$ChargerId, 'Ident'=>$Ident];
+				} else {
+					$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerConfig','ChargerId'=>$ChargerId];
 				}
 				
 				$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerState','ChargerId'=>$ChargerId];
