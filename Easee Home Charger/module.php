@@ -297,7 +297,7 @@ include __DIR__ . "/../libs/traits.php";
 
 							$count = -1;
 							if(isset($data->Buffer->Count)) {
-								$ident = $data->Buffer->Count;
+								$count = $data->Buffer->Count;
 							}
 
 
