@@ -354,10 +354,10 @@ include __DIR__ . "/../libs/traits.php";
 
 		private function Refresh(string $ChargerId, $Ident) : array{
 			if(strlen($ChargerId)>0) {
-				if(is_string($Ident)) {
-					$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerConfig','ChargerId'=>$ChargerId, 'Ident'=>$Ident];
-				} else {
+				if($Ident=='0') {
 					$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerConfig','ChargerId'=>$ChargerId];
+				} else {
+					$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerConfig','ChargerId'=>$ChargerId, 'Ident'=>$Ident];
 				}
 				
 				$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerState','ChargerId'=>$ChargerId];
