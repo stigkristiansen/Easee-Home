@@ -248,11 +248,7 @@ include __DIR__ . "/../libs/traits.php";
 							if($commandId>=0 && $ticks>=0) {
 								$value = ['CommandId'=>$commandId, 'Ticks'=>$ticks, 'Ident' => $ident, 'Count' => 0] ;
 								$script = "IPS_RequestAction(" . (string)$this->InstanceID . " ,'GetCommandState', '" . json_encode($value) . "');";
-								
-								$ticksTable = $this->FetchBuffer('Ticks', true);
-								$ticksTable[(string)$ticks] = 1;
-								$this->UpdateBuffer('Ticks', $ticksTable);
-
+																
 								$this->RegisterOnceTimer('EaseeChargerGetCommandState' . (string)$this->InstanceID, $script); // Call GetCommandState in A new thread	
 							} else {
 								throw new Exception('Invalid data receieved from parent. Missing or invalid CommandId of Ticks');
