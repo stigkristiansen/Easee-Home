@@ -219,8 +219,13 @@ class EaseeHomeGateway extends IPSModule
 					if(!isset($request->ChargerId)) {
 						throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "ChargerId" is missing. The request was "%s"', $request));
 					}
+
+					if(isset($request->Ident) && is_string($request->Ident)) {
+						$this->ExecuteEaseeRequest($childId, 'GetChargerConfig', array($request->ChargerId), $request->Ident);
+					} else {
+						$this->ExecuteEaseeRequest($childId, 'GetChargerConfig', array($request->ChargerId));
+					}
 					
-					$this->ExecuteEaseeRequest($childId, 'GetChargerConfig', array($request->ChargerId));
 					break;
 				case 'setchargerlockstate':
 					if(!isset($request->ChargerId)) {
