@@ -33,19 +33,9 @@ include __DIR__ . "/../libs/traits.php";
 				[2, 'Stop ', '', -1]
 			]);
 
-			$this->RegisterProfileIntegerEx('EHCH.StartCharging.Processing', 'Power', '', '', [
-				[1, 'Starting...', '', -1],
-				[2, 'Stopping... ', '', -1]
-			]);
-
 			$this->RegisterProfileBooleanEx('EHCH.LockCable', 'Lock', '', '', [
 				[true, 'Locking...', '', -1],
 				[false, 'Unlocking...', '', -1]
-			]);
-
-			$this->RegisterProfileBooleanEx('EHCH.Refresh', 'Lock', '', '', [
-				[true, 'Refreshing...', '', -1],
-				[false, 'Refreshing...', '', -1]
 			]);
 
 			$this->RegisterProfileBooleanEx('EHCH.ProtectAccess', 'Lock', '', '', [
@@ -116,7 +106,9 @@ include __DIR__ . "/../libs/traits.php";
 						'Function'=>'GetCommandState',
 						'ChargerId'=>$ChargerId,
 						'CommandId'=>$jsonValue->CommandId,
-						'Ticks'=>$jsonValue->Ticks
+						'Ticks'=>$jsonValue->Ticks,
+						'Ident'=>$jsonValue->Ident,
+						'Count'=>$jsonValue->Count 
 					   ];
 
 			return $request;
@@ -211,6 +203,7 @@ include __DIR__ . "/../libs/traits.php";
 
 				if($success) {
 					$function = strtolower($data->Buffer->Function);
+					$ident = '';
 					switch($function) {
 						case 'getchargerstate':
 							//IPS_SetVariableCustomProfile($this->GetIDForIdent('StartCharging'), 'EHCH.StartCharging'); 
@@ -246,7 +239,12 @@ include __DIR__ . "/../libs/traits.php";
 							}
 							break;
 						case 'setchargerlockstate':
+							$ident = 'LockCable';
 						case 'setchargingstate':
+							if(strlen($ident)==0) {
+								$ident = 'StartCharging';
+							}
+							
 							$commandId = -1;
 							if(isset($result->commandId)) {
 								$commandId =  $result->commandId;
@@ -258,7 +256,7 @@ include __DIR__ . "/../libs/traits.php";
 							}
 
 							if($commandId>=0 && $ticks>=0) {
-								$value = ['CommandId'=>$commandId, 'Ticks'=>$ticks];
+								$value = ['CommandId'=>$commandId, 'Ticks'=>$ticks, 'Ident' => $ident, 'Count' => 0] ;
 								$script = "IPS_RequestAction(" . (string)$this->InstanceID . " ,'GetCommandState', '" . json_encode($value) . "');";
 								
 								$ticksTable = $this->FetchBuffer('Ticks', true);
@@ -313,8 +311,6 @@ include __DIR__ . "/../libs/traits.php";
 											$this->UpdateBuffer('Ticks', $ticksTable);
 										}
 
-										IPS_SetVariableCustomProfile($this->GetIDForIdent($LockCable), 'EHCH.Refresh');
-										
 										$this->SendDebug(IPS_GetName($this->InstanceID), 'Quering for new charger status in 10s', 0);
 										$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, 10000); 
 
@@ -342,8 +338,6 @@ include __DIR__ . "/../libs/traits.php";
 											$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('This was the last call to GetCommandState for now. Updated TicksTable is: %s', json_encode($ticksTable)), 0);
 											
 											$this->SendDebug(IPS_GetName($this->InstanceID), 'Quering for new charger status in 10s', 0);
-
-											IPS_SetVariableCustomProfile($this->GetIDForIdent($LockCable), 'EHCH.Refresh');
 
 											$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID,10000); 
 										}

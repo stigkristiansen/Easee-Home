@@ -198,7 +198,15 @@ class EaseeHomeGateway extends IPSModule
 						throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "Tiks" is missing or is a invalid type. The request was "%s"', $request));
 					}
 
-					$this->ExecuteEaseeRequest($childId, 'GetCommandState', array($request->ChargerId, $request->CommandId, $request->Ticks));
+					if(!(isset($request->Ident) && is_string($request->Ident))) {
+						throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "Ident" is missing or is a invalid type. The request was "%s"', $request));
+					}
+
+					if(!(isset($request->Count) && is_integer($request->Count))) {
+						throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "Count" is missing or is a invalid type. The request was "%s"', $request));
+					}
+
+					$this->ExecuteEaseeRequest($childId, 'GetCommandState', array($request->ChargerId, $request->CommandId, $request->Ticks), $ident, $count);
 					break;
 				case 'getchargerstate':
 					if(!isset($request->ChargerId)) {
@@ -260,7 +268,7 @@ class EaseeHomeGateway extends IPSModule
 		}
 	}
 
-	private function ExecuteEaseeRequest(string $ChildId, string $Function, array $Args=null) {
+	private function ExecuteEaseeRequest(string $ChildId, string $Function, array $Args=null, string $Ident=null, int $Count=null) {
 		
 		$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Executing Easee::%s() for component with id %s...', $Function, isset($Args[0])?$Args[0]:'N/A'), 0);
 
@@ -307,11 +315,15 @@ class EaseeHomeGateway extends IPSModule
 
 			$return['Success'] = false;
 			$return['Result'] = $e->getMessage();
+			$return['Ident'] = $Ident;
+			$return['Count'] = $Count;
 		}
 
 		if(!isset($return['Success'])) {
 			$return['Success'] = true;
 			$return['Result'] = $result;
+			$return['Ident'] = $Ident;
+			$return['Count'] = $Count;
 		}
 		
 		$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Sending the result back to the child with Id %s', (string)$ChildId), 0);
