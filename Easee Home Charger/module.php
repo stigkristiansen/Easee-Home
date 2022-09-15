@@ -194,7 +194,10 @@ include __DIR__ . "/../libs/traits.php";
 						case 'getchargerstate':
 							//IPS_SetVariableCustomProfile($this->GetIDForIdent('StartCharging'), 'EHCH.StartCharging'); 
 							$this->SetValue('StartCharging', 0);
-							$this->EnableAction('StartCharging');
+							
+							if(isset($data->Buffer->Ident) ) {
+								$this->EnableAction($data->Buffer->Ident);  	
+							} 
 							
 							if(isset($result->chargerOpMode)) {
 								$this->SetValueEx('Status', $result->chargerOpMode);
@@ -213,9 +216,10 @@ include __DIR__ . "/../libs/traits.php";
 						case 'getproducts':
 							break;
 						case 'getchargerconfig':
-							$this->EnableAction('LockCable');  
-							$this->EnableAction('ProtectAccess'); 
-							
+							if(isset($data->Buffer->Ident) ) {
+								$this->EnableAction($data->Buffer->Ident);  	
+							} 
+																					
 							if(isset($result->lockCablePermanently)) {
 								$this->SetValueEx('LockCable', $result->lockCablePermanently);
 							}
