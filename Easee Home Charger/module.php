@@ -43,6 +43,11 @@ include __DIR__ . "/../libs/traits.php";
 				[false, 'Unlocking...', '', -1]
 			]);
 
+			$this->RegisterProfileBooleanEx('EHCH.Refresh', 'Lock', '', '', [
+				[true, 'Refreshing...', '', -1],
+				[false, 'Refreshing...', '', -1]
+			]);
+
 			$this->RegisterProfileBooleanEx('EHCH.ProtectAccess', 'Lock', '', '', [
 				[true, 'Protecting...', '', -1],
 				[false, 'Unprotecting...', '', -1]
@@ -148,7 +153,6 @@ include __DIR__ . "/../libs/traits.php";
 						break;
 					case 'startcharging':
 						if($Value>0){
-							//IPS_SetVariableCustomProfile($this->GetIDForIdent($Ident), 'EHCH.StartCharging.Processing');
 							$this->SetValue($Ident, $Value);
 							$this->DisableAction($Ident); // Disable variable in GUI
 							
@@ -308,6 +312,8 @@ include __DIR__ . "/../libs/traits.php";
 											$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('This was the last call to GetCommandState for now. Updated TicksTable is: %s', json_encode($ticksTable)), 0);
 											$this->UpdateBuffer('Ticks', $ticksTable);
 										}
+
+										IPS_SetVariableCustomProfile($this->GetIDForIdent($LockCable), 'EHCH.Refresh');
 										
 										$this->SendDebug(IPS_GetName($this->InstanceID), 'Quering for new charger status in 10s', 0);
 										$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, 10000); 
@@ -323,7 +329,7 @@ include __DIR__ . "/../libs/traits.php";
 											$value = ['CommandId'=>$commandId, 'Ticks'=>$ticks];
 											$script = "IPS_RequestAction(" . (string)$this->InstanceID . " ,'GetCommandState', '" . json_encode($value) . "');";
 
-											$this->SendDebug(IPS_GetName($this->InstanceID), 'Waiting for 1s to throttle down the queries', 0);
+											$this->SendDebug(IPS_GetName($this->InstanceID), 'Waiting 1s to throttle down the queries', 0);
 											sleep(1);
 											
 											$this->RegisterOnceTimer('EaseeChargerGetCommandState' . (string)$this->InstanceID, $script); 
@@ -336,6 +342,9 @@ include __DIR__ . "/../libs/traits.php";
 											$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('This was the last call to GetCommandState for now. Updated TicksTable is: %s', json_encode($ticksTable)), 0);
 											
 											$this->SendDebug(IPS_GetName($this->InstanceID), 'Quering for new charger status in 10s', 0);
+
+											IPS_SetVariableCustomProfile($this->GetIDForIdent($LockCable), 'EHCH.Refresh');
+
 											$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID,10000); 
 										}
 
