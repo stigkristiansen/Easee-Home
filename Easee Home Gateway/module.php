@@ -206,7 +206,7 @@ class EaseeHomeGateway extends IPSModule
 						throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "Count" is missing or is a invalid type. The request was "%s"', $request));
 					}
 
-					$this->ExecuteEaseeRequest($childId, 'GetCommandState', array($request->ChargerId, $request->CommandId, $request->Ticks), $ident, $count);
+					$this->ExecuteEaseeRequest($childId, 'GetCommandState', array($request->ChargerId, $request->CommandId, $request->Ticks), $request->Ident, $request->Count);
 					break;
 				case 'getchargerstate':
 					if(!isset($request->ChargerId)) {
