@@ -109,8 +109,8 @@ include __DIR__ . "/../libs/traits.php";
 				
 				switch (strtolower($Ident)) {
 					case 'getcommandstate':
-						$request = $this->GetCommandStateReqest($chargerId, $Value);
-						//$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('RequestAction:GetCommandState: %s', $Value), 0);
+						$request = $this->GetCommandStateRequest($chargerId, $Value);
+						
 						break;
 					case 'refresh':
 						if(is_string($Value)) {
@@ -294,6 +294,12 @@ include __DIR__ . "/../libs/traits.php";
 										$this->SendDebug(IPS_GetName($this->InstanceID), 'Quering for new charger status in 10s', 0);
 										$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, 10000); 
 
+										$value = ['Ident'=> $ident];
+										$script = "sleep(10);IPS_RequestAction(" . (string)$this->InstanceID . " ,'Refresh', '" . json_encode($value) . "');";
+
+										$this->RegisterOnceTimer('EaseeChargerRefreshOnce' . (string)$this->InstanceID, $script); 
+										//$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID,10000); 
+
 										break;
 									default:
 										if($count<30) {
@@ -312,7 +318,11 @@ include __DIR__ . "/../libs/traits.php";
 											$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('This was the last call to GetCommandState for now. Count is %d', $count), 0);
 											$this->SendDebug(IPS_GetName($this->InstanceID), 'Quering for new charger status in 10s', 0);
 
-											$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID,10000); 
+											$value = ['Ident'=> $ident];
+											$script = "sleep(10);IPS_RequestAction(" . (string)$this->InstanceID . " ,'Refresh', '" . json_encode($value) . "');";
+
+											$this->RegisterOnceTimer('EaseeChargerRefreshOnce' . (string)$this->InstanceID, $script); 
+											//$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID,10000); 
 										}
 
 										break;
@@ -362,7 +372,7 @@ include __DIR__ . "/../libs/traits.php";
 			}
 		}
 
-		private function GetCommandStateReqest(string $ChargerId, string $Value) {
+		private function GetCommandStateRequest(string $ChargerId, string $Value) {
 			$jsonValue = json_decode($Value);
 
 			$request[] = ['ChildId'=>(string)$this->InstanceID,
