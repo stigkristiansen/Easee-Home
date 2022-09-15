@@ -257,7 +257,12 @@ include __DIR__ . "/../libs/traits.php";
 							break;
 						case 'setchargeraccesslevel':
 							$this->SendDebug(IPS_GetName($this->InstanceID), 'Quering for new charger status in 10s', 0);
-							$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, 10000); // Do a extra refresh after a change in configuration
+							//$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, 10000); // Do a extra refresh after a change in configuration
+
+							$ident = 'ProtectAccess'; 
+							$script = "sleep(10);IPS_RequestAction(" . (string)$this->InstanceID . " ,'Refresh', '" . $ident . "');";
+
+							$this->RegisterOnceTimer('EaseeChargerRefreshOnce' . (string)$this->InstanceID, $script); 
 							
 							break;
 						case 'getcommandstate':
@@ -292,7 +297,7 @@ include __DIR__ . "/../libs/traits.php";
 									case 3:
 									case 4:
 										$this->SendDebug(IPS_GetName($this->InstanceID), 'Quering for new charger status in 10s', 0);
-										$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, 10000); 
+										//$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, 10000); 
 
 										$value = ['Ident'=> $ident];
 										$script = "sleep(10);IPS_RequestAction(" . (string)$this->InstanceID . " ,'Refresh', '" . $ident . "');";
