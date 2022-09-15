@@ -93,8 +93,8 @@ include __DIR__ . "/../libs/traits.php";
 			parent::MessageSink($TimeStamp, $SenderID, $Message, $Data);
 
 			if ($Message == IPS_KERNELMESSAGE && $Data[0] == KR_READY) {
-				$ticksTable = [];
-				$this->UpdateBuffer('Ticks', $ticksTable);
+				//$ticksTable = [];
+				//$this->UpdateBuffer('Ticks', $ticksTable);
 				$this->InitTimer();
 			}
 		}
@@ -290,26 +290,38 @@ include __DIR__ . "/../libs/traits.php";
 								$resultCode = $result->resultCode;
 							}
 
-							if($commandId>=0 && $ticks>=0 && $resultCode>=0) {
-								$ticksTable = $this->FetchBuffer('Ticks', true);
+							$ident = '';
+							if(isset($data->Buffer->Ident)) {
+								$ident = $data->Buffer->Ident;
+							}
+
+							$count = -1;
+							if(isset($data->Buffer->Count)) {
+								$ident = $data->Buffer->Count;
+							}
+
+
+
+							if($commandId>=0 && $ticks>=0 && $resultCode>=0 && strlen($ident>0 && $count>=0)) {
+								//$ticksTable = $this->FetchBuffer('Ticks', true);
 
 								$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Fetched the TicksTable. The table is: %s', json_encode($ticksTable)), 0);
 
-								if(array_key_exists((string)$ticks, $ticksTable)) {
+								/*if(array_key_exists((string)$ticks, $ticksTable)) {
 									$count = $ticksTable[(string)$ticks];
 								} else {
 									$count = 0;
-								}
+								}*/
 
 								switch($resultCode) {
 									case 2:
 									case 3:
 									case 4:
-										if($count>0) {
+										/*if($count>0) {
 											unset($ticksTable[(string)$ticks]);
 											$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('This was the last call to GetCommandState for now. Updated TicksTable is: %s', json_encode($ticksTable)), 0);
 											$this->UpdateBuffer('Ticks', $ticksTable);
-										}
+										}*/
 
 										$this->SendDebug(IPS_GetName($this->InstanceID), 'Quering for new charger status in 10s', 0);
 										$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, 10000); 
@@ -318,25 +330,28 @@ include __DIR__ . "/../libs/traits.php";
 									default:
 										if($count<30) {
 											$count++;
-											$ticksTable[(string)$ticks] = $count;
-											$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Recalling GetCommandState. Updated TicksTable is: %s', json_encode($ticksTable)), 0);
-											$this->UpdateBuffer('Ticks', $ticksTable);
-											
-											$value = ['CommandId'=>$commandId, 'Ticks'=>$ticks, 'Ident'=> $data->Buffer->Ident, 'Count'=>$data->Buffer->Count+1];
+											//$ticksTable[(string)$ticks] = $count;
+											//$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Recalling GetCommandState. Updated TicksTable is: %s', json_encode($ticksTable)), 0);
+											//$this->UpdateBuffer('Ticks', $ticksTable);
+
+											$value = ['CommandId'=>$commandId, 'Ticks'=>$ticks, 'Ident'=> $data->Buffer->Ident, 'Count'=>$count];
 											$script = "IPS_RequestAction(" . (string)$this->InstanceID . " ,'GetCommandState', '" . json_encode($value) . "');";
 
 											$this->SendDebug(IPS_GetName($this->InstanceID), 'Waiting 1s to throttle down the queries', 0);
 											sleep(1);
 											
+											$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Recalling GetCommandState. Count is: %d', $count), 0);
+
 											$this->RegisterOnceTimer('EaseeChargerGetCommandState' . (string)$this->InstanceID, $script); 
 										} else {
-											if(count>0) {
+											/*if(count>0) {
 												unset($ticksTable[(string)$ticks]);
 												$this->UpdateBuffer('Ticks', $ticksTable);
-											}
+											}*/
 
-											$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('This was the last call to GetCommandState for now. Updated TicksTable is: %s', json_encode($ticksTable)), 0);
-											
+											//$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('This was the last call to GetCommandState for now. Updated TicksTable is: %s', json_encode($ticksTable)), 0);
+																					
+											$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('This was the last call to GetCommandState for now. Count is %d', $count), 0);
 											$this->SendDebug(IPS_GetName($this->InstanceID), 'Quering for new charger status in 10s', 0);
 
 											$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID,10000); 
@@ -345,7 +360,7 @@ include __DIR__ . "/../libs/traits.php";
 										break;
 								}
 							} else {
-								throw new Exception('Invalid data receieved from parent. Missing or invalid CommandId, Ticks or ResultCode');
+								throw new Exception('Invalid data receieved from parent. Missing or invalid CommandId, Ticks, ResultCode, Ident or Count');
 							}
 
 							break;
