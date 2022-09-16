@@ -113,26 +113,26 @@ include __DIR__ . "/../libs/traits.php";
 						
 						break;
 					case 'refresh':
-						$request = $this->Refresh($chargerId, $Value);
+						$request = $this->RefreshRequest($chargerId, $Value);
 						
-						$this->InitTimer(); // Reset timer back to configured interval
+						$this->InitTimer(); // Reset timer back to configured interval until command has finished
 						break;
 					case 'lockcable':
 						$this->SetValue($Ident, $Value);
-						$this->DisableAction($Ident); // Disable variable in GUI
+						$this->DisableAction($Ident); // Disable variable in visualization until command has finished
 						
 						$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargerLockState','ChargerId'=>$chargerId, 'State' => $Value];
 						break;
 					case 'protectaccess':
 						$this->SetValue($Ident, $Value);
-						$this->DisableAction($Ident); // Disable variable in GUI
+						$this->DisableAction($Ident); // Disable variable in visualization  until command has finished
 						
 						$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargerAccessLevel','ChargerId'=>$chargerId, 'UseKey' => $Value];
 						break;
 					case 'startcharging':
 						if($Value>0){
 							$this->SetValue($Ident, $Value);
-							$this->DisableAction($Ident); // Disable variable in GUI
+							$this->DisableAction($Ident); // Disable variable in visualization until command has finished
 							
 							$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargingState','ChargerId'=>$chargerId, 'State' => $Value==1?true:false];
 						}
@@ -192,7 +192,6 @@ include __DIR__ . "/../libs/traits.php";
 					$ident = '';
 					switch($function) {
 						case 'getchargerstate':
-							//IPS_SetVariableCustomProfile($this->GetIDForIdent('StartCharging'), 'EHCH.StartCharging'); 
 							$this->SetValue('StartCharging', 0);
 							
 							if(isset($data->Buffer->Ident) ) {
@@ -216,7 +215,7 @@ include __DIR__ . "/../libs/traits.php";
 						case 'getproducts':
 							break;
 						case 'getchargerconfig':
-							if(isset($data->Buffer->Ident) ) {
+							if(isset($data->Buffer->Ident) ) { // Enable variable in visualization
 								$this->EnableAction($data->Buffer->Ident);  	
 							} 
 																					
@@ -257,12 +256,11 @@ include __DIR__ . "/../libs/traits.php";
 							break;
 						case 'setchargeraccesslevel':
 							$this->SendDebug(IPS_GetName($this->InstanceID), 'Quering for new charger status in 10s', 0);
-							//$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, 10000); // Do a extra refresh after a change in configuration
-
+							
 							$ident = 'ProtectAccess'; 
 							$script = "sleep(10);IPS_RequestAction(" . (string)$this->InstanceID . " ,'Refresh', '" . $ident . "');";
 
-							$this->RegisterOnceTimer('EaseeChargerRefreshOnce' . (string)$this->InstanceID, $script); 
+							$this->RegisterOnceTimer('EaseeChargerRefreshOnce' . (string)$this->InstanceID, $script);  // Call Refresh in A new thread
 							
 							break;
 						case 'getcommandstate':
@@ -297,17 +295,15 @@ include __DIR__ . "/../libs/traits.php";
 									case 3:
 									case 4:
 										$this->SendDebug(IPS_GetName($this->InstanceID), 'Quering for new charger status in 10s', 0);
-										//$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, 10000); 
-
+										
 										$value = ['Ident'=> $ident];
 										$script = "sleep(10);IPS_RequestAction(" . (string)$this->InstanceID . " ,'Refresh', '" . $ident . "');";
 
 										$this->RegisterOnceTimer('EaseeChargerRefreshOnce' . (string)$this->InstanceID, $script); 
-										//$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID,10000); 
-
+										
 										break;
 									default:
-										if($count<30) {
+										if($count<30) { // Retry 30 times to se if command has finished
 											$count++;
 
 											$value = ['CommandId'=>$commandId, 'Ticks'=>$ticks, 'Ident'=> $data->Buffer->Ident, 'Count'=>$count];
@@ -360,7 +356,7 @@ include __DIR__ . "/../libs/traits.php";
 			$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, 0); 
 		}
 
-		private function Refresh(string $ChargerId, $Ident) : array{
+		private function RefreshRequest(string $ChargerId, $Ident) : array {
 			if(strlen($ChargerId)>0) {
 				if($Ident=='0') {
 					$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerConfig','ChargerId'=>$ChargerId];
@@ -374,8 +370,31 @@ include __DIR__ . "/../libs/traits.php";
 			}
 		}
 
-		private function GetCommandStateRequest(string $ChargerId, string $Value) {
+		private function GetCommandStateRequest(string $ChargerId, string $Value) : ?array {
 			$jsonValue = json_decode($Value);
+
+			$jsonError = false;
+			$list = '';
+			if(!isset($jsonValue->CommandId)) {
+				$jsonError = true;
+			}
+
+			if(!isset($jsonValue->Ticks)) {
+				$jsonError = true;
+			}
+
+			if(!isset($jsonValue->Ident)) {
+				$jsonError = true;
+			}
+
+			if(!isset($jsonValue->Count)) {
+				$jsonError = true;
+			}
+
+			if($jsonError) {
+				$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('One or more values (CommandId, Ticks, Ident, or Count) are missing in "%s', $Value), 0);
+				return null;
+			}
 
 			$request[] = ['ChildId'=>(string)$this->InstanceID,
 						'Function'=>'GetCommandState',
@@ -393,7 +412,9 @@ include __DIR__ . "/../libs/traits.php";
 			$oldValue = $this->GetValue($Ident);
 			if($oldValue!=$Value) {
 				$this->SetValue($Ident, $Value);
-				$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Modifed variable with Ident "%s". New value is  "%s"', $Ident, (string)$Value), 0);
+				$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Modified variable with Ident "%s". New value is  "%s"', $Ident, (string)$Value), 0);
+			} else {
+				$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('The variable with Ident "%s" has not changed. Skipping update. The value is  "%s"', $Ident, (string)$Value), 0);
 			}
 		}
 	}
