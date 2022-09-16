@@ -67,7 +67,7 @@ include __DIR__ . "/../libs/traits.php";
 
 		public function RequestAction($Ident, $Value) {
 			try {
-				$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('ReqestAction called for Ident "%s" with Value %s', $Ident, (string)$Value), 0);
+				$this->SendDebug(__FUNCTION__, sprintf('ReqestAction called for Ident "%s" with Value %s', $Ident, (string)$Value), 0);
 	
 				$equalizerId = $this->ReadPropertyString('ProductId');
 
@@ -82,20 +82,20 @@ include __DIR__ . "/../libs/traits.php";
 				}
 
 				if($request!=null) {
-					$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Sending a request to the gateway: %s', json_encode($request)), 0);
+					$this->SendDebug(__FUNCTION__, sprintf('Sending a request to the gateway: %s', json_encode($request)), 0);
 					$this->SendDataToParent(json_encode(['DataID' => '{B62C0F65-7B59-0CD8-8C92-5DA32FBBD317}', 'Buffer' => $request]));
 				}
 
 			} catch(Exception $e) {
 				$this->LogMessage(sprintf('RequestAction failed. The error was "%s"',  $e->getMessage()), KL_ERROR);
-				$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('RequestAction failed. The error was "%s"', $e->getMessage()), 0);
+				$this->SendDebug(__FUNCTION__, sprintf('RequestAction failed. The error was "%s"', $e->getMessage()), 0);
 			}
 		}
 
 		public function ReceiveData($JSONString) {
 			try {
 				$data = json_decode($JSONString);
-				$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Received data from parent: %s', json_encode($data->Buffer)), 0);
+				$this->SendDebug(__FUNCTION__, sprintf('Received data from parent: %s', json_encode($data->Buffer)), 0);
 			 
 				$msg = '';
 				if(!isset($data->Buffer->Function) ) {
@@ -157,14 +157,14 @@ include __DIR__ . "/../libs/traits.php";
 							throw new Exception(sprintf('Unknown function "%s()" receeived in repsponse from gateway', $function));
 					}
 					
-					$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Processed the result from %s(): %s...', $data->Buffer->Function, json_encode($result)), 0);
+					$this->SendDebug(__FUNCTION__, sprintf('Processed the result from %s(): %s...', $data->Buffer->Function, json_encode($result)), 0);
 				} else {
 					throw new Exception(sprintf('The gateway returned an error: %s',$result));
 				}
 				
 			} catch(Exception $e) {
 				$this->LogMessage(sprintf('ReceiveData() failed. The error was "%s"',  $e->getMessage()), KL_ERROR);
-				$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('ReceiveData() failed. The error was "%s"',  $e->getMessage()), 0);
+				$this->SendDebug(__FUNCTION__, sprintf('ReceiveData() failed. The error was "%s"',  $e->getMessage()), 0);
 			}
 		}
 
@@ -184,7 +184,7 @@ include __DIR__ . "/../libs/traits.php";
 			$oldValue = $this->GetValue($Ident);
 			if($oldValue!=$Value) {
 				$this->SetValue($Ident, $Value);
-				$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Modifed variable with Ident "%s". New value is  "%s"', $Ident, (string)$Value), 0);
+				$this->SendDebug(__FUNCTION__, sprintf('Modifed variable with Ident "%s". New value is  "%s"', $Ident, (string)$Value), 0);
 			}
 		}
 	}

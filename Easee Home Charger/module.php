@@ -321,7 +321,6 @@ include __DIR__ . "/../libs/traits.php";
 											$script = "sleep(10);IPS_RequestAction(" . (string)$this->InstanceID . " ,'Refresh', '" . $ident . "');";
 
 											$this->RegisterOnceTimer('EaseeChargerRefreshOnce' . (string)$this->InstanceID, $script); 
-											//$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID,10000); 
 										}
 
 										break;

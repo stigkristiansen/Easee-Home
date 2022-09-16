@@ -46,13 +46,13 @@ class EaseeHomeGateway extends IPSModule
     }
 
 	public function ForwardData($JSONString) {
-		$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Received a request from a child. The request was "%s"', $JSONString), 0);
+		$this->SendDebug(__FUNCTION__, sprintf('Received a request from a child. The request was "%s"', $JSONString), 0);
 
 		$data = json_decode($JSONString);
 		$requests = json_encode($data->Buffer);
 		$script = "IPS_RequestAction(" . (string)$this->InstanceID . ", 'Async', '" . $requests . "');";
 
-		$this->SendDebug(IPS_GetName($this->InstanceID), 'Executing the request(s) in a new thread...', 0);
+		$this->SendDebug(__FUNCTION__, 'Executing the request(s) in a new thread...', 0);
 				
 		// Call RequestAction in another thread
 		IPS_RunScriptText($script);
@@ -63,7 +63,7 @@ class EaseeHomeGateway extends IPSModule
 
 	public function RequestAction($Ident, $Value) {
 		try {
-			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('ReqestAction called for Ident "%s" with Value %s', $Ident, $Value), 0);
+			$this->SendDebug(__FUNCTION__, sprintf('ReqestAction called for Ident "%s" with Value %s', $Ident, $Value), 0);
 
 			switch (strtolower($Ident)) {
 				case 'async':
@@ -77,12 +77,12 @@ class EaseeHomeGateway extends IPSModule
 			}
 		} catch(Exception $e) {
 			$this->LogMessage(sprintf('RequestAction failed. The error was "%s"',  $e->getMessage()), KL_ERROR);
-			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('RequestAction failed. The error was "%s"', $e->getMessage()), 0);
+			$this->SendDebug(__FUNCTION__, sprintf('RequestAction failed. The error was "%s"', $e->getMessage()), 0);
 		}
 	}
 
 	private function RefreshToken() {
-		$this->SendDebug(IPS_GetName($this->InstanceID), 'Refreshing the Easee Class...', 0);
+		$this->SendDebug(__FUNCTION__, 'Refreshing the Easee Class...', 0);
 
 		$this->SetTimerInterval('EaseeHomeRefreshToken' . (string)$this->InstanceID, 0); // Disable the timer
 
@@ -112,13 +112,13 @@ class EaseeHomeGateway extends IPSModule
 
 			$token = $easee->GetToken();
 
-			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Saving refreshed Token for later use: %s', json_encode($token)), 0);
+			$this->SendDebug(__FUNCTION__, sprintf('Saving refreshed Token for later use: %s', json_encode($token)), 0);
 			$this->AddTokenToBuffer($token);
 
 			$expiresIn = ($token->ExpiresIn-5*60); // Set to 5 minutes before token timeout
 
 			$this->SetTimerInterval('EaseeHomeRefreshToken' . (string)$this->InstanceID, $expiresIn*1000); 
-			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Token Refresh Timer set to %s second(s)', (string)$expiresIn), 0);
+			$this->SendDebug(__FUNCTION__, sprintf('Token Refresh Timer set to %s second(s)', (string)$expiresIn), 0);
 		} catch(Exception $e) {
 			$this->AddTokenToBuffer(null);	
 			throw new Exception(sprintf('RefreshToken() failed. The error was "%s"', $e->getMessage()));
@@ -126,7 +126,7 @@ class EaseeHomeGateway extends IPSModule
 	}
 
 	private function InitEasee() : ?object {
-		$this->SendDebug(IPS_GetName($this->InstanceID), 'Initializing the Easee Class...', 0);
+		$this->SendDebug(__FUNCTION__, 'Initializing the Easee Class...', 0);
 
 		$this->SetTimerInterval('EaseeHomeRefreshToken' . (string)$this->InstanceID, 0); // Disable the timer
 
@@ -135,8 +135,8 @@ class EaseeHomeGateway extends IPSModule
 		$apiKey = $this->ReadPropertyString('APIKey');
 
 		if(strlen($username)==0 || strlen($apiKey)==0) {
-			$this->LogMessage(sprintf('InitEasee(): Missing property "Username" and/or "API Key" in module "%s"', IPS_GetName($this->InstanceID)), KL_ERROR);
-			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('InitEasee(): Missing property "Username" in module "%s"', IPS_GetName($this->InstanceID)), 0);
+			$this->LogMessage(sprintf('InitEasee(): Missing property "Username" and/or "API Key" in module "%s"', __FUNCTION__), KL_ERROR);
+			$this->SendDebug(__FUNCTION__, sprintf('InitEasee(): Missing property "Username" in module "%s"', IPS_GetName($this->InstanceID)), 0);
 			
 			return null;
 		}
@@ -148,20 +148,20 @@ class EaseeHomeGateway extends IPSModule
 		}
 		
 		try {
-			$this->SendDebug(IPS_GetName($this->InstanceID), 'Connecting to Easee Cloud API...', 0);
+			$this->SendDebug(__FUNCTION__, 'Connecting to Easee Cloud API...', 0);
 			$easee->Connect();
 			$token = $easee->GetToken();
 			
-			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Saving Token for later use: %s', json_encode($token)), 0);
+			$this->SendDebug(__FUNCTION__, sprintf('Saving Token for later use: %s', json_encode($token)), 0);
 			$this->AddTokenToBuffer($token);
 			
 			$expiresIn = ($token->ExpiresIn-5*60); // Set to 5 minutes before token timeout
 
 			$this->SetTimerInterval('EaseeHomeRefreshToken' . (string)$this->InstanceID, $expiresIn*1000); 
-			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Token Refresh Timer set to %s second(s)', (string)$expiresIn), 0);
+			$this->SendDebug(__FUNCTION__, sprintf('Token Refresh Timer set to %s second(s)', (string)$expiresIn), 0);
 		} catch(Exception $e) {
 			$this->LogMessage(sprintf('Failed to connect to Easee Cloud API. The error was "%s"',  $e->getMessage()), KL_ERROR);
-			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Failed to connec to Easee Cloud API. The error was "%s"', $e->getMessage()), 0);
+			$this->SendDebug(__FUNCTION__, sprintf('Failed to connec to Easee Cloud API. The error was "%s"', $e->getMessage()), 0);
 			
 			return null;
 		}
@@ -275,7 +275,7 @@ class EaseeHomeGateway extends IPSModule
 
 	private function ExecuteEaseeRequest(string $ChildId, string $Function, array $Args=null, string $Ident=null, int $Count=null) {
 		
-		$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Executing Easee::%s() for component with id %s...', $Function, isset($Args[0])?$Args[0]:'N/A'), 0);
+		$this->SendDebug(__FUNCTION__, sprintf('Executing Easee::%s() for component with id %s...', $Function, isset($Args[0])?$Args[0]:'N/A'), 0);
 
 		$easee = null;
 				
@@ -307,10 +307,10 @@ class EaseeHomeGateway extends IPSModule
 				$result = call_user_func_array(array($easee, $Function), $Args);
 			}
 			
-			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Easee Cloud API returned "%s" for %s()', json_encode($result), $Function), 0);
+			$this->SendDebug(__FUNCTION__, sprintf('Easee Cloud API returned "%s" for %s()', json_encode($result), $Function), 0);
 			
 		} catch(Exception $e) {
-			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('ExecuteEaseeRequest() failed for function %s(). The error was "%s:%d"', $Function, $e->getMessage(), $e->getCode()), 0);
+			$this->SendDebug(__FUNCTION__, sprintf('ExecuteEaseeRequest() failed for function %s(). The error was "%s:%d"', $Function, $e->getMessage(), $e->getCode()), 0);
 			$this->LogMessage(sprintf('ExecuteEaseeRequest() failed for function %s(). The error was "%s"', $Function, $e->getMessage()), KL_ERROR);
 			
 			// No need to reset token if it is just rate limited
@@ -331,7 +331,7 @@ class EaseeHomeGateway extends IPSModule
 			$return['Result'] = $result;
 		}
 		
-		$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Sending the result back to the child with Id %s', (string)$ChildId), 0);
+		$this->SendDebug(__FUNCTION__, sprintf('Sending the result back to the child with Id %s', (string)$ChildId), 0);
 		$this->SendDataToChildren(json_encode(["DataID" => "{47508B62-3B4E-67BE-0F29-0B82A2C62B58}", "ChildId" => $ChildId, "Buffer" => $return]));
 	}
 
@@ -340,12 +340,12 @@ class EaseeHomeGateway extends IPSModule
 			$jsonToken = $this->GetBuffer('Token');
 			
 			if(strlen($jsonToken)==0) {
-				$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Missing token in the buffer', $jsonToken), 0);
+				$this->SendDebug(__FUNCTION__, sprintf('Missing token in the buffer', $jsonToken), 0);
 				$this->Unlock('Token');
 				return null;
 			}
 
-			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Got token "%s" from the buffer', $jsonToken), 0);
+			$this->SendDebug(__FUNCTION__, sprintf('Got token "%s" from the buffer', $jsonToken), 0);
 			$this->Unlock('Token');
 			
 			$token = json_decode($jsonToken);
@@ -365,7 +365,7 @@ class EaseeHomeGateway extends IPSModule
 			else
 				$token = json_encode($Token);
 			$this->SetBuffer('Token', $token);
-			$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Added token "%s" to the buffer', $token), 0);
+			$this->SendDebug(__FUNCTION__, sprintf('Added token "%s" to the buffer', $token), 0);
 			$this->Unlock('Token');
 		}
 	}
@@ -378,18 +378,18 @@ class EaseeHomeGateway extends IPSModule
 				} else {
 					$msg = sprintf('Released and recreated the Lock with id "%s"', $Id);
 				}
-				$this->SendDebug(IPS_GetName($this->InstanceID), $msg, 0);
+				$this->SendDebug(__FUNCTION__, $msg, 0);
 				return true;
 			} else {
 				if($i==0) {
-					$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Waiting for the Lock with id "%s" to be released', $Id), 0);
+					$this->SendDebug(__FUNCTION__, sprintf('Waiting for the Lock with id "%s" to be released', $Id), 0);
 				}
 				IPS_Sleep(mt_rand(1, 5));
 			}
 		}
         
 		$this->LogMessage(sprintf('Timedout waiting for the Lock with id "%s" to be released', $Id), KL_ERROR);
-        $this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Timedout waiting for the Lock with id "%s" to be released', $Id), 0);
+        $this->SendDebug(__FUNCTION__, sprintf('Timedout waiting for the Lock with id "%s" to be released', $Id), 0);
         
 		return false;
     }
@@ -398,7 +398,7 @@ class EaseeHomeGateway extends IPSModule
     {
         IPS_SemaphoreLeave("EaseeHome" . (string)$this->InstanceID . $Id);
 
-		$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Removed the Lock with id "%s"', $Id), 0);
+		$this->SendDebug(__FUNCTION__, sprintf('Removed the Lock with id "%s"', $Id), 0);
     }
 
 
