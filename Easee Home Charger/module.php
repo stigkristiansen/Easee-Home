@@ -6,8 +6,7 @@ include __DIR__ . "/../libs/traits.php";
 
 	class EaseeHomeCharger extends IPSModule {
 		use Profiles;
-		use Buffer;
-
+		
 		public function Create(){
 			//Never delete this line!
 			parent::Create();
