@@ -145,20 +145,20 @@ include __DIR__ . "/../libs/traits.php";
 						$this->PauseTimer();
 					}
 
-					$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Sending a request to the gateway: %s', json_encode($request)), 0);
+					$this->SendDebug(__FUNCTION__, sprintf('Sending a request to the gateway: %s', json_encode($request)), 0);
 					$this->SendDataToParent(json_encode(['DataID' => '{B62C0F65-7B59-0CD8-8C92-5DA32FBBD317}', 'Buffer' => $request]));
 				}
 
 			} catch(Exception $e) {
 				$this->LogMessage(sprintf('RequestAction failed. The error was "%s"',  $e->getMessage()), KL_ERROR);
-				$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('RequestAction failed. The error was "%s"', $e->getMessage()), 0);
+				$this->SendDebug(__FUNCTION__, sprintf('RequestAction failed. The error was "%s"', $e->getMessage()), 0);
 			}
 		}
 
 		public function ReceiveData($JSONString) {
 			try {
 				$data = json_decode($JSONString);
-				$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Received data from parent: %s', json_encode($data->Buffer)), 0);
+				$this->SendDebug(__FUNCTION__, sprintf('Received data from parent: %s', json_encode($data->Buffer)), 0);
 			 
 				$msg = '';
 				if(!isset($data->Buffer->Function) ) {
@@ -254,7 +254,7 @@ include __DIR__ . "/../libs/traits.php";
 
 							break;
 						case 'setchargeraccesslevel':
-							$this->SendDebug(IPS_GetName($this->InstanceID), 'Quering for new charger status in 10s', 0);
+							$this->SendDebug(__FUNCTION__, 'Quering for new charger status in 10s', 0);
 							
 							$ident = 'ProtectAccess'; 
 							$script = "sleep(10);IPS_RequestAction(" . (string)$this->InstanceID . " ,'Refresh', '" . $ident . "');";
@@ -293,7 +293,7 @@ include __DIR__ . "/../libs/traits.php";
 									case 2:
 									case 3:
 									case 4:
-										$this->SendDebug(IPS_GetName($this->InstanceID), 'Quering for new charger status in 10s', 0);
+										$this->SendDebug(__FUNCTION__, 'Quering for new charger status in 10s', 0);
 										
 										$value = ['Ident'=> $ident];
 										$script = "sleep(10);IPS_RequestAction(" . (string)$this->InstanceID . " ,'Refresh', '" . $ident . "');";
@@ -308,15 +308,15 @@ include __DIR__ . "/../libs/traits.php";
 											$value = ['CommandId'=>$commandId, 'Ticks'=>$ticks, 'Ident'=> $data->Buffer->Ident, 'Count'=>$count];
 											$script = "IPS_RequestAction(" . (string)$this->InstanceID . " ,'GetCommandState', '" . json_encode($value) . "');";
 
-											$this->SendDebug(IPS_GetName($this->InstanceID), 'Waiting 1s to throttle down the queries', 0);
+											$this->SendDebug(__FUNCTION__, 'Waiting 1s to throttle down the queries', 0);
 											sleep(1);
 											
-											$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Recalling GetCommandState. Count is: %d', $count), 0);
+											$this->SendDebug(__FUNCTION__, sprintf('Recalling GetCommandState. Count is: %d', $count), 0);
 
 											$this->RegisterOnceTimer('EaseeChargerGetCommandState' . (string)$this->InstanceID, $script); 
 										} else {
-											$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('This was the last call to GetCommandState for now. Count is %d', $count), 0);
-											$this->SendDebug(IPS_GetName($this->InstanceID), 'Quering for new charger status in 10s', 0);
+											$this->SendDebug(__FUNCTION__, sprintf('This was the last call to GetCommandState for now. Count is %d', $count), 0);
+											$this->SendDebug(__FUNCTION__, 'Quering for new charger status in 10s', 0);
 
 											$script = "sleep(10);IPS_RequestAction(" . (string)$this->InstanceID . " ,'Refresh', '" . $ident . "');";
 
@@ -335,7 +335,7 @@ include __DIR__ . "/../libs/traits.php";
 							throw new Exception(sprintf('Unknown function "%s()" receeived in repsponse from gateway', $function));
 					}
 
-					$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Processed the result from %s(): %s...', $data->Buffer->Function, json_encode($result)), 0);
+					$this->SendDebug(__FUNCTION__, sprintf('Processed the result from %s(): %s...', $data->Buffer->Function, json_encode($result)), 0);
 				} else {
 					throw new Exception(sprintf('The gateway returned an error: %s',$result));
 				}
@@ -343,7 +343,7 @@ include __DIR__ . "/../libs/traits.php";
 			} catch(Exception $e) {
 				$this->InitTimer();
 				$this->LogMessage(sprintf('ReceiveData() failed. The error was "%s"',  $e->getMessage()), KL_ERROR);
-				$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('ReceiveData() failed. The error was "%s"',  $e->getMessage()), 0);
+				$this->SendDebug(__FUNCTION__, sprintf('ReceiveData() failed. The error was "%s"',  $e->getMessage()), 0);
 			}
 		}
 
@@ -391,7 +391,7 @@ include __DIR__ . "/../libs/traits.php";
 			}
 
 			if($jsonError) {
-				$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('One or more values (CommandId, Ticks, Ident, or Count) are missing in "%s', $Value), 0);
+				$this->SendDebug(__FUNCTION__, sprintf('One or more values (CommandId, Ticks, Ident, or Count) are missing in "%s', $Value), 0);
 				return null;
 			}
 
@@ -411,9 +411,9 @@ include __DIR__ . "/../libs/traits.php";
 			$oldValue = $this->GetValue($Ident);
 			if($oldValue!=$Value) {
 				$this->SetValue($Ident, $Value);
-				$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('Modified variable with Ident "%s". New value is  "%s"', $Ident, (string)$Value), 0);
+				$this->SendDebug(__FUNCTION__, sprintf('Modified variable with Ident "%s". New value is  "%s"', $Ident, (string)$Value), 0);
 			} else {
-				$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('The variable with Ident "%s" has not changed. Skipping update. The value is  "%s"', $Ident, (string)$Value), 0);
+				$this->SendDebug(__FUNCTION__, sprintf('The variable with Ident "%s" has not changed. Skipping update. The value is  "%s"', $Ident, (string)$Value), 0);
 			}
 		}
 	}
