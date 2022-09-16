@@ -100,7 +100,7 @@ include __DIR__ . "/../libs/traits.php";
 
 		public function RequestAction($Ident, $Value) {
 			try {
-				$this->SendDebug(IPS_GetName($this->InstanceID), sprintf('ReqestAction called for Ident "%s" with Value %s', $Ident, (string)$Value), 0);
+				$this->SendDebug(__FUNCTION__, sprintf('ReqestAction called for Ident "%s" with Value %s', $Ident, (string)$Value), 0);
 	
 				$chargerId = $this->ReadPropertyString('ProductId');
 
