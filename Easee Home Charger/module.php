@@ -260,10 +260,12 @@ include __DIR__ . "/../libs/traits.php";
 						case 'setchargeraccesslevel':
 							$this->SendDebug(__FUNCTION__, 'Quering for new charger status in 10s', 0);
 							
-							$ident = 'ProtectAccess'; 
-							$script = "sleep(10);IPS_RequestAction(" . (string)$this->InstanceID . " ,'Refresh', '" . $ident . "');";
+							//$ident = 'ProtectAccess'; 
+							$script = "sleep(10);IPS_RequestAction(" . (string)$this->InstanceID . " ,'Refresh', 0);";
 
 							$this->RegisterOnceTimer('EaseeChargerRefreshOnce' . (string)$this->InstanceID, $script);  // Call Refresh in A new thread
+
+							$this->EnableAction('ProtectAccess')
 							
 							break;
 						case 'getcommandstate':
