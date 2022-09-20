@@ -212,7 +212,7 @@ include __DIR__ . "/../libs/traits.php";
 						case 'getproducts':
 							break;
 						case 'getchargerconfig':
-							if(isset($data->Buffer->Ident && $data->Buffer->Ident != null) ) { // Enable variable in visualization
+							if(isset($data->Buffer->Ident && $data->Buffer->Ident!==null) ) { // Enable variable in visualization
 								$this->SendDebug(__FUNCTION__, sprintf('Enabling visualization for %s', $data->Buffer->Ident), 0);
 								$this->EnableAction($data->Buffer->Ident);  	
 							} else { // Recover from possible error if it is a periodical refresh
