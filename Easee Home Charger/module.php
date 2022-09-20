@@ -394,9 +394,9 @@ include __DIR__ . "/../libs/traits.php";
 		}
 
 		private function InitTimer(){
-			$sec = $this->ReadPropertyInteger('UpdateInterval')*1000;
+			$sec = $this->ReadPropertyInteger('UpdateInterval');
 			$this->SendDebug(__FUNCTION__, sprintf('Setting refresh timer to %ds', $sec), 0);
-			$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, $sec); 
+			$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, $sec*1000); 
 		}
 
 		private function PauseTimer(){
