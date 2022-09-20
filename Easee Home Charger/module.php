@@ -400,6 +400,7 @@ include __DIR__ . "/../libs/traits.php";
 		}
 
 		private function PauseTimer(){
+			$this->SendDebug(__FUNCTION__, 'Pausing the refresh timer', 0);
 			$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, 0); 
 		}
 
