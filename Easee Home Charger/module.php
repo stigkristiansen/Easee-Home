@@ -195,7 +195,9 @@ include __DIR__ . "/../libs/traits.php";
 							
 							if(isset($data->Buffer->Ident) ) {
 								$this->EnableAction($data->Buffer->Ident);  	
-							} 
+							} else {
+								$this->EnableAction('StartCharging');  	
+							}
 							
 							if(isset($result->chargerOpMode)) {
 								$this->SetValueEx('Status', $result->chargerOpMode);
@@ -216,7 +218,10 @@ include __DIR__ . "/../libs/traits.php";
 						case 'getchargerconfig':
 							if(isset($data->Buffer->Ident) ) { // Enable variable in visualization
 								$this->EnableAction($data->Buffer->Ident);  	
-							} 
+							} else {
+								$this->EnableAction('LockCable');  	
+								$this->EnableAction('ProtectAccess');  	
+							}
 																					
 							if(isset($result->lockCablePermanently)) {
 								$this->SetValueEx('LockCable', $result->lockCablePermanently);
