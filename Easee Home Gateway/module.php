@@ -145,6 +145,7 @@ class EaseeHomeGateway extends IPSModule
 		
 		if($this->ReadPropertyBoolean('SkipSSLCheck')) {
 			$easee->DisableSSLCheck();
+			
 		}
 		
 		try {
