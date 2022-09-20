@@ -294,7 +294,7 @@ include __DIR__ . "/../libs/traits.php";
 
 							$wasAccepted = null;
 							if(isset($result->wasAccepted)) {
-								$resultCode = $result->wasAccepted;
+								$wasAccepted = $result->wasAccepted;
 							}
 
 							if($commandId>=0 && $ticks>=0 && $resultCode>=0 && strlen($ident)>0 && $count>=0 && $wasAccepted!==null) {
