@@ -193,7 +193,7 @@ include __DIR__ . "/../libs/traits.php";
 						case 'getchargerstate':
 							$this->SetValue('StartCharging', 0);
 													
-							$this->SendDebug(__FUNCTION__, 'Enabling visualization for "StartCharging"', 0);
+							$this->SendDebug(__FUNCTION__, '(Re)enabling visualization for "StartCharging"', 0);
 							$this->EnableAction('StartCharging');  	
 														
 							if(isset($result->chargerOpMode)) {
@@ -214,7 +214,7 @@ include __DIR__ . "/../libs/traits.php";
 							break;
 						case 'getchargerconfig':
 							if(isset($data->Buffer->Ident) && $data->Buffer->Ident!==null) { // Enable variable in visualization
-								$this->SendDebug(__FUNCTION__, sprintf('Enabling visualization for %s', $data->Buffer->Ident), 0);
+								$this->SendDebug(__FUNCTION__, sprintf('(Re)enabling visualization for %s', $data->Buffer->Ident), 0);
 								$this->EnableAction($data->Buffer->Ident);  	
 							} else { // Recover from possible error if it is a periodical refresh
 								$this->SendDebug(__FUNCTION__, 'Renabling visualization for "LockCable" and "ProtectAccess"', 0);
@@ -292,7 +292,13 @@ include __DIR__ . "/../libs/traits.php";
 								$count = $data->Buffer->Count;
 							}
 
-							if($commandId>=0 && $ticks>=0 && $resultCode>=0 && strlen($ident)>0 && $count>=0) {
+							$wasAccepted = null;
+							if(isset($result->wasAccepted)) {
+								$resultCode = $result->wasAccepted;
+							}
+
+							if($commandId>=0 && $ticks>=0 && $resultCode>=0 && strlen($ident)>0 && $count>=0 && $wasAccepted!==null) {
+								$this->SendDebug(__FUNCTION__, sprintf('WasAccepted: "%s" ResultCode: %d ', $wasAccepted?'true':'false', $resultCode), 0);
 								switch($resultCode) {
 									case 2:
 									case 3:
