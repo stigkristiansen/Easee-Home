@@ -192,13 +192,9 @@ include __DIR__ . "/../libs/traits.php";
 					switch($function) {
 						case 'getchargerstate':
 							$this->SetValue('StartCharging', 0);
-							
-							if(isset($data->Buffer->Ident) ) {
-								$this->EnableAction($data->Buffer->Ident);  	
-							} else { // Recover from unexpected error if it is a periodical refresh
-								$this->EnableAction('StartCharging');  	
-							}
-							
+													
+							$this->EnableAction($data->Buffer->Ident);  	
+														
 							if(isset($result->chargerOpMode)) {
 								$this->SetValueEx('Status', $result->chargerOpMode);
 							}
@@ -216,9 +212,10 @@ include __DIR__ . "/../libs/traits.php";
 						case 'getproducts':
 							break;
 						case 'getchargerconfig':
-							if(isset($data->Buffer->Ident) ) { // Enable variable in visualization
+							if(isset($data->Buffer->Ident && $data->Buffer->Ident != null) ) { // Enable variable in visualization
+								$this->SendDebug(__FUNCTION__, sprintf('Enabling visualization for %s', $data->Buffer->Ident), 0);
 								$this->EnableAction($data->Buffer->Ident);  	
-							} else { // Recover from unexpected error if it is a periodical refresh
+							} else { // Recover from possible error if it is a periodical refresh
 								$this->EnableAction('LockCable');  	
 								$this->EnableAction('ProtectAccess');  	
 							}
