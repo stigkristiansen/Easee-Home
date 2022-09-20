@@ -193,7 +193,8 @@ include __DIR__ . "/../libs/traits.php";
 						case 'getchargerstate':
 							$this->SetValue('StartCharging', 0);
 													
-							$this->EnableAction($data->Buffer->Ident);  	
+							$this->SendDebug(__FUNCTION__, 'Enabling visualization for StartCharging', 0);
+							$this->EnableAction('StartCharging');  	
 														
 							if(isset($result->chargerOpMode)) {
 								$this->SetValueEx('Status', $result->chargerOpMode);
@@ -216,6 +217,7 @@ include __DIR__ . "/../libs/traits.php";
 								$this->SendDebug(__FUNCTION__, sprintf('Enabling visualization for %s', $data->Buffer->Ident), 0);
 								$this->EnableAction($data->Buffer->Ident);  	
 							} else { // Recover from possible error if it is a periodical refresh
+								$this->SendDebug(__FUNCTION__, 'Renabling visualization', 0);
 								$this->EnableAction('LockCable');  	
 								$this->EnableAction('ProtectAccess');  	
 							}
