@@ -302,16 +302,30 @@ include __DIR__ . "/../libs/traits.php";
 								switch($resultCode) {
 									case 2: // Expired
 									case 3: // Executed
-										$this->SendDebug(__FUNCTION__, 'Command is executed or expired. Quering for new charger status in 10s', 0);										
+										$this->SendDebug(__FUNCTION__, 'Command is executed or expired', 0);										
 										
-										$script = "sleep(10);IPS_RequestAction(" . (string)$this->InstanceID . " ,'Refresh', 0);";
+										if(!$wasAccepted) {
+											$this->SendDebug(__FUNCTION__, 'Command was not accepted. Resetting value and quering for charger status immediately', 0);										
+											$sleep = '';
+
+											if($ident=='StartCharging') {
+												$this->SetValue($ident, 0);
+											} else {
+												$this->SetValue($ident, !$this->GetValue($ident));
+											}	
+										} else {
+											$this->SendDebug(__FUNCTION__, 'Command was accepted. Quering for new charger status in 10s', 0);
+											$sleep = 'sleep(10);';
+										}
+																				
+										$script = $sleep . "IPS_RequestAction(" . (string)$this->InstanceID . " ,'Refresh', 0);";
 										$this->RegisterOnceTimer('EaseeChargerRefreshOnce' . (string)$this->InstanceID, $script); 
 
 										$this->EnableAction($ident);
 										
 										break;
 									case 4: // Rejected
-										$this->SendDebug(__FUNCTION__, 'Command is rejected. Quering for charger status immediately', 0);
+										$this->SendDebug(__FUNCTION__, 'Command is rejected. Resetting value and quering for charger status immediately', 0);
 										
 										// Reset value
 										if($ident=='StartCharging') {
@@ -319,11 +333,11 @@ include __DIR__ . "/../libs/traits.php";
 										} else {
 											$this->SetValue($ident, !$this->GetValue($ident));
 										}
-
-										$this->EnableAction($ident);
 																				
 										$script = "IPS_RequestAction(" . (string)$this->InstanceID . " ,'Refresh', 0);";
 										$this->RegisterOnceTimer('EaseeChargerRefreshOnce' . (string)$this->InstanceID, $script); 
+
+										$this->EnableAction($ident);
 										break;
 									default:
 										// 1 = Sent
