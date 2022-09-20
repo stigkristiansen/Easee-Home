@@ -304,8 +304,6 @@ include __DIR__ . "/../libs/traits.php";
 								switch($resultCode) {
 									case 2: // Expired
 									case 3: // Executed
-										$this->SendDebug(__FUNCTION__, 'Command is executed or expired', 0);										
-										
 										if(!$wasAccepted) {
 											$this->SendDebug(__FUNCTION__, 'Command was not accepted. Resetting value and quering for charger status immediately', 0);										
 											$sleep = '';
@@ -317,6 +315,7 @@ include __DIR__ . "/../libs/traits.php";
 											}	
 										} else {
 											$this->SendDebug(__FUNCTION__, 'Command was accepted. Quering for new charger status in 10s', 0);
+											$this->SendDebug(__FUNCTION__, 'Command state was executed or expired', 0);										
 											$sleep = 'sleep(10);';
 										}
 																				
@@ -327,7 +326,7 @@ include __DIR__ . "/../libs/traits.php";
 										
 										break;
 									case 4: // Rejected
-										$this->SendDebug(__FUNCTION__, 'Command is rejected. Resetting value and quering for charger status immediately', 0);
+										$this->SendDebug(__FUNCTION__, 'Command was rejected. Resetting value and quering for charger status immediately', 0);
 										
 										// Reset value
 										if($ident=='StartCharging') {
@@ -343,7 +342,7 @@ include __DIR__ . "/../libs/traits.php";
 										break;
 									default:
 										// 1 = Sent
-										if($count<30) { // Retry 30 times to se if command has finished
+										if($count<30) { // Retry 30 times to se if command can complete
 											$count++;
 
 											$value = ['CommandId'=>$commandId, 'Ticks'=>$ticks, 'Ident'=> $data->Buffer->Ident, 'Count'=>$count];
