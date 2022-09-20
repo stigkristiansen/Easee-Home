@@ -195,7 +195,7 @@ include __DIR__ . "/../libs/traits.php";
 							
 							if(isset($data->Buffer->Ident) ) {
 								$this->EnableAction($data->Buffer->Ident);  	
-							} else {
+							} else { // Recover from unexpected error if it is a periodical refresh
 								$this->EnableAction('StartCharging');  	
 							}
 							
@@ -218,7 +218,7 @@ include __DIR__ . "/../libs/traits.php";
 						case 'getchargerconfig':
 							if(isset($data->Buffer->Ident) ) { // Enable variable in visualization
 								$this->EnableAction($data->Buffer->Ident);  	
-							} else {
+							} else { // Recover from unexpected error if it is a periodical refresh
 								$this->EnableAction('LockCable');  	
 								$this->EnableAction('ProtectAccess');  	
 							}
