@@ -265,7 +265,7 @@ include __DIR__ . "/../libs/traits.php";
 
 							$this->RegisterOnceTimer('EaseeChargerRefreshOnce' . (string)$this->InstanceID, $script);  // Call Refresh in A new thread
 
-							$this->EnableAction('ProtectAccess')
+							$this->EnableAction('ProtectAccess');
 							
 							break;
 						case 'getcommandstate':
