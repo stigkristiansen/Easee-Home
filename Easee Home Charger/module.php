@@ -299,8 +299,8 @@ include __DIR__ . "/../libs/traits.php";
 												$this->SetValue($ident, !$this->GetValue($ident));
 											}	
 										} else {
-											$this->SendDebug(__FUNCTION__, 'Command was accepted. querying for new charger status in 10s', 0);
-											$this->SendDebug(__FUNCTION__, 'Command state was executed or expired', 0);										
+											$this->SendDebug(__FUNCTION__, 'Command was accepted.', 0);
+											$this->SendDebug(__FUNCTION__, 'Command state was executed or expired. Querying for new charger status in 10s', 0);										
 											$sleep = 'sleep(10);';
 										}
 																				

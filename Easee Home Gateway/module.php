@@ -319,15 +319,27 @@ class EaseeHomeGateway extends IPSModule
 				$this->AddTokenToBuffer(null);	
 			}
 
-			$return['Ident'] = $Ident;
-			$return['Count'] = $Count;
+			if($Ident!==null) {
+				$return['Ident'] = $Ident;
+			}
+			
+			if($Count!==null) {
+				$return['Count'] = $Count;
+			}
+			
 			$return['Success'] = false;
 			$return['Result'] = $e->getMessage();
 		}
 
 		if(!isset($return['Success'])) {
-			$return['Ident'] = $Ident;
-			$return['Count'] = $Count;
+			if($Ident!==null) {
+				$return['Ident'] = $Ident;
+			}
+			
+			if($Count!==null) {
+				$return['Count'] = $Count;
+			}
+			
 			$return['Success'] = true;
 			$return['Result'] = $result;
 		}
