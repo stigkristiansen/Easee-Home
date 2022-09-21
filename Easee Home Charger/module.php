@@ -191,11 +191,6 @@ include __DIR__ . "/../libs/traits.php";
 					$ident = '';
 					switch($function) {
 						case 'getchargerstate':
-							//$this->SetValue('StartCharging', 0);
-													
-							//$this->SendDebug(__FUNCTION__, '(Re)enabling visualization for "StartCharging"', 0);
-							//$this->EnableAction('StartCharging');  	
-														
 							if(isset($result->chargerOpMode)) {
 								$this->SetValueEx('Status', $result->chargerOpMode);
 							}
@@ -213,15 +208,6 @@ include __DIR__ . "/../libs/traits.php";
 						case 'getproducts':
 							break;
 						case 'getchargerconfig':
-							/*if(isset($data->Buffer->Ident) && $data->Buffer->Ident!==null) { // Enable variable in visualization
-								$this->SendDebug(__FUNCTION__, sprintf('(Re)enabling visualization for %s', $data->Buffer->Ident), 0);
-								$this->EnableAction($data->Buffer->Ident);  	
-							} else { // Recover from possible error if it is a periodical refresh
-								$this->SendDebug(__FUNCTION__, 'Renabling visualization for "LockCable" and "ProtectAccess"', 0);
-								$this->EnableAction('LockCable');  	
-								$this->EnableAction('ProtectAccess');  	
-							}*/
-																					
 							if(isset($result->lockCablePermanently)) {
 								$this->SetValueEx('LockCable', $result->lockCablePermanently);
 							}
@@ -251,7 +237,7 @@ include __DIR__ . "/../libs/traits.php";
 								$value = ['CommandId'=>$commandId, 'Ticks'=>$ticks, 'Ident' => $ident, 'Count' => 0] ;
 								$script = "IPS_RequestAction(" . (string)$this->InstanceID . " ,'GetCommandState', '" . json_encode($value) . "');";
 																
-								$this->RegisterOnceTimer('EaseeChargerGetCommandState' . (string)$this->InstanceID, $script); // Call GetCommandState in A new thread	
+								$this->RegisterOnceTimer('EaseeChargerGetCommandState' . (string)$this->InstanceID, $script); // Call GetCommandState in a new thread	
 							} else {
 								throw new Exception('Invalid data receieved from parent. Missing or invalid CommandId of Ticks');
 							}
@@ -260,10 +246,9 @@ include __DIR__ . "/../libs/traits.php";
 						case 'setchargeraccesslevel':
 							$this->SendDebug(__FUNCTION__, 'Quering for new charger status in 10s', 0);
 							
-							//$ident = 'ProtectAccess'; 
 							$script = "sleep(10);IPS_RequestAction(" . (string)$this->InstanceID . " ,'Refresh', 0);";
 
-							$this->RegisterOnceTimer('EaseeChargerRefreshOnce' . (string)$this->InstanceID, $script);  // Call Refresh in A new thread
+							$this->RegisterOnceTimer('EaseeChargerRefreshOnce' . (string)$this->InstanceID, $script);  // Call Refresh in a new thread
 
 							$this->EnableAction('ProtectAccess');
 							
@@ -305,16 +290,16 @@ include __DIR__ . "/../libs/traits.php";
 									case 2: // Expired
 									case 3: // Executed
 										if(!$wasAccepted) {
-											$this->SendDebug(__FUNCTION__, 'Command was not accepted. Resetting value and quering for charger status immediately', 0);										
+											$this->SendDebug(__FUNCTION__, 'Command was not accepted. Resetting value and querying for charger status immediately', 0);										
 											$sleep = '';
 
-											if($ident=='StartCharging') {
+											if(strtolower($ident)=='startcharging') {
 												$this->SetValue($ident, 0);
 											} else {
 												$this->SetValue($ident, !$this->GetValue($ident));
 											}	
 										} else {
-											$this->SendDebug(__FUNCTION__, 'Command was accepted. Quering for new charger status in 10s', 0);
+											$this->SendDebug(__FUNCTION__, 'Command was accepted. querying for new charger status in 10s', 0);
 											$this->SendDebug(__FUNCTION__, 'Command state was executed or expired', 0);										
 											$sleep = 'sleep(10);';
 										}
@@ -326,10 +311,10 @@ include __DIR__ . "/../libs/traits.php";
 										
 										break;
 									case 4: // Rejected
-										$this->SendDebug(__FUNCTION__, 'Command was rejected. Resetting value and quering for charger status immediately', 0);
+										$this->SendDebug(__FUNCTION__, 'Command was rejected. Resetting value and querying for charger status immediately', 0);
 										
 										// Reset value
-										if($ident=='StartCharging') {
+										if(strtolower($ident)=='startcharging') {
 											$this->SetValue($ident, 0);
 										} else {
 											$this->SetValue($ident, !$this->GetValue($ident));
@@ -345,20 +330,20 @@ include __DIR__ . "/../libs/traits.php";
 										if($count<30) { // Retry 30 times to se if command can complete
 											$count++;
 
-											$value = ['CommandId'=>$commandId, 'Ticks'=>$ticks, 'Ident'=> $data->Buffer->Ident, 'Count'=>$count];
-											$script = "IPS_RequestAction(" . (string)$this->InstanceID . " ,'GetCommandState', '" . json_encode($value) . "');";
-
 											$this->SendDebug(__FUNCTION__, 'Waiting 1s to throttle down the queries', 0);
-											sleep(1);
+											//sleep(1);
+
+											$value = ['CommandId'=>$commandId, 'Ticks'=>$ticks, 'Ident'=> $data->Buffer->Ident, 'Count'=>$count];
+											$script = "sleep(1);IPS_RequestAction(" . (string)$this->InstanceID . " ,'GetCommandState', '" . json_encode($value) . "');";
 											
 											$this->SendDebug(__FUNCTION__, sprintf('Recalling GetCommandState. Count is: %d', $count), 0);
 
 											$this->RegisterOnceTimer('EaseeChargerGetCommandState' . (string)$this->InstanceID, $script); 
 										} else {
 											$this->SendDebug(__FUNCTION__, sprintf('This was the last call to GetCommandState for now. Count is %d', $count), 0);
-											$this->SendDebug(__FUNCTION__, 'Quering for charger status immediately', 0);
+											$this->SendDebug(__FUNCTION__, 'querying for charger status immediately', 0);
 
-											$script = "sleep(10);IPS_RequestAction(" . (string)$this->InstanceID . " ,'Refresh', 0);";
+											$script = "IPS_RequestAction(" . (string)$this->InstanceID . " ,'Refresh', 0);";
 
 											$this->RegisterOnceTimer('EaseeChargerRefreshOnce' . (string)$this->InstanceID, $script); 
 										}
@@ -366,7 +351,7 @@ include __DIR__ . "/../libs/traits.php";
 										break;
 								}
 							} else {
-								throw new Exception('Invalid data receieved from parent. Missing or invalid CommandId, Ticks, ResultCode, Ident or Count');
+								throw new Exception('Invalid data receieved from parent. Missing or invalid CommandId, Ticks, WasAccepted, ResultCode, Ident or Count');
 							}
 
 							break;
@@ -376,12 +361,14 @@ include __DIR__ . "/../libs/traits.php";
 
 					$this->SendDebug(__FUNCTION__, sprintf('Processed the result from %s(): %s...', $data->Buffer->Function, json_encode($result)), 0);
 				} else {
-					throw new Exception(sprintf('The gateway returned an error: %s',$result));
+					throw new Exception(sprintf('The gateway returned an error: %s', $result));
 				}
 				
 			} catch(Exception $e) {
 				$this->LogMessage(sprintf('ReceiveData() failed. The error was "%s"',  $e->getMessage()), KL_ERROR);
 				$this->SendDebug(__FUNCTION__, sprintf('ReceiveData() failed. The error was "%s"',  $e->getMessage()), 0);
+
+				$this->SendDebug(__FUNCTION__, 'Setting EnableAction to True for StartCharging, ProtectAccess and LockCable', 0);
 
 				$this->EnableAction('StartCharging');
 				$this->EnableAction('ProtectAccess');
