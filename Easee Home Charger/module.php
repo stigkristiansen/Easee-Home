@@ -380,7 +380,7 @@ include __DIR__ . "/../libs/traits.php";
 		}
 
 		private function InitTimer(){
-			if($this->GetTimerInterval('EaseeChargerRefresh')==0) {
+			if($this->GetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID)==0) {
 				$sec = $this->ReadPropertyInteger('UpdateInterval');
 				$this->SendDebug(__FUNCTION__, sprintf('Setting refresh timer to %ds', $sec), 0);
 				$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, $sec*1000); 				
