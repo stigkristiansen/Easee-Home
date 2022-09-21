@@ -296,7 +296,7 @@ class Easee {
         } 
         
         if(isset($Result->result->status) && $Result->result->status != 200) {
-            throw new Exception(sprintf('%s failed. Error: "%s"', $url, isset($Result->result->title)?$Result->result->title:(string)$Result->result->status));
+            throw new Exception(sprintf('%s failed. Error: "%s"', $Url, isset($Result->result->title)?$Result->result->title:(string)$Result->result->status));
         } 
         
         if($Result->httpcode!=200 && $Result->httpcode!=202) {

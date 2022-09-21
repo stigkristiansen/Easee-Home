@@ -285,7 +285,7 @@ include __DIR__ . "/../libs/traits.php";
 							}
 
 							if($commandId>=0 && $ticks>=0 && $resultCode>=0 && strlen($ident)>0 && $count>=0 && $wasAccepted!==null) {
-								$this->SendDebug(__FUNCTION__, sprintf('WasAccepted: "%s" ResultCode: %d ', $wasAccepted?'true':'false', $resultCode), 0);
+								//$this->SendDebug(__FUNCTION__, sprintf('WasAccepted: "%s" ResultCode: %d ', $wasAccepted?'true':'false', $resultCode), 0);
 								switch($resultCode) {
 									case 2: // Expired
 									case 3: // Executed
