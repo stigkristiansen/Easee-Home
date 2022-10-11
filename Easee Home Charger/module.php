@@ -301,7 +301,12 @@ include __DIR__ . "/../libs/traits.php";
 										} else {
 											$this->SendDebug(__FUNCTION__, 'Command was accepted.', 0);
 											$this->SendDebug(__FUNCTION__, 'Command state was executed or expired. Querying for new charger status in 10s', 0);										
+											
 											$sleep = 'sleep(10);';
+
+											if(strtolower($ident)=='startcharging') {
+												$this->SetValue($ident, 0);
+											}
 										}
 																				
 										$script = $sleep . "IPS_RequestAction(" . (string)$this->InstanceID . " ,'Refresh', 0);";
