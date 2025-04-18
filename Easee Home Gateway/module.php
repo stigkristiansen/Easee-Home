@@ -344,7 +344,7 @@ class EaseeHomeGateway extends IPSModule
 			$return['Result'] = $result;
 		}
 		
-		$this->SendDebug(__FUNCTION__, sprintf('Sending the result back to the child with Id %s', (string)$ChildId), 0);
+		$this->SendDebug(__FUNCTION__, sprintf('Sending the result from function %s back to the child with Id %s', $Function, (string)$ChildId), 0);
 		$this->SendDataToChildren(json_encode(["DataID" => "{47508B62-3B4E-67BE-0F29-0B82A2C62B58}", "ChildId" => $ChildId, "Buffer" => $return]));
 	}
 
