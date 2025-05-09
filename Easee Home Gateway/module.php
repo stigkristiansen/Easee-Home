@@ -19,6 +19,8 @@ class EaseeHomeGateway extends IPSModule
 		$this->RegisterTimer('EaseeHomeRefreshToken' . (string)$this->InstanceID, 0, 'IPS_RequestAction(' . (string)$this->InstanceID . ', "RefreshToken", 0);'); 
 
 		$this->RegisterMessage(0, IPS_KERNELMESSAGE);
+
+		$this->RequireParent('{D68FD31F-0E90-7019-F16C-1949BD3079EF}');
 	}
 
 	public function Destroy()
@@ -44,6 +46,46 @@ class EaseeHomeGateway extends IPSModule
 			$this->InitEasee();
 		}
     }
+
+	public function GetConfigurationForParent() {
+		$headers[] = ['Name' => 'User-Agent', 'Value' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36'];
+        $headers[] = ['Name' => 'Accept-Encoding', 'Value' => 'gzip, deflate, br, zstd'];
+        $headers[] = ['Name' => 'Accept-Language', 'Value' => 'en-US,en;q=0.9,nb;q=0.8,en-GB;q=0.7,no;q=0.6'];
+
+		$active = false;
+        $token = $this->GetTokenFromBuffer();
+        if($token!=null) {
+			$headers[] = ['Name' => 'Authorization', 'Value' => 'Bearer ' . $token->AccessToken];	
+			$active = true; 
+		}
+		       
+		$config['Type'] = 0;
+		$config['VerifyCertificate'] = $this->enableTLS;
+		$config['Active'] = $active;
+		$config['URL'] = self::BuildWebSocketUrl();
+		$config['Headers'] = json_encode($headers);
+        
+        return $config;
+        
+	}
+
+	private function UpdateConfigurationForParent() {
+        $parentConfig = $this->GetConfigurationForParent();
+        IPS_SetConfiguration($this->GetConnectionId(), $parentConfig);
+        IPS_ApplyChanges($this->GetConnectionId());
+    }
+
+	private function BuildWebSocketUrl() {
+			$search = 'https';
+			$replace = 'wss';
+			
+			return str_replace($search, $replace, SignalR::ENDPOINT);
+    }
+
+	private GetConnectionId() {
+		$config = IPS_GetInstance($this->InstanceID);
+		return $config['ConnectionID']
+	}
 
 	public function ForwardData($JSONString) {
 		$this->SendDebug(__FUNCTION__, sprintf('Received a request from a child. The request was "%s"', $JSONString), 0);
@@ -145,7 +187,6 @@ class EaseeHomeGateway extends IPSModule
 		
 		if($this->ReadPropertyBoolean('SkipSSLCheck')) {
 			$easee->DisableSSLCheck();
-			
 		}
 		
 		try {

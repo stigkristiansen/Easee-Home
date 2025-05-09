@@ -2,6 +2,10 @@
 
 declare(strict_types=1);
 
+class SignalR {
+    const ENDPOINT = 'https://streams.easee.com/hubs/chargers';
+}
+
 class Easee {
     private $username;
     private $password;
@@ -14,7 +18,7 @@ class Easee {
     private $userProfile;
 
     const ENDPOINT = 'https://api.easee.cloud';
-
+    
     public function __construct(String $Username='', string $Password='', string $ApiKey = '', string $AccessToken='', string $RefreshToken='', DateTime $Expires = null) {
         $this->username = $Username;
         $this->password = $Password;
