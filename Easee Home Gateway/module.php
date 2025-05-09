@@ -52,7 +52,7 @@ class EaseeHomeGateway extends IPSModule
         $headers[] = ['Name' => 'Accept-Encoding', 'Value' => 'gzip, deflate, br, zstd'];
         $headers[] = ['Name' => 'Accept-Language', 'Value' => 'en-US,en;q=0.9,nb;q=0.8,en-GB;q=0.7,no;q=0.6'];
 
-		//$active = false;
+		$active = false;
         //$token = $this->GetTokenFromBuffer();
         //if($token!=null) {
 		//	$headers[] = ['Name' => 'Authorization', 'Value' => 'Bearer ' . $token->AccessToken];	
