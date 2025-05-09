@@ -61,7 +61,7 @@ class EaseeHomeGateway extends IPSModule
 		       
 		$config['Type'] = 0;
 		$config['VerifyCertificate'] = !$this->ReadPropertyBoolean('SkipSSLCheck');
-		$config['Active'] = $active;
+		//$config['Active'] = $active;
 		$config['URL'] = SignalR::BuildWebSocketUrl();
 		$config['Headers'] = json_encode($headers);
         
