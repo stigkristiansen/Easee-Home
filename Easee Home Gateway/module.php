@@ -52,12 +52,12 @@ class EaseeHomeGateway extends IPSModule
         $headers[] = ['Name' => 'Accept-Encoding', 'Value' => 'gzip, deflate, br, zstd'];
         $headers[] = ['Name' => 'Accept-Language', 'Value' => 'en-US,en;q=0.9,nb;q=0.8,en-GB;q=0.7,no;q=0.6'];
 
-		$active = false;
-        $token = $this->GetTokenFromBuffer();
-        if($token!=null) {
-			$headers[] = ['Name' => 'Authorization', 'Value' => 'Bearer ' . $token->AccessToken];	
-			$active = true; 
-		}
+		//$active = false;
+        //$token = $this->GetTokenFromBuffer();
+        //if($token!=null) {
+		//	$headers[] = ['Name' => 'Authorization', 'Value' => 'Bearer ' . $token->AccessToken];	
+		//	$active = true; 
+		//}
 		       
 		$config['Type'] = 0;
 		$config['VerifyCertificate'] = !$this->ReadPropertyBoolean('SkipSSLCheck');
