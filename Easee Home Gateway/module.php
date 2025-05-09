@@ -84,7 +84,7 @@ class EaseeHomeGateway extends IPSModule
 
 	private function GetConnectionId() {
 		$config = IPS_GetInstance($this->InstanceID);
-		return $config['ConnectionID']
+		return $config['ConnectionID'];
 	}
 
 	public function ForwardData($JSONString) {
