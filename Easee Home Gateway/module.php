@@ -62,7 +62,7 @@ class EaseeHomeGateway extends IPSModule
 		$config['Type'] = 0;
 		$config['VerifyCertificate'] = !$this->ReadPropertyBoolean('SkipSSLCheck');
 		$config['Active'] = $active;
-		$config['URL'] = self::BuildWebSocketUrl();
+		$config['URL'] = SignalR::BuildWebSocketUrl();
 		$config['Headers'] = json_encode($headers);
         
         return json_encode($config);
@@ -73,13 +73,6 @@ class EaseeHomeGateway extends IPSModule
         $parentConfig = $this->GetConfigurationForParent();
         IPS_SetConfiguration($this->GetConnectionId(), $parentConfig);
         IPS_ApplyChanges($this->GetConnectionId());
-    }
-
-	private function BuildWebSocketUrl() {
-			$search = 'https';
-			$replace = 'wss';
-			
-			return str_replace($search, $replace, SignalR::ENDPOINT);
     }
 
 	private function GetConnectionId() {

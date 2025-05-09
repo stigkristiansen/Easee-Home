@@ -104,7 +104,7 @@ include __DIR__ . "/../libs/traits.php";
 	
 				$chargerId = $this->ReadPropertyString('ProductId');
 
-				$request = null;
+				$request = [];
 				
 				switch (strtolower($Ident)) {
 					case 'getcommandstate':
@@ -140,7 +140,7 @@ include __DIR__ . "/../libs/traits.php";
 						throw new Exception(sprintf('ReqestAction called with unkown Ident "%s"', $Ident));
 				}
 
-				if($request!=null) {
+				if($request!=[]) {
 					if(strtolower($Ident)!='refresh') {
 						$this->PauseTimer();
 					}
@@ -409,44 +409,50 @@ include __DIR__ . "/../libs/traits.php";
 					
 				return $request;
 			}
+
+			return [];
 		}
 
 		private function GetCommandStateRequest(string $ChargerId, string $Value) : ?array {
-			$jsonValue = json_decode($Value);
+			if(strlen($ChargerId)>0) {
+				$jsonValue = json_decode($Value);
 
-			$jsonError = false;
-			$list = '';
-			if(!isset($jsonValue->CommandId)) {
-				$jsonError = true;
+				$jsonError = false;
+				$list = '';
+				if(!isset($jsonValue->CommandId)) {
+					$jsonError = true;
+				}
+
+				if(!isset($jsonValue->Ticks)) {
+					$jsonError = true;
+				}
+
+				if(!isset($jsonValue->Ident)) {
+					$jsonError = true;
+				}
+
+				if(!isset($jsonValue->Count)) {
+					$jsonError = true;
+				}
+
+				if($jsonError) {
+					$this->SendDebug(__FUNCTION__, sprintf('One or more values (CommandId, Ticks, Ident, or Count) are missing in "%s', $Value), 0);
+					return null;
+				}
+
+				$request[] = ['ChildId'=>(string)$this->InstanceID,
+							'Function'=>'GetCommandState',
+							'ChargerId'=>$ChargerId,
+							'CommandId'=>$jsonValue->CommandId,
+							'Ticks'=>$jsonValue->Ticks,
+							'Ident'=>$jsonValue->Ident,
+							'Count'=>$jsonValue->Count 
+						];
+
+				return $request;
 			}
 
-			if(!isset($jsonValue->Ticks)) {
-				$jsonError = true;
-			}
-
-			if(!isset($jsonValue->Ident)) {
-				$jsonError = true;
-			}
-
-			if(!isset($jsonValue->Count)) {
-				$jsonError = true;
-			}
-
-			if($jsonError) {
-				$this->SendDebug(__FUNCTION__, sprintf('One or more values (CommandId, Ticks, Ident, or Count) are missing in "%s', $Value), 0);
-				return null;
-			}
-
-			$request[] = ['ChildId'=>(string)$this->InstanceID,
-						'Function'=>'GetCommandState',
-						'ChargerId'=>$ChargerId,
-						'CommandId'=>$jsonValue->CommandId,
-						'Ticks'=>$jsonValue->Ticks,
-						'Ident'=>$jsonValue->Ident,
-						'Count'=>$jsonValue->Count 
-					   ];
-
-			return $request;
+			return [];
 		}
 
 		private function SetValueEx(string $Ident, $Value) {

@@ -4,6 +4,13 @@ declare(strict_types=1);
 
 class SignalR {
     const ENDPOINT = 'https://streams.easee.com/hubs/chargers';
+
+    static function BuildWebSocketUrl() {
+        $search = 'https';
+        $replace = 'wss';
+        
+        return str_replace($search, $replace, self::ENDPOINT);
+    }
 }
 
 class Easee {
