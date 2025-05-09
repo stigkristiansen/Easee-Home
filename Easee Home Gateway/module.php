@@ -47,7 +47,7 @@ class EaseeHomeGateway extends IPSModule
 		}
     }
 
-	/*public function GetConfigurationForParent() {
+	public function GetConfigurationForParent() {
 		$headers[] = ['Name' => 'User-Agent', 'Value' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36'];
         $headers[] = ['Name' => 'Accept-Encoding', 'Value' => 'gzip, deflate, br, zstd'];
         $headers[] = ['Name' => 'Accept-Language', 'Value' => 'en-US,en;q=0.9,nb;q=0.8,en-GB;q=0.7,no;q=0.6'];
@@ -65,7 +65,7 @@ class EaseeHomeGateway extends IPSModule
 		$config['URL'] = self::BuildWebSocketUrl();
 		$config['Headers'] = json_encode($headers);
         
-        return $config;
+        return json_encode($config);
         
 	}
 
@@ -74,7 +74,7 @@ class EaseeHomeGateway extends IPSModule
         IPS_SetConfiguration($this->GetConnectionId(), $parentConfig);
         IPS_ApplyChanges($this->GetConnectionId());
     }
-*/
+
 	private function BuildWebSocketUrl() {
 			$search = 'https';
 			$replace = 'wss';
