@@ -90,6 +90,9 @@ class EaseeHomeGateway extends IPSModule
 		return $config['ConnectionID'];
 	}
 
+	public function ReceiveData($JSONString) {
+	}
+		
 	public function ForwardData($JSONString) {
 		$this->SendDebug(__FUNCTION__, sprintf('Received a request from a child. The request was "%s"', $JSONString), 0);
 
