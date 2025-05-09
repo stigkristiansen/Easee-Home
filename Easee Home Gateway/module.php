@@ -82,7 +82,7 @@ class EaseeHomeGateway extends IPSModule
 			return str_replace($search, $replace, SignalR::ENDPOINT);
     }
 
-	private GetConnectionId() {
+	private function GetConnectionId() {
 		$config = IPS_GetInstance($this->InstanceID);
 		return $config['ConnectionID']
 	}
