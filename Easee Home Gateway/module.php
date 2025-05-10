@@ -64,6 +64,7 @@ class EaseeHomeGateway extends IPSModule
 		}
 				
 		if($token!=null) {
+			$this->SendDebug(__FUNCTION__, 'Preparing WebSockets for communication through SignalR...', 0);
 			$config = json_decode($this->GetConfigurationForParent(), true);
 
 			$headers[] = ['Name' => 'Authorization', 'Value' => 'Bearer ' . $token->AccessToken];	
@@ -77,9 +78,13 @@ class EaseeHomeGateway extends IPSModule
         	IPS_SetConfiguration($this->GetConnectionId(), json_encode($config));
         	IPS_ApplyChanges($this->GetConnectionId());
 
+			$this->SendDebug(__FUNCTION__, 'Websocket I/O instance is set active. Sending handshake...', 0);
+
 			$verifyTLS = !$this->ReadPropertyBoolean('SkipSSLCheck');
 			
 			$signalR = new SignalR($token->AccessToken, $verifyTLS);
+
+			$this->SendDebug(__FUNCTION__, 'Sending ' . $signalR->Handshake() . '...', 0);
 			
 			$this->SendDataToParent(json_encode(['DataID' => '{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}', 'Buffer' => $signalR->Handshake()]));
 		}
