@@ -77,7 +77,7 @@ class EaseeHomeGateway extends IPSModule
         	IPS_SetConfiguration($this->GetConnectionId(), json_encode($config));
         	IPS_ApplyChanges($this->GetConnectionId());
 
-			$verifyTLS = !$this->ReadPropertyString('SkipSSLCheck');
+			$verifyTLS = !$this->ReadPropertyBoolean('SkipSSLCheck');
 			
 			$signalR = new SignalR($token, $verifyTLS);
 			
@@ -89,7 +89,7 @@ class EaseeHomeGateway extends IPSModule
 		$token = $this->GetTokenFromBuffer();
 		
 		if($token!=null) {
-			$verifyTLS = !$this->ReadPropertyString('SkipSSLCheck');
+			$verifyTLS = !$this->ReadPropertyBoolean('SkipSSLCheck');
 			
 			$signalR = new SignalR($token, $verifyTLS);
 			
