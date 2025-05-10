@@ -74,7 +74,7 @@ class EaseeHomeGateway extends IPSModule
 			$config['Active'] = true;
         	$config['Headers'] = json_encode($headers);
 		
-        	IPS_SetConfiguration($this->GetConnectionId(), $config);
+        	IPS_SetConfiguration($this->GetConnectionId(), json_encode($config));
         	IPS_ApplyChanges($this->GetConnectionId());
 
 			$verifyTLS = !$this->ReadPropertyString('SkipSSLCheck');
