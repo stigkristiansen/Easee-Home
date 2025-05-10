@@ -48,32 +48,56 @@ class EaseeHomeGateway extends IPSModule
     }
 
 	public function GetConfigurationForParent() {
-		$headers[] = ['Name' => 'User-Agent', 'Value' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36'];
-        $headers[] = ['Name' => 'Accept-Encoding', 'Value' => 'gzip, deflate, br, zstd'];
-        $headers[] = ['Name' => 'Accept-Language', 'Value' => 'en-US,en;q=0.9,nb;q=0.8,en-GB;q=0.7,no;q=0.6'];
-
-		$active = false;
-        //$token = $this->GetTokenFromBuffer();
-        //if($token!=null) {
-		//	$headers[] = ['Name' => 'Authorization', 'Value' => 'Bearer ' . $token->AccessToken];	
-		//	$active = true; 
-		//}
-		       
 		$config['Type'] = 0;
 		$config['VerifyCertificate'] = !$this->ReadPropertyBoolean('SkipSSLCheck');
-		//$config['Active'] = $active;
+		
 		$config['URL'] = SignalR::BuildWebSocketUrl();
-		$config['Headers'] = json_encode($headers);
-        
-        return json_encode($config);
-        
+	
+		return json_encode($config);
 	}
 
-	private function UpdateConfigurationForParent() {
-        $parentConfig = $this->GetConfigurationForParent();
-        IPS_SetConfiguration($this->GetConnectionId(), $parentConfig);
-        IPS_ApplyChanges($this->GetConnectionId());
+	private function StartSignalR($Token=null) {
+		if($Token==null) {
+			$token = $this->GetTokenFromBuffer();
+		} else {
+			$token = $Token;
+		}
+				
+		if($token!=null) {
+			$config = json_decode($this->GetConfigurationForParent(), true);
+
+			$headers[] = ['Name' => 'Authorization', 'Value' => 'Bearer ' . $token->AccessToken];	
+			$headers[] = ['Name' => 'User-Agent', 'Value' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36'];
+    	    $headers[] = ['Name' => 'Accept-Encoding', 'Value' => 'gzip, deflate, br, zstd'];
+        	$headers[] = ['Name' => 'Accept-Language', 'Value' => 'en-US,en;q=0.9,nb;q=0.8,en-GB;q=0.7,no;q=0.6'];
+		
+			$config['Active'] = $true;
+        	$config['Headers'] = json_encode($headers);
+		
+        	IPS_SetConfiguration($this->GetConnectionId(), $config);
+        	IPS_ApplyChanges($this->GetConnectionId());
+
+			$verifyTLS = !$this->ReadPropertyString('SkipSSLCheck');
+			
+			$signalR = new SignalR($token, $verifyTLS);
+			
+			$this->SendDataToParent(json_encode(['DataID' => '{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}', 'Buffer' => $signalR->Handshake()));
+		}
     }
+
+	private function SubscribeToSignalR(string $Serial) {
+		$token = $this->GetTokenFromBuffer();
+		
+		if($token!=null) {
+			$verifyTLS = !$this->ReadPropertyString('SkipSSLCheck');
+			
+			$signalR = new SignalR($token, $verifyTLS);
+			
+			$subscribe = $signalR->Subscribe($Serial);
+			$this->SendDataToParent(json_encode(['DataID' => '{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}', 'Buffer' => $subscribe));
+		}
+
+	}
 
 	private function GetConnectionId() {
 		$config = IPS_GetInstance($this->InstanceID);
@@ -163,7 +187,7 @@ class EaseeHomeGateway extends IPSModule
 		}
 	}
 
-	private function InitEasee() : ?object {
+	private function InitEasee() : object {
 		$this->SendDebug(__FUNCTION__, 'Initializing the Easee Class...', 0);
 
 		$this->SetTimerInterval('EaseeHomeRefreshToken' . (string)$this->InstanceID, 0); // Disable the timer
@@ -197,6 +221,9 @@ class EaseeHomeGateway extends IPSModule
 
 			$this->SetTimerInterval('EaseeHomeRefreshToken' . (string)$this->InstanceID, $expiresIn*1000); 
 			$this->SendDebug(__FUNCTION__, sprintf('Token Refresh Timer set to %s second(s)', (string)$expiresIn), 0);
+
+			$this->StartSignalR($token);
+
 		} catch(Exception $e) {
 			$this->LogMessage(sprintf('Failed to connect to Easee Cloud API. The error was "%s"',  $e->getMessage()), KL_ERROR);
 			$this->SendDebug(__FUNCTION__, sprintf('Failed to connec to Easee Cloud API. The error was "%s"', $e->getMessage()), 0);
@@ -315,7 +342,7 @@ class EaseeHomeGateway extends IPSModule
 		
 		$this->SendDebug(__FUNCTION__, sprintf('Executing Easee::%s() for component with id %s...', $Function, isset($Args[0])?$Args[0]:'N/A'), 0);
 
-		$easee = null;
+		$easee = [];
 				
 		$token = $this->GetTokenFromBuffer();
 		if($token==null) {

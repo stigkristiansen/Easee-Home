@@ -5,12 +5,157 @@ declare(strict_types=1);
 class SignalR {
     const ENDPOINT = 'https://streams.easee.com/hubs/chargers';
 
+    private $connectionId;
+    private $connectionToken;
+    private $availableTransports;
+    private $negotiateVersion;
+
+    const PUT = 'PUT';
+    const GET = 'GET';
+    const POST = 'POST';
+
+    const PROTOCOL_NONE = 0;
+    const PROTOCOL_WEBSOCKETS = 1;
+    const PROTOCOL_SSE = 2;
+    const PROTOCOL_ANY = 3;
+
+    private $accessToken;
+    private $forcedProtocol;
+    private $verifyTLS;
+
+    public function __construct(string $AccessToken, bool $VerifyTLS=true, int $ForcedProtocol = self::PROTOCOL_WEBSOCKETS ) {
+        $this->accessToken = $AccessToken;
+        $this->forcedProtocol = $ForcedProtocol;
+        $this->verifyTLS = $VerifyTLS;
+    }
+
     static function BuildWebSocketUrl() {
         $search = 'https';
         $replace = 'wss';
         
         return str_replace($search, $replace, self::ENDPOINT);
     }
+
+    public function Negotiate() {
+        $url = sprintf('%s/negotiate?negotiateVersion=1', self::ENDPOINT);
+        
+        $result = self::HttpRequest(self::POST, $url);
+
+        if($result['error']===false) {
+            if(is_array($result['result'])) {
+                if(isset($result['result']['error'])) {
+                    throw new Exception(sprintf('Negotiate failed. %s',$result['result']['error']));        
+                }
+
+                $this->connectionId = $result['result']['connectionId'];
+                $this->connectionToken = $result['result']['connectionToken'];
+                $this->availableTransports = $result['result']['availableTransports'];
+                $this->negotiateVersion = $result['result']['negotiateVersion'];
+
+                if($this->negotiateVersion!=1) {
+                    throw new Exception(sprintf('Negotiate failed. It does not support version 1. Version supported is: %d',$this->negotiateVersion));    
+                }
+                
+                foreach($this->availableTransports as $transport) {
+                    switch(strtolower($transport['transport'])) {
+                        case 'websockets':
+                            $this->selectedProtocol = self::PROTOCOL_WEBSOCKETS;
+                            break;
+                        case 'serversentevents':
+                            $this->selectedProtocol = self::PROTOCOL_SSE;
+                            break;
+                        default:
+                            $this->selectedProtocol = self::PROTOCOL_NONE;
+                    }
+
+                    if($this->forcedProtocol==$this->selectedProtocol) {
+                        break;
+                    }
+
+                    if($this->forcedProtocol==self::PROTOCOL_ANY && $this->selectedProtocol!=self::PROTOCOL_NONE) {
+                        break;
+                    }
+                }
+
+                if($this->selectedProtocol==self::PROTOCOL_NONE) {
+                    throw new Exception('Negotiate failed. Service does not support WebSockets or SSE.');
+                }
+            } else {
+                throw new Exception(sprintf('Negotiate failed. Unknown data: %s',$result['result']));        
+            }
+        } else {
+            throw new Exception(sprintf('Negotiate failed%s. %s', $result['httpcode']>0?' ('.(string)$result['httpcode'].')':'' , $result['errortext']));
+        }
+    }
+
+    public function Handshake() {
+         return sprintf('{"protocol":"json","version":1}%s', chr(0x1E));
+    }
+
+    public function Subscribe(string $Serial) {
+         return sprintf('{"arguments":["%s",true],"invocationId":"1","target":"SubscribeWithCurrentState","type":1}%s', $Serial, chr(0x1E));
+    }
+
+    private function HttpRequest($Type, $Url, $Body=null) {
+		$ch = curl_init();
+
+        switch($Type) {
+			case self::PUT:
+				curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
+				break;
+			case self::POST:
+				curl_setopt($ch, CURLOPT_POST, 1 );
+				break;
+			case self::GET:
+				// Get is default for cURL
+				break;
+		}
+
+        $headers[] = 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36';
+        $headers[] = 'Accept: application/*+json';
+        $headers[] = 'Content-Type: application/json;charset=UTF-8';
+        $headers[] = 'Accept-Encoding: gzip, deflate, br, zstd';
+        $headers[] = 'Accept-Language: en-US,en;q=0.9,nb;q=0.8,en-GB;q=0.7,no;q=0.6';
+        $headers[] = 'Authorization: Bearer ' . $this->accessToken;
+    
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+        if(!$this->verifyTLS) {
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        }
+
+        if($Body!=NULL) {
+            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($Body));
+        }
+		
+		curl_setopt($ch, CURLOPT_URL, $Url);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1 );
+		
+		$result = curl_exec($ch);
+
+        $response['httpcode'] = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
+        
+        if($result===false) {
+            $response['error'] = true;
+            $response['errortext'] = curl_error($ch);
+                    
+            return $response;
+        } else {
+            $response['error'] = false;
+                    
+            $json = json_decode($result, true);
+            
+            if($json!==null) {
+                $response['result'] = $json;
+            } else {
+                $response['result'] = $result;
+            }
+                        
+            return  $response;
+	    }
+    }
+
 }
 
 class Easee {
