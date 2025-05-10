@@ -81,7 +81,7 @@ class EaseeHomeGateway extends IPSModule
 			
 			$signalR = new SignalR($token, $verifyTLS);
 			
-			$this->SendDataToParent(json_encode(['DataID' => '{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}', 'Buffer' => $signalR->Handshake()));
+			$this->SendDataToParent(json_encode(['DataID' => '{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}', 'Buffer' => $signalR->Handshake()]));
 		}
     }
 
@@ -94,7 +94,7 @@ class EaseeHomeGateway extends IPSModule
 			$signalR = new SignalR($token, $verifyTLS);
 			
 			$subscribe = $signalR->Subscribe($Serial);
-			$this->SendDataToParent(json_encode(['DataID' => '{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}', 'Buffer' => $subscribe));
+			$this->SendDataToParent(json_encode(['DataID' => '{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}', 'Buffer' => $subscribe]));
 		}
 
 	}
