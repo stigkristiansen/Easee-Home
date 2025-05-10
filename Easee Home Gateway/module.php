@@ -83,7 +83,7 @@ class EaseeHomeGateway extends IPSModule
 					$this->SendDebug(__FUNCTION__, 'Websocket I/O instance is set active. Sending handshake...', 0);
 					break;
 				}
-				IPS_>Sleep(100);
+				IPS_Sleep(100);
 			}
 
 			$verifyTLS = !$this->ReadPropertyBoolean('SkipSSLCheck');
