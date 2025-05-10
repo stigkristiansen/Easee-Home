@@ -78,7 +78,13 @@ class EaseeHomeGateway extends IPSModule
         	IPS_SetConfiguration($this->GetConnectionId(), json_encode($config));
         	IPS_ApplyChanges($this->GetConnectionId());
 
-			$this->SendDebug(__FUNCTION__, 'Websocket I/O instance is set active. Sending handshake...', 0);
+			for($i=1;$i<=100;$i++) {
+				if($this->HasActiveParent()) {
+					$this->SendDebug(__FUNCTION__, 'Websocket I/O instance is set active. Sending handshake...', 0);
+					break;
+				}
+				IPS_>Sleep(100);
+			}
 
 			$verifyTLS = !$this->ReadPropertyBoolean('SkipSSLCheck');
 			
@@ -101,7 +107,6 @@ class EaseeHomeGateway extends IPSModule
 			$subscribe = $signalR->Subscribe($Serial);
 			$this->SendDataToParent(json_encode(['DataID' => '{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}', 'Buffer' => $subscribe]));
 		}
-
 	}
 
 	private function GetConnectionId() {
