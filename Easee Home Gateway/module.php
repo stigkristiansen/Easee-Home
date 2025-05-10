@@ -79,7 +79,7 @@ class EaseeHomeGateway extends IPSModule
 
 			$verifyTLS = !$this->ReadPropertyBoolean('SkipSSLCheck');
 			
-			$signalR = new SignalR($token, $verifyTLS);
+			$signalR = new SignalR($token->AccessToken, $verifyTLS);
 			
 			$this->SendDataToParent(json_encode(['DataID' => '{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}', 'Buffer' => $signalR->Handshake()]));
 		}
@@ -91,7 +91,7 @@ class EaseeHomeGateway extends IPSModule
 		if($token!=null) {
 			$verifyTLS = !$this->ReadPropertyBoolean('SkipSSLCheck');
 			
-			$signalR = new SignalR($token, $verifyTLS);
+			$signalR = new SignalR($token->AccessToken, $verifyTLS);
 			
 			$subscribe = $signalR->Subscribe($Serial);
 			$this->SendDataToParent(json_encode(['DataID' => '{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}', 'Buffer' => $subscribe]));
