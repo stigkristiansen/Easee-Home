@@ -44,8 +44,24 @@ class EaseeHomeGateway extends IPSModule
 
 		if ($Message == IPS_KERNELMESSAGE && $Data[0] == KR_READY) {
 			$this->InitEasee();
+
+			return;
 		}
+
+		HandleParentMessages($TimeStamp, $SenderID, $Message, $Data);
     }
+
+	private function HandleParentMessages($TimeStamp, $SenderID, $Message, $Data) {
+		$this->SendDebug(__FUNCTION__, sprintf('Instance %d sendt message %d', $SenderID, $Message), 0);	
+	}
+
+	private function RegisterParentMessages() {
+		$parent = $this->GetConnectionId();
+
+		$this->RegisterMessage($parent, IM_CHANGESETTINGS);
+		$this->RegisterMessage($parent, IM_CHANGESTATUS);
+		$this->RegisterMessage($parent, IM_DISCONNECT);
+	}
 
 	public function GetConfigurationForParent() {
 		$config['Type'] = 0;
@@ -233,6 +249,8 @@ class EaseeHomeGateway extends IPSModule
 			$this->SendDebug(__FUNCTION__, sprintf('Token Refresh Timer set to %s second(s)', (string)$expiresIn), 0);
 
 			$this->StartSignalR($token);
+
+			$this->RegisterParentMessages();
 
 		} catch(Exception $e) {
 			$this->LogMessage(sprintf('Failed to connect to Easee Cloud API. The error was "%s"',  $e->getMessage()), KL_ERROR);
