@@ -88,12 +88,28 @@ class SignalR {
         }
     }
 
-    public function Handshake() {
-         return sprintf('{"protocol":"json","version":1}%s', chr(0x1E));
+    static function Handshake() {
+        $command = [
+            'protocol'  => 'json',
+            'version'   => 1
+        ];
+
+        return sprintf('%s%s', json_encode($command), chr(0x1E));
+        
+        //return sprintf('{"protocol":"json","version":1}%s', chr(0x1E));
     }
 
-    public function Subscribe(string $Serial) {
-         return sprintf('{"arguments":["%s",true],"invocationId":"1","target":"SubscribeWithCurrentState","type":1}%s', $Serial, chr(0x1E));
+    static function Subscribe(string $Serial, bool $WithCurrentStage) {
+        $command = [
+            'arguments' => [$Serial, $WithCurrentStage],
+            'invocationId' => '1',
+            'target' => 'SubscribeWithCurrentState',
+            'type' => 1
+        ];
+         
+        return sprintgf('%s%s',json_encode($command),chr(0x1E));
+
+        //return sprintf('{"arguments":["%s",true],"invocationId":"1","target":"SubscribeWithCurrentState","type":1}%s', $Serial, chr(0x1E));
     }
 
     private function HttpRequest($Type, $Url, $Body=null) {
