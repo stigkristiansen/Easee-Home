@@ -163,23 +163,23 @@ class EaseeHomeGateway extends IPSModule
 	public function ReceiveData($JSONString) {
 		$this->SendDebug(__FUNCTION__, sprintf('Received data from Easee Cloud. The data was "%s"', $JSONString), 0);
 
-		$data = json_decode($JSONString, true)['Buffer'];
-		$commands = explode(chr(0x1E), $data);
-		unset($commands[sizeof($commands)-1]);
+		$buffer = json_decode($JSONString, true)['Buffer'];
+		$data = explode(chr(0x1E), $buffer);
+		unset($data[sizeof($data)-1]);
 
 		$this->SendDebug(__FUNCTION__, 'Received commands are: ' . json_encode($commands), 0);
 
-		foreach($commands as $command) {
-			$decodedCommand = json_decode($command, true);
+		foreach($data as $info) {
+			$decodedInfo = json_decode($info, true);
 			
-			if(isset($decodedCommand['type'])) {
-				switch($decodedCommand['type']) {
+			if(isset($decodedInfo['type'])) {
+				switch($decodedInfo['type']) {
 					case 6: // Ping
 						$this->SendDataToParent(json_encode(['DataID' => '{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}', 'Buffer' => SignalR::Ping()]));
 				}
 			}
 
-			if($decodedCommand=='{}') {
+			if($decodedInfo=='') {
 				$this->SendDebug(__FUNCTION__, 'The handshake was successful!', 0);
 			}
 		}
