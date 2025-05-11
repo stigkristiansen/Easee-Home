@@ -19,8 +19,8 @@ class EaseeHomeGateway extends IPSModule
 		$this->RegisterTimer('EaseeHomeRefreshToken' . (string)$this->InstanceID, 0, 'IPS_RequestAction(' . (string)$this->InstanceID . ', "RefreshToken", 0);'); 
 
 		$this->RegisterMessage(0, IPS_KERNELMESSAGE);
-		$this->RegisterMessage(0, IPS_INSTANCEMESSAGE);
-		$this->RegisterMessage(0, IPS_FLOWMESSAGE);
+		//$this->RegisterMessage(0, IPS_INSTANCEMESSAGE);
+		//$this->RegisterMessage(0, IPS_FLOWMESSAGE);
 
 		$this->RequireParent('{D68FD31F-0E90-7019-F16C-1949BD3079EF}');
 	}
@@ -49,7 +49,6 @@ class EaseeHomeGateway extends IPSModule
 
 		if ($Message == IPS_KERNELMESSAGE && $Data[0] == KR_READY) {
 			$this->InitEasee();
-
 			return;
 		}
 
@@ -60,11 +59,11 @@ class EaseeHomeGateway extends IPSModule
 	private function HandleParentMessages($TimeStamp, $SenderID, $Message, $Data) {
 		$this->SendDebug(__FUNCTION__, sprintf('Instance %d sendt message %d: %s', $SenderID, $Message, print_r($Data)), 0);
 		
-		/*switch ($Message) {
+		switch ($Message) {
 			case FM_CONNECT:
 			case IM_CHANGESTATUS:
 				$this->StartSignalR();
-		}*/		
+		}		
 	}
 
 	private function RegisterParentMessages(bool $EnableMessages) {
