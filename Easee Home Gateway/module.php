@@ -170,7 +170,7 @@ class EaseeHomeGateway extends IPSModule
 			$decodedCommand = json_decode($command, true);
 			
 			if(isset($decodedCommand['type'])) {
-				switch($decodedCOmmand['type']) {
+				switch($decodedCommand['type']) {
 					case 6: // Ping
 						$this->SendDataToParent(json_encode(['DataID' => '{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}', 'Buffer' => SignalR::Ping()]));
 				}
