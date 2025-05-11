@@ -45,25 +45,26 @@ class EaseeHomeGateway extends IPSModule
 	}
 
 	public function MessageSink($TimeStamp, $SenderID, $Message, $Data) {
-        if ($Message == IPS_KERNELMESSAGE && $Data[0] == KR_READY) {
+        parent::MessageSink($TimeStamp, $SenderID, $Message, $Data);
+
+		if ($Message == IPS_KERNELMESSAGE && $Data[0] == KR_READY) {
 			$this->InitEasee();
 
 			return;
 		}
 
 		$this->HandleParentMessages($TimeStamp, $SenderID, $Message, $Data);
-
-		parent::MessageSink($TimeStamp, $SenderID, $Message, $Data);
+		
     }
 
 	private function HandleParentMessages($TimeStamp, $SenderID, $Message, $Data) {
 		$this->SendDebug(__FUNCTION__, sprintf('Instance %d sendt message %d: %s', $SenderID, $Message, print_r($Data)), 0);
 		
-		switch ($Message) {
+		/*switch ($Message) {
 			case FM_CONNECT:
 			case IM_CHANGESTATUS:
 				$this->StartSignalR();
-		}		
+		}*/		
 	}
 
 	private function RegisterParentMessages(bool $EnableMessages) {
