@@ -35,8 +35,8 @@ class EaseeHomeGateway extends IPSModule
 		//Never delete this line!
 		parent::ApplyChanges();
 
-		$this->RegisterMessage($this->InstanceID, FM_CONNECT);
-        $this->RegisterMessage($this->InstanceID, FM_DISCONNECT);
+		//$this->RegisterMessage($this->InstanceID, FM_CONNECT);
+        //$this->RegisterMessage($this->InstanceID, FM_DISCONNECT);
 
 		if (IPS_GetKernelRunlevel() == KR_READY) {
             $this->InitEasee();
@@ -64,9 +64,9 @@ class EaseeHomeGateway extends IPSModule
 		
 		$parent = $this->GetConnectionId();
 		
-		//$this->RegisterMessage($parent, IM_CHANGESETTINGS);
-		//$this->RegisterMessage($parent, IM_CHANGESTATUS);
-		//$this->RegisterMessage($parent, IM_DISCONNECT);
+		$this->RegisterMessage($parent, IM_CHANGESETTINGS);
+		$this->RegisterMessage($parent, IM_CHANGESTATUS);
+		$this->RegisterMessage($parent, IM_DISCONNECT);
 	}
 
 	public function GetConfigurationForParent() {
