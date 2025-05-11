@@ -103,14 +103,16 @@ class EaseeHomeGateway extends IPSModule
 				IPS_Sleep(100);
 			}
 
-			$this->SendDebug(__FUNCTION__, 'Sending ' . $signalR::Handshake() . '...', 0);
+			$this->SendDebug(__FUNCTION__, 'Sending ' . SignalR::Handshake() . '...', 0);
 			
-			$this->SendDataToParent(json_encode(['DataID' => '{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}', 'Buffer' => $signalR::Handshake()]));
+			$this->SendDataToParent(json_encode(['DataID' => '{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}', 'Buffer' => SignalR::Handshake()]));
 		}
     }
 
 	private function SubscribeToSignalR(string $Serial, bool $WithCurrentStage) {
-		$this->SendDataToParent(json_encode(['DataID' => '{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}', 'Buffer' => $signalR::Subscribe($Serial, $WithCurrentStage)]));
+		$this->SendDebug(__FUNCTION__, 'Sending ' . SignalR::Subscribe($Serial, $WithCurrentStage) . '...', 0);
+		
+		$this->SendDataToParent(json_encode(['DataID' => '{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}', 'Buffer' => SignalR::Subscribe($Serial, $WithCurrentStage)]));
 	}
 
 	private function GetConnectionId() {
