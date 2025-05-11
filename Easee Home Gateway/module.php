@@ -167,10 +167,17 @@ class EaseeHomeGateway extends IPSModule
 		$commands = explode(chr(0x1E), $data);
 
 		foreach($commands as $command) {
-			$type = json_decode($command, true)['type'];
-			switch($type) {
-				case 6: // Ping
-					$this->SendDataToParent(json_encode(['DataID' => '{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}', 'Buffer' => SignalR::Ping()]));
+			$decodedCommand = json_decode($command, true);
+			
+			if(isset($decodedCommand['type'])) {
+				switch($decodedCOmmand['type']) {
+					case 6: // Ping
+						$this->SendDataToParent(json_encode(['DataID' => '{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}', 'Buffer' => SignalR::Ping()]));
+				}
+			}
+
+			if($decodedCommand=='{}') {
+				$this->SendDebug(__FUNCTION__, 'The handshake was successful!', 0);
 			}
 		}
 	}
