@@ -179,7 +179,7 @@ class EaseeHomeGateway extends IPSModule
 				}
 			}
 
-			if($decodedInfo=='') {
+			if($decodedInfo==[]) {
 				$this->SendDebug(__FUNCTION__, 'The handshake was successful!', 0);
 			}
 		}
