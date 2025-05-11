@@ -57,7 +57,7 @@ class EaseeHomeGateway extends IPSModule
     }
 
 	private function HandleParentMessages($TimeStamp, $SenderID, $Message, $Data) {
-		$this->SendDebug(__FUNCTION__, sprintf('Instance %d sendt message %d: %s', $SenderID, $Message, print_r($Data)), 0);
+		$this->SendDebug(__FUNCTION__, sprintf('Instance %d sendt message %d:', $SenderID, $Message), 0);
 		
 		switch ($Message) {
 			case FM_CONNECT:
