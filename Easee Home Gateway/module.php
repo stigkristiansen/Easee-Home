@@ -59,23 +59,30 @@ class EaseeHomeGateway extends IPSModule
 		
 		switch ($Message) {
 			case FM_CONNECT:
+				$localConfig = IPS_GetInstance($this->InstanceID);
+				$parentConfig = IPS_GetInstance($localConfig['ConnectionID']);
+				if($parentConfig['ModuleInfo']['ModuleID']!='{D68FD31F-0E90-7019-F16C-1949BD3079EF}') {
+					$this->SendDebug(__FUNCTION__, 'The gateway can only connect to a WebSocket client instance', 0);
+					return;
+				} 
 			case IM_CHANGESTATUS:
 				$this->StartSignalR();
 		}		
 	}
 
-	private function RegisterParentMessages(bool $EnableMessages) {
+	private function RegisterParentMessages(bool $Enable) {
 		$parent = $this->GetConnectionId();
 
-		if($EnableMessages) {
-			$this->SendDebug(__FUNCTION__, 'Registering for receving parent instance messages', 0);	
+		if($Enable) {
+			$this->SendDebug(__FUNCTION__, 'Registering for receiving parent instance messages', 0);	
 			
 			$this->RegisterMessage($parent, IM_CHANGESETTINGS);
 			$this->RegisterMessage($parent, IM_CHANGESTATUS);
 			$this->RegisterMessage($parent, IM_DISCONNECT);
 			$this->RegisterMessage($parent, IM_CONNECT);
 		} else {
-			$this->SendDebug(__FUNCTION__, 'Unregistering for receving parent instance messages', 0);	
+			$this->SendDebug(__FUNCTION__, 'Unregistering for receiving parent instance messages', 0);	
+			
 			$this->UnregisterMessage($parent, IM_CHANGESETTINGS);
 			$this->UnregisterMessage($parent, IM_CHANGESTATUS);
 			$this->UnregisterMessage($parent, IM_DISCONNECT);
@@ -118,12 +125,19 @@ class EaseeHomeGateway extends IPSModule
         	IPS_SetConfiguration($parent, json_encode($config));
         	IPS_ApplyChanges($parent);
 
+			$hasActiveParent = false;
 			for($i=1;$i<=100;$i++) {
 				if($this->HasActiveParent()) {
+					$hasActiveParent = true;
 					$this->SendDebug(__FUNCTION__, 'Websocket I/O instance is set active. Sending handshake...', 0);
 					break;
 				}
 				IPS_Sleep(100);
+			}
+
+			if(!$hasActiveParent) {
+				$this->SendDebug(__FUNCTION__, 'Timed out waiting for active WebSocket client!', 0);
+				return;
 			}
 
 			$this->SendDebug(__FUNCTION__, 'Sending ' . SignalR::Handshake() . '...', 0);
