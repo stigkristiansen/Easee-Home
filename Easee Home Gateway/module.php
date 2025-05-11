@@ -59,6 +59,7 @@ class EaseeHomeGateway extends IPSModule
 		$this->SendDebug(__FUNCTION__, 'Registering for receving parent instance messages', 0);	
 		
 		$parent = $this->GetConnectionId();
+		$this->RegisterMessage($parent, IPS_INSTANCEMESSAGE);
 		$this->RegisterMessage($parent, IM_CHANGESETTINGS);
 		$this->RegisterMessage($parent, IM_CHANGESTATUS);
 		$this->RegisterMessage($parent, IM_DISCONNECT);
