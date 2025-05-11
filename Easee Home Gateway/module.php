@@ -19,8 +19,6 @@ class EaseeHomeGateway extends IPSModule
 		$this->RegisterTimer('EaseeHomeRefreshToken' . (string)$this->InstanceID, 0, 'IPS_RequestAction(' . (string)$this->InstanceID . ', "RefreshToken", 0);'); 
 
 		$this->RegisterMessage(0, IPS_KERNELMESSAGE);
-		//$this->RegisterMessage(0, IPS_INSTANCEMESSAGE);
-		//$this->RegisterMessage(0, IPS_FLOWMESSAGE);
 
 		$this->RequireParent('{D68FD31F-0E90-7019-F16C-1949BD3079EF}');
 	}
@@ -148,6 +146,7 @@ class EaseeHomeGateway extends IPSModule
 	}
 
 	public function ReceiveData($JSONString) {
+		$this->SendDebug(__FUNCTION__, sprintf('Received data fro Easee cloud. The request was "%s"', $JSONString), 0);
 	}
 
 	public function ForwardData($JSONString) {
