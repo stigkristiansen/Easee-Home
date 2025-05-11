@@ -19,6 +19,7 @@ class EaseeHomeGateway extends IPSModule
 		$this->RegisterTimer('EaseeHomeRefreshToken' . (string)$this->InstanceID, 0, 'IPS_RequestAction(' . (string)$this->InstanceID . ', "RefreshToken", 0);'); 
 
 		$this->RegisterMessage(0, IPS_KERNELMESSAGE);
+		$this->RegisterMessage(0, IPS_INSTANCEMESSAGE);
 
 		$this->RequireParent('{D68FD31F-0E90-7019-F16C-1949BD3079EF}');
 	}
@@ -40,15 +41,15 @@ class EaseeHomeGateway extends IPSModule
 	}
 
 	public function MessageSink($TimeStamp, $SenderID, $Message, $Data) {
-        parent::MessageSink($TimeStamp, $SenderID, $Message, $Data);
-
-		if ($Message == IPS_KERNELMESSAGE && $Data[0] == KR_READY) {
+        if ($Message == IPS_KERNELMESSAGE && $Data[0] == KR_READY) {
 			$this->InitEasee();
 
 			return;
 		}
 
-		HandleParentMessages($TimeStamp, $SenderID, $Message, $Data);
+		$this->HandleParentMessages($TimeStamp, $SenderID, $Message, $Data);
+
+		parent::MessageSink($TimeStamp, $SenderID, $Message, $Data);
     }
 
 	private function HandleParentMessages($TimeStamp, $SenderID, $Message, $Data) {
@@ -59,7 +60,7 @@ class EaseeHomeGateway extends IPSModule
 		$this->SendDebug(__FUNCTION__, 'Registering for receving parent instance messages', 0);	
 		
 		$parent = $this->GetConnectionId();
-		$this->RegisterMessage($parent, IPS_INSTANCEMESSAGE);
+		
 		$this->RegisterMessage($parent, IM_CHANGESETTINGS);
 		$this->RegisterMessage($parent, IM_CHANGESTATUS);
 		$this->RegisterMessage($parent, IM_DISCONNECT);
