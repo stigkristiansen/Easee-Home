@@ -64,9 +64,9 @@ class EaseeHomeGateway extends IPSModule
 		
 		$parent = $this->GetConnectionId();
 		
-		$this->RegisterMessage($parent, IM_CHANGESETTINGS);
-		$this->RegisterMessage($parent, IM_CHANGESTATUS);
-		$this->RegisterMessage($parent, IM_DISCONNECT);
+		//$this->RegisterMessage($parent, IM_CHANGESETTINGS);
+		//$this->RegisterMessage($parent, IM_CHANGESTATUS);
+		//$this->RegisterMessage($parent, IM_DISCONNECT);
 	}
 
 	public function GetConfigurationForParent() {
