@@ -20,6 +20,7 @@ class EaseeHomeGateway extends IPSModule
 
 		$this->RegisterMessage(0, IPS_KERNELMESSAGE);
 		$this->RegisterMessage(0, IPS_INSTANCEMESSAGE);
+		$this->RegisterMessage(0, IPS_FLOWMESSAGE);
 
 		$this->RequireParent('{D68FD31F-0E90-7019-F16C-1949BD3079EF}');
 	}
@@ -35,8 +36,8 @@ class EaseeHomeGateway extends IPSModule
 		//Never delete this line!
 		parent::ApplyChanges();
 
-		//$this->RegisterMessage($this->InstanceID, FM_CONNECT);
-        //$this->RegisterMessage($this->InstanceID, FM_DISCONNECT);
+		$this->RegisterMessage($this->InstanceID, FM_CONNECT);
+        $this->RegisterMessage($this->InstanceID, FM_DISCONNECT);
 
 		if (IPS_GetKernelRunlevel() == KR_READY) {
             $this->InitEasee();
@@ -56,7 +57,7 @@ class EaseeHomeGateway extends IPSModule
     }
 
 	private function HandleParentMessages($TimeStamp, $SenderID, $Message, $Data) {
-		$this->SendDebug(__FUNCTION__, sprintf('Instance %d sendt message %d', $SenderID, $Message), 0);	
+		$this->SendDebug(__FUNCTION__, sprintf('Instance %d sendt message %d: %s', $SenderID, $Message, print_r($Data)), 0);	
 	}
 
 	private function RegisterParentMessages() {
@@ -96,9 +97,10 @@ class EaseeHomeGateway extends IPSModule
 		
 			$config['Active'] = true;
         	$config['Headers'] = json_encode($headers);
-		
-        	IPS_SetConfiguration($this->GetConnectionId(), json_encode($config));
-        	IPS_ApplyChanges($this->GetConnectionId());
+
+			$parent = $this->GetConnectionId();
+        	IPS_SetConfiguration($parent, json_encode($config));
+        	IPS_ApplyChanges($parent);
 
 			for($i=1;$i<=100;$i++) {
 				if($this->HasActiveParent()) {
