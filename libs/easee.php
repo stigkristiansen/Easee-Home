@@ -88,6 +88,14 @@ class SignalR {
         }
     }
 
+    static function Ping() {
+        $command = [
+            'type'  => 6
+        ];
+
+        return sprintf('%s%s', json_encode($command), chr(0x1E));
+    }
+
     static function Handshake() {
         $command = [
             'protocol'  => 'json',
@@ -95,8 +103,6 @@ class SignalR {
         ];
 
         return sprintf('%s%s', json_encode($command), chr(0x1E));
-        
-        //return sprintf('{"protocol":"json","version":1}%s', chr(0x1E));
     }
 
     static function Subscribe(string $Serial, bool $WithCurrentStage) {
@@ -107,9 +113,7 @@ class SignalR {
             'type' => 1
         ];
          
-        return sprintgf('%s%s',json_encode($command),chr(0x1E));
-
-        //return sprintf('{"arguments":["%s",true],"invocationId":"1","target":"SubscribeWithCurrentState","type":1}%s', $Serial, chr(0x1E));
+        return sprintf('%s%s',json_encode($command),chr(0x1E));
     }
 
     private function HttpRequest($Type, $Url, $Body=null) {

@@ -63,6 +63,7 @@ class EaseeHomeGateway extends IPSModule
 				$parentConfig = IPS_GetInstance($localConfig['ConnectionID']);
 				if($parentConfig['ModuleInfo']['ModuleID']!='{D68FD31F-0E90-7019-F16C-1949BD3079EF}') {
 					$this->SendDebug(__FUNCTION__, 'The gateway can only connect to a WebSocket client instance', 0);
+					IPS_DisconnectInstance($this->InstanceID);
 					return;
 				} 
 			case IM_CHANGESTATUS:
@@ -160,7 +161,18 @@ class EaseeHomeGateway extends IPSModule
 	}
 
 	public function ReceiveData($JSONString) {
-		$this->SendDebug(__FUNCTION__, sprintf('Received data fro Easee Cloud. The data was "%s"', $JSONString), 0);
+		$this->SendDebug(__FUNCTION__, sprintf('Received data from Easee Cloud. The data was "%s"', $JSONString), 0);
+
+		$data = json_decode($JSONString, true)['Buffer'];
+		$commands = explode(chr(0x1E), $data);
+
+		foreach($commands as $command) {
+			$type = json_decode($command, true)['type'];
+			switch($type) {
+				case 6: // Ping
+					$this->SendDataToParent(json_encode(['DataID' => '{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}', 'Buffer' => SignalR::Ping()]));
+			}
+		}
 	}
 
 	public function ForwardData($JSONString) {
