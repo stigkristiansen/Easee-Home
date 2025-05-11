@@ -55,7 +55,7 @@ class EaseeHomeGateway extends IPSModule
     }
 
 	private function HandleParentMessages($TimeStamp, $SenderID, $Message, $Data) {
-		$this->SendDebug(__FUNCTION__, sprintf('Instance %d sendt message %d:', $SenderID, $Message), 0);
+		$this->SendDebug(__FUNCTION__, sprintf('Instance %d sendt message %d: %s', $SenderID, $Message, json_encode($Data)), 0);
 		
 		switch ($Message) {
 			case FM_CONNECT:
@@ -146,7 +146,7 @@ class EaseeHomeGateway extends IPSModule
 	}
 
 	public function ReceiveData($JSONString) {
-		$this->SendDebug(__FUNCTION__, sprintf('Received data fro Easee cloud. The request was "%s"', $JSONString), 0);
+		$this->SendDebug(__FUNCTION__, sprintf('Received data fro Easee Cloud. The data was "%s"', $JSONString), 0);
 	}
 
 	public function ForwardData($JSONString) {
