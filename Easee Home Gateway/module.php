@@ -166,6 +166,8 @@ class EaseeHomeGateway extends IPSModule
 		$data = json_decode($JSONString, true)['Buffer'];
 		$commands = explode(chr(0x1E), $data);
 
+		$this->SendDebug(__FUNCTION__, 'Received commands are: ' . json_encode($commands), 0);
+
 		foreach($commands as $command) {
 			$decodedCommand = json_decode($command, true);
 			
