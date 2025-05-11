@@ -56,8 +56,9 @@ class EaseeHomeGateway extends IPSModule
 	}
 
 	private function RegisterParentMessages() {
+		$this->SendDebug(__FUNCTION__, 'Registering for receving parent instance messages', 0);	
+		
 		$parent = $this->GetConnectionId();
-
 		$this->RegisterMessage($parent, IM_CHANGESETTINGS);
 		$this->RegisterMessage($parent, IM_CHANGESTATUS);
 		$this->RegisterMessage($parent, IM_DISCONNECT);
@@ -102,10 +103,6 @@ class EaseeHomeGateway extends IPSModule
 				IPS_Sleep(100);
 			}
 
-			$verifyTLS = !$this->ReadPropertyBoolean('SkipSSLCheck');
-			
-			$signalR = new SignalR($token->AccessToken, $verifyTLS);
-
 			$this->SendDebug(__FUNCTION__, 'Sending ' . $signalR::Handshake() . '...', 0);
 			
 			$this->SendDataToParent(json_encode(['DataID' => '{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}', 'Buffer' => $signalR::Handshake()]));
@@ -113,16 +110,7 @@ class EaseeHomeGateway extends IPSModule
     }
 
 	private function SubscribeToSignalR(string $Serial, bool $WithCurrentStage) {
-		$token = $this->GetTokenFromBuffer();
-		
-		if($token!=null) {
-			$verifyTLS = !$this->ReadPropertyBoolean('SkipSSLCheck');
-			
-			$signalR = new SignalR($token->AccessToken, $verifyTLS);
-			
-			$subscribe = $signalR::Subscribe($Serial, $WithCurrentStage);
-			$this->SendDataToParent(json_encode(['DataID' => '{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}', 'Buffer' => $subscribe]));
-		}
+		$this->SendDataToParent(json_encode(['DataID' => '{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}', 'Buffer' => $signalR::Subscribe($Serial, $WithCurrentStage)]));
 	}
 
 	private function GetConnectionId() {
