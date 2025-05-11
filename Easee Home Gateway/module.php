@@ -57,17 +57,33 @@ class EaseeHomeGateway extends IPSModule
     }
 
 	private function HandleParentMessages($TimeStamp, $SenderID, $Message, $Data) {
-		$this->SendDebug(__FUNCTION__, sprintf('Instance %d sendt message %d: %s', $SenderID, $Message, print_r($Data)), 0);	
+		$this->SendDebug(__FUNCTION__, sprintf('Instance %d sendt message %d: %s', $SenderID, $Message, print_r($Data)), 0);
+		
+		switch ($Message) {
+			case FM_CONNECT:
+			case IM_CHANGESTATUS:
+				$this->StartSignalR();
+		}		
 	}
 
-	private function RegisterParentMessages() {
-		$this->SendDebug(__FUNCTION__, 'Registering for receving parent instance messages', 0);	
-		
+	private function RegisterParentMessages(bool $EnableMessages) {
 		$parent = $this->GetConnectionId();
+
+		if($EnableMessages) {
+			$this->SendDebug(__FUNCTION__, 'Registering for receving parent instance messages', 0);	
+			
+			$this->RegisterMessage($parent, IM_CHANGESETTINGS);
+			$this->RegisterMessage($parent, IM_CHANGESTATUS);
+			$this->RegisterMessage($parent, IM_DISCONNECT);
+			$this->RegisterMessage($parent, IM_CONNECT);
+		} else {
+			$this->SendDebug(__FUNCTION__, 'Unregistering for receving parent instance messages', 0);	
+			$this->UnregisterMessage($parent, IM_CHANGESETTINGS);
+			$this->UnregisterMessage($parent, IM_CHANGESTATUS);
+			$this->UnregisterMessage($parent, IM_DISCONNECT);
+			$this->UnregisterMessage($parent, IM_CONNECT);
+		}
 		
-		$this->RegisterMessage($parent, IM_CHANGESETTINGS);
-		$this->RegisterMessage($parent, IM_CHANGESTATUS);
-		$this->RegisterMessage($parent, IM_DISCONNECT);
 	}
 
 	public function GetConfigurationForParent() {
@@ -98,6 +114,8 @@ class EaseeHomeGateway extends IPSModule
 			$config['Active'] = true;
         	$config['Headers'] = json_encode($headers);
 
+			$this->RegisterParentMessages(false);
+			
 			$parent = $this->GetConnectionId();
         	IPS_SetConfiguration($parent, json_encode($config));
         	IPS_ApplyChanges($parent);
@@ -113,6 +131,8 @@ class EaseeHomeGateway extends IPSModule
 			$this->SendDebug(__FUNCTION__, 'Sending ' . SignalR::Handshake() . '...', 0);
 			
 			$this->SendDataToParent(json_encode(['DataID' => '{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}', 'Buffer' => SignalR::Handshake()]));
+
+			$this->RegisterParentMessages(true);
 		}
     }
 
@@ -246,8 +266,6 @@ class EaseeHomeGateway extends IPSModule
 			$this->SendDebug(__FUNCTION__, sprintf('Token Refresh Timer set to %s second(s)', (string)$expiresIn), 0);
 
 			$this->StartSignalR($token);
-
-			$this->RegisterParentMessages();
 
 		} catch(Exception $e) {
 			$this->LogMessage(sprintf('Failed to connect to Easee Cloud API. The error was "%s"',  $e->getMessage()), KL_ERROR);
