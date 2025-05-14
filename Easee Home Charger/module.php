@@ -81,7 +81,7 @@ include __DIR__ . "/../libs/traits.php";
 			//Never delete this line!
 			parent::ApplyChanges();
 
-			$this->SetReceiveDataFilter(sprintf('.*"ChildId":"%s".*|.*##AllChildren##.*)', (string)$this->InstanceID));
+			$this->SetReceiveDataFilter(sprintf('.*"ChildId":"%s".*|.*##AllChildren##.*', (string)$this->InstanceID));
 			// $this->SetReceiveDataFilter('.*"ChildId":"' . (string)$this->InstanceID .'".*');
 
 			
