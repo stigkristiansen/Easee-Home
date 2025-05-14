@@ -181,9 +181,9 @@ class EaseeHomeGateway extends IPSModule
 							'Result' => $decodedInfo['arguments']
 						];
 
-						$chargerId=$decodedInfo['arguments']['mid'];
+						//$chargerId=$decodedInfo['arguments']['mid'];
 
-						$this->SendDataToChildren(json_encode(["DataID" => "{47508B62-3B4E-67BE-0F29-0B82A2C62B58}", "ChildId" => $chargerId, "Buffer" => $forwardingData]));
+						$this->SendDataToChildren(json_encode(["DataID" => "{47508B62-3B4E-67BE-0F29-0B82A2C62B58}", "Buffer" => $forwardingData]));
 						break;
 					case 6: // Ping
 						$this->SendDataToParent(json_encode(['DataID' => '{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}', 'Buffer' => SignalR::Ping()]));
