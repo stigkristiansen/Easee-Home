@@ -178,7 +178,7 @@ class EaseeHomeGateway extends IPSModule
 						$forwardingData =[
 							'Function' => 'IncomingSignalRData',
 							'Success' => true,
-							'Result' => $decodedInfo;
+							'Result' => $decodedInfo['arguments']
 						];
 
 						$chagerId=$decodedInfo['arguments']['mid'];
