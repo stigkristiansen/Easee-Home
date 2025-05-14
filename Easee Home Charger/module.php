@@ -81,7 +81,10 @@ include __DIR__ . "/../libs/traits.php";
 			//Never delete this line!
 			parent::ApplyChanges();
 
-			$this->SetReceiveDataFilter('.*"ChildId":"' . (string)$this->InstanceID .'".*');
+			$this->SetReceiveDataFilter(sprintf('.*"ChildId":"%s".*|.*##AllChildren##.*)', (string)$this->InstanceID));
+			// $this->SetReceiveDataFilter('.*"ChildId":"' . (string)$this->InstanceID .'".*');
+
+			
 
 			if (IPS_GetKernelRunlevel() == KR_READY) {
 				$this->InitTimer();
@@ -159,16 +162,16 @@ include __DIR__ . "/../libs/traits.php";
 			try {
 				$data = json_decode($JSONString);
 				$this->SendDebug(__FUNCTION__, sprintf('Received data from parent: %s', json_encode($data->Buffer)), 0);
-			 
+
 				$msg = '';
 				if(!isset($data->Buffer->Function) ) {
 					$msg = 'Missing "Function"';
 				} 
 				if(!isset($data->Buffer->Success) ) {
 					if(strlen($msg)>0) {
-						$msg += ', missing "Buffer"';
+						$msg += ', missing "Status"';
 					} else {
-						$msg = 'Missing "Buffer"';
+						$msg = 'Missing "Status"';
 					}
 				} 
 				if(!isset($data->Buffer->Result) ) {
@@ -190,6 +193,13 @@ include __DIR__ . "/../libs/traits.php";
 					$function = strtolower($data->Buffer->Function);
 					$ident = '';
 					switch($function) {
+						case 'subscribe':
+							// Send message back to parent to subscribe
+							$chargerId = $this->ReadPropertyString('ProductId');
+							$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'Subscribe','ChargerId'=>$chargerId, 'WithCurrentState' => true];
+							$this->SendDataToParent(json_encode(['DataID' => '{B62C0F65-7B59-0CD8-8C92-5DA32FBBD317}', 'Buffer' => $request]));
+						case 'events':
+							// TODO: Handle recevied event in a new thread
 						case 'getchargerstate':
 							if(isset($result->chargerOpMode)) {
 								$this->SetValueEx('Status', $result->chargerOpMode);

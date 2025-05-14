@@ -167,7 +167,7 @@ class EaseeHomeGateway extends IPSModule
 		$data = explode(chr(0x1E), $buffer);
 		unset($data[sizeof($data)-1]);
 
-		$this->SendDebug(__FUNCTION__, 'Received commands are: ' . json_encode($data), 0);
+		$this->SendDebug(__FUNCTION__, 'Received command(s) are: ' . json_encode($data), 0);
 
 		foreach($data as $info) {
 			$decodedInfo = json_decode($info, true);
@@ -181,6 +181,15 @@ class EaseeHomeGateway extends IPSModule
 
 			if($decodedInfo==[]) {
 				$this->SendDebug(__FUNCTION__, 'The handshake was successful!', 0);
+
+				$instruction = [
+					'Function' => 'Subscribe',
+					'Success' => true,
+					'Result' => ''
+				];
+
+				// Send message to childs to subscribe to SignalR
+				$this->SendDataToChildren(json_encode(["DataID" => "{47508B62-3B4E-67BE-0F29-0B82A2C62B58}", "ChildId" => '##AllChildren##', "Buffer" => $instruction]));
 			}
 		}
 	}
@@ -325,6 +334,17 @@ class EaseeHomeGateway extends IPSModule
 			$childId =  strtolower($request->ChildId);
 			
 			switch($function) {
+				case 'subscribe':
+					if(!isset($request->ChargerId)) {
+						throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "ChargerId" is missing. The request was "%s"', $request));
+					}
+					
+					if(!isset($request->WithCurrentState)) {
+						throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "WithCurrentState" is missing. The request was "%s"', $request));
+					}
+
+					$this->SendDataToParent(json_encode(['DataID' => '{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}', 'Buffer' => SignalR::Subscribe($request->ChargerId, $request->WithCurrentState)]));
+					break;
 				case 'getproducts':
 					$this->ExecuteEaseeRequest($childId, 'GetProducts');
 					break;
