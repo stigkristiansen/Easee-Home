@@ -81,10 +81,15 @@ include __DIR__ . "/../libs/traits.php";
 			//Never delete this line!
 			parent::ApplyChanges();
 
-			$this->SetReceiveDataFilter(sprintf('.*"ChildId":"%s".*|.*##AllChildren##.*', (string)$this->InstanceID));
-			// $this->SetReceiveDataFilter('.*"ChildId":"' . (string)$this->InstanceID .'".*');
-
+			$filter = sprintf('.*"ChildId":"%s".*|.*##AllChildren##.*', (string)$this->InstanceID);
 			
+			$chargerId = $this->ReadPropertyString('ProductId');
+			if($chargerId!='') {
+				$filter .= sprintf('|.*%s.*', $chargerId);
+			}
+			
+			$this->SetReceiveDataFilter($filter);
+			// $this->SetReceiveDataFilter('.*"ChildId":"' . (string)$this->InstanceID .'".*');
 
 			if (IPS_GetKernelRunlevel() == KR_READY) {
 				$this->InitTimer();
@@ -193,6 +198,8 @@ include __DIR__ . "/../libs/traits.php";
 					$function = strtolower($data->Buffer->Function);
 					$ident = '';
 					switch($function) {
+						case 'incomingsignalrdata':
+							break;
 						case 'subscribe':
 							// Send message back to parent to subscribe
 							$chargerId = $this->ReadPropertyString('ProductId');
