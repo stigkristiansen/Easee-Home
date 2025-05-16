@@ -83,9 +83,9 @@ include __DIR__ . "/../libs/traits.php";
 
 			$filter = sprintf('.*"ChildId":"%s".*|.*##AllChildren##.*', (string)$this->InstanceID);
 			
-			$chargerId = $this->ReadPropertyString('ProductId');
-			if($chargerId!='') {
-				$filter .= sprintf('|.*%s.*', $chargerId);
+			$serialNumber = $this->ReadPropertyString('ProductId');
+			if($serialNumber!='') {
+				$filter .= sprintf('|.*"SerialNumber": "%s".*', $serialNumber);
 			}
 			
 			$this->SetReceiveDataFilter($filter);
