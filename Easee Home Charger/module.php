@@ -432,12 +432,12 @@ include __DIR__ . "/../libs/traits.php";
 		}
 
 		private function HandleSignalRData($Data) {
-			if(isset($Data['mid'])) {
+			if(isset($Data->mid) {
 				$this->SendDebug(__FUNCTION__, 'Processing a change in properties...', 0);
 				return;
 			}
 
-			if(isset($Data['serialNumber'])) {
+			if(isset($Data->serialNumber)) {
 				$this->SendDebug(__FUNCTION__, 'Processing a Command Response result...', 0);
 				return;
 			}
