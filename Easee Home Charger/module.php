@@ -199,6 +199,7 @@ include __DIR__ . "/../libs/traits.php";
 					$ident = '';
 					switch($function) {
 						case 'incomingsignalrdata':
+							$this->HandleSignalRData($result);
 							break;
 						case 'subscribe':
 							// Send message back to parent to subscribe
@@ -428,6 +429,14 @@ include __DIR__ . "/../libs/traits.php";
 			}
 
 			return [];
+		}
+
+		private function HandleSignalRData($Data) {
+			$decodedData = json_decode($Data);
+
+			$chargerId = $decodedData['mid'];
+
+			$this->SendDebug(__FUNCTION__, sprintf('The Product Id is "%s', $chargerId), 0);
 		}
 
 		private function GetCommandStateRequest(string $ChargerId, string $Value) : ?array {
