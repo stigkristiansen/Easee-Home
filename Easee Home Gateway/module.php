@@ -185,10 +185,10 @@ class EaseeHomeGateway extends IPSModule
 							
 							switch(strtolower($decodedInfo['target'])) {
 								case 'productupdate':
-									$forwardingData['SerialNumber'] = $argument->mid;
+									$forwardingData['SerialNumber'] = $argument['mid'];
 									break;
 								case 'commandresponse':
-									$forwardingData['SerialNumber'] = $argument->serialNumber;
+									$forwardingData['SerialNumber'] = $argument['serialNumber'];
 									break;
 							}
 							
