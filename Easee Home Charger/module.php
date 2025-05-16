@@ -434,7 +434,7 @@ include __DIR__ . "/../libs/traits.php";
 		private function HandleSignalRData($Data) {
 			//$chargerId = $Data['mid'];
 
-			$this->SendDebug(__FUNCTION__, sprintf('Handeling "%s', json_encode($Data), 0);
+			$this->SendDebug(__FUNCTION__, sprintf('Handeling "%s', json_encode($Data), 0));
 		}
 
 		private function GetCommandStateRequest(string $ChargerId, string $Value) : ?array {
