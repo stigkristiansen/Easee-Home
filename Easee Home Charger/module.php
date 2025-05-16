@@ -198,8 +198,11 @@ include __DIR__ . "/../libs/traits.php";
 					$function = strtolower($data->Buffer->Function);
 					$ident = '';
 					switch($function) {
-						case 'incomingsignalrdata':
-							$this->HandleSignalRData($result);
+						case 'productupdate':
+							$this->HandleProductUpdate($result);
+							break;
+						case 'commandresponse':
+							$this->HandleCommandResponse($result);
 							break;
 						case 'subscribe':
 							// Send message back to parent to subscribe
@@ -431,16 +434,16 @@ include __DIR__ . "/../libs/traits.php";
 			return [];
 		}
 
-		private function HandleSignalRData($Data) {
-			if(isset($Data->mid)) {
-				$this->SendDebug(__FUNCTION__, 'Processing a change in properties...', 0);
-				return;
-			}
+		private function HandleProductUpdate($Data) {
+			
+			$this->SendDebug(__FUNCTION__, 'Processing Product Update...', 0);
+			
+		}
 
-			if(isset($Data->serialNumber)) {
-				$this->SendDebug(__FUNCTION__, 'Processing a Command Response result...', 0);
-				return;
-			}
+		private function HandleCommandResponse($Data) {
+			
+			$this->SendDebug(__FUNCTION__, 'Processing Command Response...', 0);
+			
 		}
 
 		private function GetCommandStateRequest(string $ChargerId, string $Value) : ?array {
