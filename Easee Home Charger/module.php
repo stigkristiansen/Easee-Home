@@ -432,9 +432,7 @@ include __DIR__ . "/../libs/traits.php";
 		}
 
 		private function HandleSignalRData($Data) {
-			$decodedData = json_decode($Data);
-
-			$chargerId = $decodedData['mid'];
+			$chargerId = $Data['mid'];
 
 			$this->SendDebug(__FUNCTION__, sprintf('The Product Id is "%s', $chargerId), 0);
 		}
