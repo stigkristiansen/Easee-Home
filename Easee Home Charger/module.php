@@ -85,7 +85,7 @@ include __DIR__ . "/../libs/traits.php";
 			
 			$serialNumber = $this->ReadPropertyString('ProductId');
 			if($serialNumber!='') {
-				$filter .= sprintf('|.*"SerialNumber": "%s".*', $serialNumber);
+				$filter .= sprintf('|.*"SerialNumber":"%s".*', $serialNumber);
 			}
 			
 			$this->SetReceiveDataFilter($filter);
