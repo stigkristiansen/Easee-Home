@@ -182,6 +182,16 @@ class EaseeHomeGateway extends IPSModule
 
 						foreach($decodedInfo['arguments'] as $argument) {
 							$forwardingData['Result'] = $argument;
+							
+							switch(strtolower($decodedInfo['target'])) {
+								case 'productupdate':
+									$forwardingData['SerialNumber'] = $argument->mid;
+									break;
+								case 'commandresponse':
+									$forwardingData['SerialNumber'] = $argument->serialNumber;
+									break;
+							}
+							
 							$this->SendDataToChildren(json_encode(["DataID" => "{47508B62-3B4E-67BE-0F29-0B82A2C62B58}", "Buffer" => $forwardingData]));
 						}
 
