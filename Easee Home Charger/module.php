@@ -432,9 +432,15 @@ include __DIR__ . "/../libs/traits.php";
 		}
 
 		private function HandleSignalRData($Data) {
-			//$chargerId = $Data['mid'];
+			if(isset($Data['mid']) {
+				$this->SendDebug(__FUNCTION__, 'Processing a change in properties...', 0);
+				return;
+			}
 
-			$this->SendDebug(__FUNCTION__, sprintf('Handeling "%s', json_encode($Data)), 0);
+			if(isset($Data['serialNumber']) {
+				$this->SendDebug(__FUNCTION__, 'Processing a Command Response result...', 0);
+				return;
+			}
 		}
 
 		private function GetCommandStateRequest(string $ChargerId, string $Value) : ?array {
