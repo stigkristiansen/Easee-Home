@@ -439,7 +439,7 @@ class EaseeHomeCharger extends IPSModule {
 		try{
 			$change = Charger::GetObservation($Data);
 			if($change!==false) {
-				$this->SetValueEx($Data['Ident'], $Data['Value']);
+				$this->SetValueEx($change['Ident'], $change['Value']);
 			}
 		} catch(Exception $e) {
 			IPS_LogMessage(IPS_GetInstance($this->InstanceID)['ModuleInfo']['ModuleName'], $e->getMessage());
