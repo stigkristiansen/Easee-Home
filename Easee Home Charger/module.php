@@ -434,12 +434,15 @@ class EaseeHomeCharger extends IPSModule {
 	}
 
 	private function HandleProductUpdate($Data) {
-		$this->SendDebug(__FUNCTION__, 'Processing Product Update...', 0);
+		$this->SendDebug(__FUNCTION__, sprintf('Processing Product Update: %s...', json_encode($Data)), 0);
 
 		try{
 			$change = Charger::GetObservation($Data);
 			if($change!==false) {
+				$this->SendDebug(__FUNCTION__, sprintf('Observation Id %d is an Id that corresponds to Ident %d', $Data->id, $change['Ident']), 0);
 				$this->SetValueEx($change['Ident'], $change['Value']);
+			} else {
+				$this->SendDebug(__FUNCTION__, sprintf('Observation Id %d is not corresponding to an Ident', $Data->id), 0);
 			}
 		} catch(Exception $e) {
 			IPS_LogMessage(IPS_GetInstance($this->InstanceID)['ModuleInfo']['ModuleName'], $e->getMessage());
