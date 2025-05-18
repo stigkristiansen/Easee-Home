@@ -23,6 +23,8 @@ class SignalR {
     private $forcedProtocol;
     private $verifyTLS;
 
+
+
     public function __construct(string $AccessToken, bool $VerifyTLS=true, int $ForcedProtocol = self::PROTOCOL_WEBSOCKETS ) {
         $this->accessToken = $AccessToken;
         $this->forcedProtocol = $ForcedProtocol;
