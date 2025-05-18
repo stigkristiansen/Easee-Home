@@ -23,16 +23,16 @@ class Observations {
                 $change = ['Ident' => $observation[$Observation->id]['Ident']];
     
                 switch($observations[$Observation->id]['Type']) {
-                    case ObservationId::BOOLEAN:
+                    case Observations::BOOLEAN:
                         $change['Value'] = (bool)$Observation->value; 
                         break;
-                    case ObservationId::INTEGER:
+                    case Observations::INTEGER:
                         $change['Value'] = (int)$Observation->value; 
                         break;
-                    case ObservationId::STRING:
+                    case Observations::STRING:
                         $change['Value'] = (string)$Observation->value; 
                         break;
-                    case ObservationId::FLOAT:
+                    case Observations::FLOAT:
                         $change['Value'] = (float)$Observation->value; 
                         break;
                 }
@@ -90,7 +90,7 @@ class Charger extends Observations {
             'Description' => 'LOCK CABLE PERMANENTLY',
             'Ident' => 'LockCable',
             'Caption' => 'Lock Cable',
-            'Type' => ObservationId::BOOLEAN,
+            'Type' => Observations::BOOLEAN,
             'Enable' => true,
             'Profile' => 'EHCH.LockCable',
             'Icon' => 'Lock',
@@ -128,7 +128,7 @@ class Charger extends Observations {
             'Description' => 'AUTHORIZATION REQUIRED',
             'Ident' => 'ProtectAccess',
             'Caption' => 'Protect Access',
-            'Type' => ObservationId::BOOLEAN,
+            'Type' => Observations::BOOLEAN,
             'Enable' => true,
             'Profile' => 'EHCH.ProtectAccess',
             'Icon' => 'Lock',
@@ -234,7 +234,7 @@ class Charger extends Observations {
             'Description' => 'CHARGER OP MODE',
             'Ident' => 'Status',
             'Caption' => 'Status',
-            'Type' => ObservationId::INTEGER,
+            'Type' => Observations::INTEGER,
             'Enable' => false,
             'Profile' => 'EHCH.ChargerOpMode',
             'Icon' => 'Electricity',
@@ -296,7 +296,7 @@ class Charger extends Observations {
             'Description' => 'LIFETIME ENERGY',
             'Ident' => 'TotalEnergi',
             'Caption' => 'Total Energi',
-            'Type' => ObservationId::FLOAT,
+            'Type' => Observations::FLOAT,
             'Enable' => false,
             'Profile' => '~Electricity'
         ],
