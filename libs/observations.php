@@ -20,7 +20,7 @@ class Observations {
         
         if(isset($observations[$Observation->id])) {
             if($observations[$Observation->id]['IsVariable']) {
-                $change = ['Ident' => $observation[$Observation->id]['Ident']];
+                $change = ['Ident' => $observations[$Observation->id]['Ident']];
     
                 switch($observations[$Observation->id]['Type']) {
                     case Observations::BOOLEAN:
