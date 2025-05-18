@@ -380,7 +380,7 @@ class Charger extends Observations {
             'IsVariable' => false,
             'Description' => 'EQ AVAILABLE CURRENT P1'
         ],
-        321 => [
+        231 => [
             'IsVariable' => false,
             'Description' => 'EQ AVAILABLE CURRENT P2'
         ],
