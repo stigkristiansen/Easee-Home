@@ -11,30 +11,41 @@ class Observations {
     const Observation = [];
 
     static function GetObservation($Observation) {
+        if(!isset($Observation->id) || !isset($Observation->value)) {
+            $error = 'Observation is invalid. Missing "id" and/or "value"';    
+            throw new Exception($error);
+        }
+
         $observations = get_called_class()::Observations;
-
-        if($observations[$Observation->id]['IsVariable']) {
-            $observation = ['Ident' => $observation[$Observation->id]['Ident']];
-
-            switch($observations[$Observation->id]['Type']) {
-                case ObservationId::BOOLEAN:
-                    $observation['Value'] = (bool)$Observation->value; 
-                    break;
-                case ObservationId::INTEGER:
-                    $observation['Value'] = (int)$Observation->value; 
-                    break;
-                case ObservationId::STRING:
-                    $observation['Value'] = (string)$Observation->value; 
-                    break;
-                case ObservationId::FLOAT:
-                    $observation['Value'] = (float)$Observation->value; 
-                    break;
+        
+        if(isset($observations[$Observation->id])) {
+            if($observations[$Observation->id]['IsVariable']) {
+                $change = ['Ident' => $observation[$Observation->id]['Ident']];
+    
+                switch($observations[$Observation->id]['Type']) {
+                    case ObservationId::BOOLEAN:
+                        $change['Value'] = (bool)$Observation->value; 
+                        break;
+                    case ObservationId::INTEGER:
+                        $change['Value'] = (int)$Observation->value; 
+                        break;
+                    case ObservationId::STRING:
+                        $change['Value'] = (string)$Observation->value; 
+                        break;
+                    case ObservationId::FLOAT:
+                        $change['Value'] = (float)$Observation->value; 
+                        break;
+                }
+    
+                return $change;
             }
-
-            return $observation;
+            
+            return false;
+        } else {
+            $error = sprintf('Observation Id %d is not defined in class %s', $Observation->id, get_called_class());
+            throw new Exception($error);
         }
         
-        return false;
     }
 
 }
@@ -43,6 +54,10 @@ class Charger extends Observations {
 
     const Observations = [
         11 => [
+            'IsVariable' => false,
+            'Description'  => 'CHARGER OFFLINE REASON'
+        ],
+        15 => [
             'IsVariable' => false,
             'Description'  => 'LOCAL PRE AUTHORIZE ENABLED'
         ],
@@ -91,6 +106,10 @@ class Charger extends Observations {
         36 => [
             'IsVariable' => false,
             'Description' => 'WIFI SSID'
+        ],
+        37 => [
+            'IsVariable' => false,
+            'Description' => 'NOT DOCUMENTED'
         ],
         38 => [
             'IsVariable' => false,
@@ -148,7 +167,7 @@ class Charger extends Observations {
         ],
         62 => [
             'IsVariable' => false,
-            'Description' => 'MAX CURRENT OFFLINE FALLBACK P3'
+            'Description' => 'CHARGING SCHEDULE'
         ],
         68 => [
             'IsVariable' => false,
@@ -182,6 +201,34 @@ class Charger extends Observations {
             'IsVariable' => false,
             'Description' => 'Software relase'
         ],
+        81 => [
+            'IsVariable' => false,
+            'Description' => 'ICCID'
+        ],
+        96 => [
+            'IsVariable' => false,
+            'Description' => 'REASON FOR NO CURRENT'
+        ],
+        100 => [
+            'IsVariable' => false,
+            'Description' => 'PILOT MODE'
+        ],
+        102 => [
+            'IsVariable' => false,
+            'Description' => 'SMART CHARGING'
+        ],
+        103 => [
+            'IsVariable' => false,
+            'Description' => 'CABLE LOCKED'
+        ],
+        104 => [
+            'IsVariable' => false,
+            'Description' => 'CABLE RATING'
+        ],
+        107 => [
+            'IsVariable' => false,
+            'Description' => 'BACKPLATE ID'
+        ],
         109 => [
             'IsVariable' => true,
             'Description' => 'CHARGER OP MODE',
@@ -200,6 +247,50 @@ class Charger extends Observations {
 				[6, 'Ready To Charge' , '', -1]
 			]
         ],
+        110 => [
+            'IsVariable' => false,
+            'Description' => 'OUTPUT PHASE'
+        ],
+        111 => [
+            'IsVariable' => false,
+            'Description' => 'Dynamic Circuit Current P1'
+        ],
+        112 => [
+            'IsVariable' => false,
+            'Description' => 'Dynamic Circuit Current P2'
+        ],
+        113 => [
+            'IsVariable' => false,
+            'Description' => 'Dynamic Circuit Current P3'
+        ],
+        114 => [
+            'IsVariable' => false,
+            'Description' => 'Output Current'
+        ],
+        116 => [
+            'IsVariable' => false,
+            'Description' => 'DERATING ACTIVE'
+        ],
+        118 => [
+            'IsVariable' => false,
+            'Description' => 'Error String'
+        ],
+        119 => [
+            'IsVariable' => false,
+            'Description' => 'ERROR CODE'
+        ],
+        120 => [
+            'IsVariable' => false,
+            'Description' => 'TOTAL POWER'
+        ],
+        121 => [
+            'IsVariable' => false,
+            'Description' => 'SESSION ENERGY'
+        ],
+        122 => [
+            'IsVariable' => false,
+            'Description' => 'ENERGY PER HOUR'
+        ],
         124 => [
             'IsVariable' => true,
             'Description' => 'LIFETIME ENERGY',
@@ -208,6 +299,66 @@ class Charger extends Observations {
             'Type' => ObservationId::FLOAT,
             'Enable' => false,
             'Profile' => '~Electricity'
+        ],
+        130 => [
+            'IsVariable' => false,
+            'Description' => 'CELL RSSI'
+        ],
+        132 => [
+            'IsVariable' => false,
+            'Description' => 'WIFI RSSI'
+        ],
+        134 => [
+            'IsVariable' => false,
+            'Description' => 'WIFI ADDRESS'
+        ],
+        140 => [
+            'IsVariable' => false,
+            'Description' => 'UNDOCUMENTED'
+        ],
+        141 => [
+            'IsVariable' => false,
+            'Description' => 'CURRENT CONNECTION'
+        ],
+        146 => [
+            'IsVariable' => false,
+            'Description' => 'LOCAL NODE TYPE'
+        ],
+        147 => [
+            'IsVariable' => false,
+            'Description' => 'UNDOCUMENTED'
+        ],
+        148 => [
+            'IsVariable' => false,
+            'Description' => 'UNDOCUMENTED'
+        ],
+        149 => [
+            'IsVariable' => false,
+            'Description' => 'LOCAL PARENT ADDR OR NUM OF NODES'
+        ],
+        150 => [
+            'IsVariable' => false,
+            'Description' => 'TEMP MAX'
+        ],
+        182 => [
+            'IsVariable' => false,
+            'Description' => 'INT CURRENT T2'
+        ],
+        183 => [
+            'IsVariable' => false,
+            'Description' => 'IN VOLT T2T5'
+        ],
+        183 => [
+            'IsVariable' => false,
+            'Description' => 'INT CURRENT T3'
+        ],
+        184 => [
+            'IsVariable' => false,
+            'Description' => 'INT CURRENT T4'
+        ],
+        185 => [
+            'IsVariable' => false,
+            'Description' => 'INT CURRENT T5'
         ],
         194 => [
             'IsVariable' => false,
@@ -220,6 +371,42 @@ class Charger extends Observations {
         196 => [
             'IsVariable' => false,
             'Description' => 'IN VOLT T2T5'
+        ],
+        219 => [
+            'IsVariable' => false,
+            'Description' => 'UNDOCUMENTED'
+        ],
+        230 => [
+            'IsVariable' => false,
+            'Description' => 'EQ AVAILABLE CURRENT P1'
+        ],
+        321 => [
+            'IsVariable' => false,
+            'Description' => 'EQ AVAILABLE CURRENT P2'
+        ],
+        232 => [
+            'IsVariable' => false,
+            'Description' => 'EQ AVAILABLE CURRENT P3'
+        ],
+        233 => [
+            'IsVariable' => false,
+            'Description' => 'UNDOCUMENTED'
+        ],
+        234 => [
+            'IsVariable' => false,
+            'Description' => 'UNDOCUMENTED'
+        ],
+        241 => [
+            'IsVariable' => false,
+            'Description' => 'UNDOCUMENTED'
+        ],
+        250 => [
+            'IsVariable' => false,
+            'Description' => 'CONNECTED TO CLOUD'
+        ],
+        251 => [
+            'IsVariable' => false,
+            'Description' => 'CLOUD DISCONNECT REASON'
         ]
     ];
 }

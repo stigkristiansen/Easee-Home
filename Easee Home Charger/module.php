@@ -434,11 +434,18 @@ class EaseeHomeCharger extends IPSModule {
 	}
 
 	private function HandleProductUpdate($Data) {
-		
 		$this->SendDebug(__FUNCTION__, 'Processing Product Update...', 0);
 
+		try{
+			$change = Charger::GetObservation($Data);
+			if($change!==false) {
+				$this->SetValueEx($Data['Ident'], $Data['Value']);
+			}
+		} catch(Exception $e) {
+			IPS_LogMessage(IPS_GetInstance($this->InstanceID)['ModuleInfo']['ModuleName'], $e->getMessage());
+			$this->SendDebug(__FUNCTION__, $e->getMessage(), 0);
+		}	
 
-		
 	}
 
 	private function HandleCommandResponse($Data) {
