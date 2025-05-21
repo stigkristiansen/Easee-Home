@@ -451,7 +451,7 @@ class EaseeHomeCharger extends IPSModule {
 
 	private function HandleCommandResponse($Data) {
 		
-		$this->SendDebug(__FUNCTION__, 'Processing Command Response...', 0);
+		$this->SendDebug(__FUNCTION__, sprintf('Processing Command Response: %s...', json_encode($Data)), 0);
 		
 	}
 
