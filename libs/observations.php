@@ -501,7 +501,7 @@ class Charger extends Observations {
         ],
         156 => [
             'IsVariable' => false,
-            'Description' => 'UDOCUMENTED'
+            'Description' => 'Undocumented'
         ],
         182 => [
             'IsVariable' => false,
@@ -520,8 +520,13 @@ class Charger extends Observations {
             'Description' => 'INT CURRENT T5'
         ],
         194 => [
-            'IsVariable' => false,
-            'Description' => 'IN VOLT T2T3'
+            'IsVariable' => true,
+            'Description' => 'IN VOLT T2T3',
+            'Ident' => 'Voltage',
+            'Caption' => 'Voltage',
+            'Type' => Observations::FLOAT,
+            'Enable' => false,
+            'Profile' => '~Volt'
         ],
         195 => [
             'IsVariable' => false,
