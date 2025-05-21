@@ -499,11 +499,11 @@ class EaseeHomeCharger extends IPSModule {
 
 	private function SetValueEx(string $Ident, $Value) {
 		$oldValue = $this->GetValue($Ident);
-		if($oldValue!=$Value) {
+		//if($oldValue!=$Value) {
 			$this->SetValue($Ident, $Value);
 			$this->SendDebug(__FUNCTION__, sprintf('Modified variable with Ident "%s". New value is  "%s"', $Ident, (string)$Value), 0);
-		} else {
-			$this->SendDebug(__FUNCTION__, sprintf('The variable with Ident "%s" has not changed. Skipping update. The value is  "%s"', $Ident, (string)$Value), 0);
-		}
+		//} else {
+		//	$this->SendDebug(__FUNCTION__, sprintf('The variable with Ident "%s" has not changed. Skipping update. The value is  "%s"', $Ident, (string)$Value), 0);
+		//}
 	}
 }
