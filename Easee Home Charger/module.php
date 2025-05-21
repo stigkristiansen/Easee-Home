@@ -93,7 +93,7 @@ class EaseeHomeCharger extends IPSModule {
 		// $this->SetReceiveDataFilter('.*"ChildId":"' . (string)$this->InstanceID .'".*');
 
 		if (IPS_GetKernelRunlevel() == KR_READY) {
-			$this->InitTimer();
+			//$this->InitTimer();
 		}
 	}
 
@@ -101,11 +101,9 @@ class EaseeHomeCharger extends IPSModule {
 		parent::MessageSink($TimeStamp, $SenderID, $Message, $Data);
 
 		if ($Message == IPS_KERNELMESSAGE && $Data[0] == KR_READY) {
-			$this->InitTimer();
+			//$this->InitTimer();
 		}
 	}
-
-
 
 	public function RequestAction($Ident, $Value) {
 		try {
@@ -123,7 +121,7 @@ class EaseeHomeCharger extends IPSModule {
 				case 'refresh':
 					$request = $this->RefreshRequest($chargerId, $Value);
 					
-					$this->InitTimer(); // Reset timer back to configured interval 
+					//$this->InitTimer(); // Reset timer back to configured interval 
 					break;
 				case 'lockcable':
 					$this->SetValue($Ident, $Value);
