@@ -231,6 +231,10 @@ class Charger extends Observations {
             'IsVariable' => false,
             'Description' => 'Circuit Max Current P3'
         ],
+        25 => [
+            'IsVariable' => false,
+            'Description' => 'Undocumented'
+        ],
         30 => [
             'IsVariable' => true,
             'Description' => 'LOCK CABLE PERMANENTLY',
@@ -469,7 +473,7 @@ class Charger extends Observations {
         ],
         140 => [
             'IsVariable' => false,
-            'Description' => 'UNDOCUMENTED'
+            'Description' => 'Undocumented'
         ],
         141 => [
             'IsVariable' => false,
@@ -481,11 +485,11 @@ class Charger extends Observations {
         ],
         147 => [
             'IsVariable' => false,
-            'Description' => 'UNDOCUMENTED'
+            'Description' => 'Undocumented'
         ],
         148 => [
             'IsVariable' => false,
-            'Description' => 'UNDOCUMENTED'
+            'Description' => 'Undocumented'
         ],
         149 => [
             'IsVariable' => false,
@@ -529,7 +533,7 @@ class Charger extends Observations {
         ],
         219 => [
             'IsVariable' => false,
-            'Description' => 'UNDOCUMENTED'
+            'Description' => 'Undocumented'
         ],
         230 => [
             'IsVariable' => false,
@@ -545,15 +549,15 @@ class Charger extends Observations {
         ],
         233 => [
             'IsVariable' => false,
-            'Description' => 'UNDOCUMENTED'
+            'Description' => 'Undocumented'
         ],
         234 => [
             'IsVariable' => false,
-            'Description' => 'UNDOCUMENTED'
+            'Description' => 'Undocumented'
         ],
         241 => [
             'IsVariable' => false,
-            'Description' => 'UNDOCUMENTED'
+            'Description' => 'Undocumented'
         ],
         250 => [
             'IsVariable' => false,
