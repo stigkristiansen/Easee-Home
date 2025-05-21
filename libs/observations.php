@@ -12,7 +12,7 @@ class Observations {
 
     static function GetObservation($Observation) {
         if(!isset($Observation->id) || !isset($Observation->value)) {
-            $error = 'Observation is invalid. Missing "id" and/or "value"';    
+            $error = 'Observation is invalid! Missing "id" and/or "value"';    
             throw new Exception($error);
         }
 
@@ -42,13 +42,159 @@ class Observations {
             
             return false;
         } else {
-            $error = sprintf('Observation Id %d is not defined in class %s', $Observation->id, get_called_class());
-            throw new Exception($error);
+            throw new Exception(sprintf('Observation Id %d is not defined in class %s', $Observation->id, get_called_class()));
         }
         
     }
 
 }
+
+class Equalizer extends Observations {
+
+    const Observations = [
+        1 => [
+            'IsVariable' => false,
+            'Description' => 'SelfTestResult'
+        ],
+        2 => [
+            'IsVariable' => false,
+            'Description' => '	SelfTestDetails'
+        ],
+        13 => [
+            'IsVariable' => false,
+            'Description' => 'EaseeLinkCommandResponse'
+        ],
+        14 => [
+            'IsVariable' => false,
+            'Description' => 'EaseeLinkDataReceived'
+        ],
+        19 => [
+            'IsVariable' => false,
+            'Description' => 'SitelDNumeric'
+        ],
+        20 => [
+            'IsVariable' => false,
+            'Description' => 'SiteStructure'
+        ],
+        21 => [
+            'IsVariable' => false,
+            'Description' => 'SoftwareRelease'
+        ],
+        23 => [
+            'IsVariable' => false,
+            'Description' => 'DeviceMode'
+        ],
+        25 => [
+            'IsVariable' => false,
+            'Description' => 'MeterType'
+        ],
+        26 => [
+            'IsVariable' => false,
+            'Description' => 'MeterlD'
+        ],
+        27 => [
+            'IsVariable' => false,
+            'Description' => 'OBISListldentifier'
+        ],
+        29 => [
+            'IsVariable' => false,
+            'Description' => 'GridType'
+        ],
+        30 => [
+            'IsVariable' => false,
+            'Description' => 'NumPhases'
+        ],
+        31 => [
+            'IsVariable' => false,
+            'Description' => 'Current_L1'
+        ],
+        32 => [
+            'IsVariable' => false,
+            'Description' => 'Current_L2'
+        ],
+        33 => [
+            'IsVariable' => false,
+            'Description' => 'Current_L3'
+        ],
+        34 => [
+            'IsVariable' => false,
+            'Description' => 'Voltage_N_L1'
+        ],
+        35 => [
+            'IsVariable' => false,
+            'Description' => 'Voltage_N_L2'
+        ],
+        36 => [
+            'IsVariable' => false,
+            'Description' => 'Voltage_N_L3'
+        ],
+        37 => [
+            'IsVariable' => false,
+            'Description' => 'Voltage_Ll_L2'
+        ],
+        38 => [
+            'IsVariable' => false,
+            'Description' => 'Voltage_Ll_L3'
+        ],
+        39 => [
+            'IsVariable' => false,
+            'Description' => 'Voltage_L2_L3'
+        ],
+        40 => [
+            'IsVariable' => false,
+            'Description' => 'ActivePowerlmport'
+        ],
+        41 => [
+            'IsVariable' => false,
+            'Description' => 'Active PowerExport'
+        ],
+        42 => [
+            'IsVariable' => false,
+            'Description' => 'ReactivePowerlmport'
+        ],
+        43 => [
+            'IsVariable' => false,
+            'Description' => 'ReactivePowerExport'
+        ],
+        44 => [
+            'IsVariable' => false,
+            'Description' => 'MaxPowerlmport'
+        ],
+        45 => [
+            'IsVariable' => false,
+            'Description' => 'CumulativeActivePowerImport'
+        ],
+        46 => [
+            'IsVariable' => false,
+            'Description' => 'CumulativeActivePowerExport'
+        ],
+        47 => [
+            'IsVariable' => false,
+            'Description' => 'CumulativeReactivePowerImport'
+        ],
+        48 => [
+            'IsVariable' => false,
+            'Description' => 'CumulativeReactivePowerExport'
+        ],
+        49 => [
+            'IsVariable' => false,
+            'Description' => 'ClockAndDateMeter'
+        ],
+        51 => [
+            'IsVariable' => false,
+            'Description' => 'SSID'
+        ],
+        55 => [
+            'IsVariable' => false,
+            'Description' => 'MasterBackPlatelD'
+        ],
+        56 => [
+            'IsVariable' => false,
+            'Description' => 'EqualizerlD'
+        ]
+        ];
+}
+
 
 class Charger extends Observations {
 
@@ -264,8 +410,13 @@ class Charger extends Observations {
             'Description' => 'Dynamic Circuit Current P3'
         ],
         114 => [
-            'IsVariable' => false,
-            'Description' => 'Output Current'
+            'IsVariable' => true,
+            'Description' => 'Output Current',
+            'Ident' => 'Current',
+            'Caption' => 'Current',
+            'Type' => Observations::FLOAT,
+            'Enable' => false,
+            'Profile' => '~Ampere'
         ],
         116 => [
             'IsVariable' => false,
@@ -299,6 +450,10 @@ class Charger extends Observations {
             'Type' => Observations::FLOAT,
             'Enable' => false,
             'Profile' => '~Electricity'
+        ],
+        126 => [
+            'IsVariable' => false,
+            'Description' => 'LIFETIME HOURS'
         ],
         130 => [
             'IsVariable' => false,
@@ -340,13 +495,13 @@ class Charger extends Observations {
             'IsVariable' => false,
             'Description' => 'TEMP MAX'
         ],
+        156 => [
+            'IsVariable' => false,
+            'Description' => 'UDOCUMENTED'
+        ],
         182 => [
             'IsVariable' => false,
             'Description' => 'INT CURRENT T2'
-        ],
-        183 => [
-            'IsVariable' => false,
-            'Description' => 'IN VOLT T2T5'
         ],
         183 => [
             'IsVariable' => false,

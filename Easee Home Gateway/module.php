@@ -6,8 +6,7 @@ include __DIR__ . "/../libs/easee.php";
 
 class EaseeHomeGateway extends IPSModule
 {
-	public function Create()
-	{
+	public function Create() {
 		//Never delete this line!
 		parent::Create();
 
