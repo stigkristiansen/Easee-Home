@@ -166,9 +166,10 @@ class EaseeHomeGateway extends IPSModule
 		$data = explode(chr(0x1E), $buffer);
 		unset($data[sizeof($data)-1]);
 
-		$this->SendDebug(__FUNCTION__, 'Received command(s) are: ' . json_encode($data), 0);
+		$this->SendDebug(__FUNCTION__, sprintf('Received command(s) are: %s', json_encode($data)), 0);
 
 		foreach($data as $info) {
+			
 			$decodedInfo = json_decode($info, true);
 			
 			if(isset($decodedInfo['type'])) {
@@ -190,6 +191,8 @@ class EaseeHomeGateway extends IPSModule
 							}
 
 							$forwardingData['Result'] = $argument;
+
+							$this->SendDebug(__FUNCTION__, sprintf('Sending to children: %s', json_encode($forwardingData)), 0);
 							
 							$this->SendDataToChildren(json_encode(["DataID" => "{47508B62-3B4E-67BE-0F29-0B82A2C62B58}", "Buffer" => $forwardingData]));
 						}
