@@ -453,6 +453,8 @@ class EaseeHomeCharger extends IPSModule {
 			if($receivedObservations!==null && isset($receivedObservations[$Ident])) {
 				return $receivedObservations[$Ident];
 			}
+
+			return false;
 		}
 	}
 
