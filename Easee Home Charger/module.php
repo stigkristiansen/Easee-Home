@@ -464,7 +464,10 @@ class EaseeHomeCharger extends IPSModule {
 			
 			if($receivedObservations!==null) {
 				$receivedObservations[$Observation['Ident']] = $Observation;
-				$this->SetBuffer(self::RECEIVED_OBSERVATIONS, json_encode($receivedObservations));
+				$josnList = json_encode($receivedObservations);
+				$this->SetBuffer(self::RECEIVED_OBSERVATIONS, $jsonList);
+
+				$this->SendDebug(__FUNCTION__, sprintf('New list of received observations: %s', $jsonList), 0);
 			}
 
 			$this->Unlock(self::RECEIVED_OBSERVATIONS);
