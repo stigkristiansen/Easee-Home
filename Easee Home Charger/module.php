@@ -94,7 +94,7 @@ class EaseeHomeCharger extends IPSModule {
 		
 		$this->SetReceiveDataFilter($filter);
 
-		$this->SetBuffer(self::RECEIVED_OBSERVATIONS) = json_encode([]);
+		$this->SetBuffer(self::RECEIVED_OBSERVATIONS, json_encode([]));
 		
 		if (IPS_GetKernelRunlevel() == KR_READY) {
 			//$this->InitTimer();
@@ -462,7 +462,7 @@ class EaseeHomeCharger extends IPSModule {
 			
 			if($receivedObservations!==null) {
 				$receivedObservations[$Observation['Ident']] = $Observation;
-				$this->SetBuffer(self::RECEIVED_OBSERVATIONS) = json_encode($receivedObservations);
+				$this->SetBuffer(self::RECEIVED_OBSERVATIONS, json_encode($receivedObservations));
 			}
 
 			$this->Unlock(self::RECEIVED_OBSERVATIONS);
