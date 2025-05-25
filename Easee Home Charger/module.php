@@ -456,6 +456,8 @@ class EaseeHomeCharger extends IPSModule {
 
 			return false;
 		}
+
+		return false;
 	}
 
 	private function UpdateReceivedObservations($Observation) {
