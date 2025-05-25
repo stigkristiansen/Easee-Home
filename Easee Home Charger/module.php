@@ -7,6 +7,9 @@ include __DIR__ . "/../libs/observations.php";
 
 class EaseeHomeCharger extends IPSModule {
 	use Profiles;
+	use Buffer;
+
+	const RECEIVED_OBSERVATIONS = 'ReceivedObservations';
 	
 	public function Create(){
 		//Never delete this line!
@@ -90,8 +93,9 @@ class EaseeHomeCharger extends IPSModule {
 		}
 		
 		$this->SetReceiveDataFilter($filter);
-		// $this->SetReceiveDataFilter('.*"ChildId":"' . (string)$this->InstanceID .'".*');
 
+		$this->SetBuffer(self::RECEIVED_OBSERVATIONS) = json_encode([]);
+		
 		if (IPS_GetKernelRunlevel() == KR_READY) {
 			//$this->InitTimer();
 		}
@@ -236,6 +240,17 @@ class EaseeHomeCharger extends IPSModule {
 						break;
 					case 'setchargerlockstate':
 						$ident = 'LockCable';
+
+						if(isset($result->commandId)) {
+							$commandId =  $result->commandId;
+						}
+
+						$ticks = -1;
+						if(isset($result->ticks)) {
+							$ticks = $result->ticks;
+						}
+
+						break;
 					case 'setchargingstate':
 						if(strlen($ident)==0) {
 							$ident = 'StartCharging';
@@ -431,6 +446,29 @@ class EaseeHomeCharger extends IPSModule {
 		return [];
 	}
 
+	private function GetReceivedObservation($Ident) {
+		if($this->Lock(self::RECEIVED_OBSERVATIONS)) {
+			$receivedObservations = json_decode($this->GetBuffer(self::RECEIVED_OBSERVATIONS), true);	
+			$this->Unlock(self::RECEIVED_OBSERVATIONS);
+			if($receivedObservations!==null && isset($receivedObservations[$Ident])) {
+				return $receivedObservations[$Ident]
+			}
+		}
+	}
+
+	private UpdateReceivedObservations($Observation) {
+		if($this->Lock(self::RECEIVED_OBSERVATIONS)) {
+			$receivedObservations = json_decode($this->GetBuffer(self::RECEIVED_OBSERVATIONS), true);	
+			
+			if($receivedObservations!==null) {
+				$receivedObservations[$Observation['Ident']] = $Observation;
+				$this->SetBuffer(self::RECEIVED_OBSERVATIONS) = json_encode($receivedObservations);
+			}
+
+			$this->Unlock(self::RECEIVED_OBSERVATIONS);
+		}
+	}
+
 	private function HandleProductUpdate($Data) {
 		$this->SendDebug(__FUNCTION__, sprintf('Processing Product Update: %s...', json_encode($Data)), 0);
 
@@ -438,6 +476,15 @@ class EaseeHomeCharger extends IPSModule {
 			$change = Charger::GetObservation($Data);
 			if($change!==false) {
 				$this->SendDebug(__FUNCTION__, sprintf('Observation Id %d is an Id that corresponds to Ident "%s"', $Data->id, $change['Ident']), 0);
+				$oldObservation = $this->GetReceivedObservation($change['Ident']);
+				if($oldObservation!==false) {
+					if($oldObservation['Timestamp']>$change['Timestamp']) {
+						return; // Newer observation has already been handeled
+					}
+				}
+
+				$this->UpdateReceivedObservations($change);
+
 				$this->SetValueEx($change['Ident'], $change['Value']);
 			} else {
 				$this->SendDebug(__FUNCTION__, sprintf('Observation Id %d is not corresponding to an Ident', $Data->id), 0);
@@ -454,7 +501,7 @@ class EaseeHomeCharger extends IPSModule {
 		$this->SendDebug(__FUNCTION__, sprintf('Processing Command Response: %s...', json_encode($Data)), 0);
 		
 	}
-
+	
 	private function GetCommandStateRequest(string $ChargerId, string $Value) : ?array {
 		if(strlen($ChargerId)>0) {
 			$jsonValue = json_decode($Value);

@@ -11,9 +11,8 @@ class Observations {
     const Observation = [];
 
     static function GetObservation($Observation) {
-        if(!isset($Observation->id) || !isset($Observation->value)) {
-            $error = 'Observation is invalid! Missing "id" and/or "value"';    
-            throw new Exception($error);
+        if(!isset($Observation->id) || !isset($Observation->timestamp)) {
+            throw new Exception('Observation is invalid! Missing "timestamp" and/or "id"');
         }
 
         $observations = get_called_class()::Observations;
@@ -21,22 +20,34 @@ class Observations {
         if(isset($observations[$Observation->id])) {
             if($observations[$Observation->id]['IsVariable']) {
                 $change = ['Ident' => $observations[$Observation->id]['Ident']];
-    
-                switch($observations[$Observation->id]['Type']) {
-                    case Observations::BOOLEAN:
-                        $change['Value'] = (bool)$Observation->value; 
-                        break;
-                    case Observations::INTEGER:
-                        $change['Value'] = (int)$Observation->value; 
-                        break;
-                    case Observations::STRING:
-                        $change['Value'] = (string)$Observation->value; 
-                        break;
-                    case Observations::FLOAT:
-                        $change['Value'] = (float)$Observation->value; 
-                        break;
+                $change['timestamp'] = strtotime($Observation->timestamp);
+                
+                if(isset($Observation->mid)) {
+                    switch($observations[$Observation->id]['Type']) {
+                        case Observations::BOOLEAN:
+                            $change['Value'] = (bool)$Observation->value; 
+                            break;
+                        case Observations::INTEGER:
+                            $change['Value'] = (int)$Observation->value; 
+                            break;
+                        case Observations::STRING:
+                            $change['Value'] = (string)$Observation->value; 
+                            break;
+                        case Observations::FLOAT:
+                            $change['Value'] = (float)$Observation->value; 
+                            break;
+                    }
+                } else if(isset($Observation->serialnumber)) {
+                    if(!isset($Observation->wasAccepted) || !isset($Observation->ticks)) {
+                        throw new Exception('Observation is invalid! Missing "wasAccepted" and/or "ticks"');
+                    }
+
+                    $change['WasAccepted'] = $Observation->wasAccepted;
+                    $change['Ticks'] = $Observation->ticks;
+                } else {
+                    throw new Exception('Observation is invalid! MIssing "mid" or "serialnumber"');        
                 }
-    
+                
                 return $change;
             }
             
@@ -44,9 +55,7 @@ class Observations {
         } else {
             throw new Exception(sprintf('Observation Id %d is not defined in class %s', $Observation->id, get_called_class()));
         }
-        
-    }
-
+     }
 }
 
 class Equalizer extends Observations {
@@ -473,7 +482,7 @@ class Charger extends Observations {
         ],
         140 => [
             'IsVariable' => false,
-            'Description' => 'Undocumented'
+            'Description' => 'FOUND WI FI'
         ],
         141 => [
             'IsVariable' => false,
