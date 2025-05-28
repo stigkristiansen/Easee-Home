@@ -226,6 +226,7 @@ class EaseeHomeGateway extends IPSModule {
 
 		$data = json_decode($JSONString);
 		$requests = json_encode($data->Buffer);
+
 		$script = "IPS_RequestAction(" . (string)$this->InstanceID . ", 'Async', '" . $requests . "');";
 
 		$this->SendDebug(__FUNCTION__, 'Executing the request(s) in a new thread...', 0);

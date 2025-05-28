@@ -119,7 +119,7 @@ class EaseeHomeCharger extends IPSModule {
 			
 			switch (strtolower($Ident)) {
 				case 'getcommandstate':
-					$request = $this->GetCommandStateRequest($chargerId, $Value);
+					//$request = $this->GetCommandStateRequest($chargerId, $Value);
 					
 					break;
 				case 'refresh':
@@ -490,9 +490,9 @@ class EaseeHomeCharger extends IPSModule {
 					}
 				}
 
-				$this->UpdateReceivedObservations($change);
-
 				$this->SetValueEx($change['Ident'], $change['Value']);
+
+				$this->UpdateReceivedObservations($change);
 			} else {
 				$this->SendDebug(__FUNCTION__, sprintf('Observation Id %d is not corresponding to an Ident', $Data->id), 0);
 			}
@@ -506,6 +506,30 @@ class EaseeHomeCharger extends IPSModule {
 	private function HandleCommandResponse($Data) {
 		
 		$this->SendDebug(__FUNCTION__, sprintf('Processing Command Response: %s...', json_encode($Data)), 0);
+
+		try{
+			$response = Charger::GetObservation($Data);
+			if($response!==false) {
+				$this->SendDebug(__FUNCTION__, sprintf('Observation Id %d is an Id that corresponds to Ident "%s"', $Data->id, $response['Ident']), 0);
+				$oldObservation = $this->GetReceivedObservation($response['Ident']);
+				if($oldObservation!==false) {
+					if($oldObservation['Timestamp']>$response['Timestamp']) {
+						return; // Newer observation has already been handeled
+					}
+				}
+
+				if($oldObservation['Ticks']==$response['Ticks'] && $response['WasAccepted']) {
+					$this->SetValueEx($oldObservation['Ident'], $oldObservation['Value']);
+				}
+
+				$this->UpdateReceivedObservations($response);
+			} else {
+				$this->SendDebug(__FUNCTION__, sprintf('Observation Id %d is not corresponding to an Ident', $Data->id), 0);
+			}
+		} catch(Exception $e) {
+			IPS_LogMessage(IPS_GetInstance($this->InstanceID)['ModuleInfo']['ModuleName'], $e->getMessage());
+			$this->SendDebug(__FUNCTION__, $e->getMessage(), 0);
+		}	
 		
 	}
 	
