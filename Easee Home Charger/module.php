@@ -270,7 +270,7 @@ class EaseeHomeCharger extends IPSModule {
 							$value = ['CommandId'=>$commandId, 'Ticks'=>$ticks, 'Ident' => $ident, 'Count' => 0] ;
 							$script = "IPS_RequestAction(" . (string)$this->InstanceID . " ,'GetCommandState', '" . json_encode($value) . "');";
 															
-							$this->RegisterOnceTimer('EaseeChargerGetCommandState' . (string)$this->InstanceID, $script); // Call GetCommandState in a new thread	
+							//$this->RegisterOnceTimer('EaseeChargerGetCommandState' . (string)$this->InstanceID, $script); // Call GetCommandState in a new thread	
 						} else {
 							throw new Exception('Invalid data receieved from parent. Missing or invalid CommandId of Ticks');
 						}
@@ -376,7 +376,7 @@ class EaseeHomeCharger extends IPSModule {
 										
 										$this->SendDebug(__FUNCTION__, sprintf('Recalling GetCommandState. Count is: %d', $count), 0);
 
-										$this->RegisterOnceTimer('EaseeChargerGetCommandState' . (string)$this->InstanceID, $script); 
+										//$this->RegisterOnceTimer('EaseeChargerGetCommandState' . (string)$this->InstanceID, $script); 
 									} else {
 										$this->SendDebug(__FUNCTION__, sprintf('This was the last call to GetCommandState for now. Count is %d', $count), 0);
 										$this->SendDebug(__FUNCTION__, 'querying for charger status immediately', 0);

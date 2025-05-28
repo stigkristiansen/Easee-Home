@@ -512,6 +512,10 @@ class Charger extends Observations {
             'IsVariable' => false,
             'Description' => 'Undocumented'
         ],
+        157 => [
+            'IsVariable' => false,
+            'Description' => 'Undocumented'
+        ],
         182 => [
             'IsVariable' => false,
             'Description' => 'INT CURRENT T2'
