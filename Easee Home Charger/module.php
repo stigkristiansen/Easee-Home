@@ -131,20 +131,20 @@ class EaseeHomeCharger extends IPSModule {
 					$this->SetValue($Ident, $Value);
 					$this->DisableAction($Ident); // Disable variable in visualization until command has finished
 					
-					$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargerLockState','ChargerId'=>$chargerId, 'State' => $Value];
+					$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargerLockState', 'Ident'=> $Ident, 'ChargerId'=>$chargerId, 'State' => $Value];
 					break;
 				case 'protectaccess':
 					$this->SetValue($Ident, $Value);
 					$this->DisableAction($Ident); // Disable variable in visualization  until command has finished
 					
-					$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargerAccessLevel','ChargerId'=>$chargerId, 'UseKey' => $Value];
+					$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargerAccessLevel', 'Ident'=> $Ident, 'ChargerId'=>$chargerId, 'UseKey' => $Value];
 					break;
 				case 'startcharging':
 					if($Value>0){
 						$this->SetValue($Ident, $Value);
 						$this->DisableAction($Ident); // Disable variable in visualization until command has finished
 						
-						$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargingState','ChargerId'=>$chargerId, 'State' => $Value==1?true:false];
+						$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargingState', 'Ident'=> $Ident, 'ChargerId'=>$chargerId, 'State' => $Value==1?true:false];
 					}
 					break;
 				default:
