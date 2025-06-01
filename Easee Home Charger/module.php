@@ -137,7 +137,7 @@ class EaseeHomeCharger extends IPSModule {
 						'Ident' => $Ident,
                 		'Timestamp' => strtotime(time()),
 						'Value' => $Value
-					]
+					];
 
 					$this->UpdateReceivedObservations($Change);
 					break;
