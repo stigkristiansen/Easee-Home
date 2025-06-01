@@ -139,7 +139,7 @@ class EaseeHomeCharger extends IPSModule {
 						'Value' => $Value
 					];
 
-					$this->UpdateReceivedObservations($Change);
+					$this->UpdateReceivedObservations($change);
 					break;
 				case 'protectaccess':
 					$this->SetValue($Ident, $Value);
