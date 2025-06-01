@@ -66,7 +66,7 @@ class EaseeHomeCharger extends IPSModule {
 		$this->RegisterTimer('EaseeChargerRefresh' . (string)$this->InstanceID, 0, 'IPS_RequestAction(' . (string)$this->InstanceID . ', "Refresh", 0);'); 
 
 		$this->RegisterMessage(0, IPS_KERNELMESSAGE);
-		
+
 	}
 
 	public function Destroy(){
@@ -129,18 +129,26 @@ class EaseeHomeCharger extends IPSModule {
 					//$this->InitTimer(); // Reset timer back to configured interval 
 					break;
 				case 'lockcable':
+					$this->SendDebug(__FUNCTION__, 'Starting process for locking...', 0);
 					// $this->SetValue($Ident, $Value);
 					//$this->DisableAction($Ident); // Disable variable in visualization until command has finished
 					
 					$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargerLockState', 'Ident'=> $Ident, 'ChargerId'=>$chargerId, 'State' => $Value];
 
+					$this->SendDebug(__FUNCTION__, 'Before creationg change-variable', 0);
+					
 					$change = [
 						'Ident' => $Ident,
                 		'Timestamp' => strtotime(time()),
 						'Value' => $Value
 					];
 
+					$this->SendDebug(__FUNCTION__, 'After creationg change-variable', 0);
+
+
+					$this->SendDebug(__FUNCTION__, 'Before UpdateReceivedObservations', 0);
 					$this->UpdateReceivedObservations($change);
+					$this->SendDebug(__FUNCTION__, 'After UpdateReceivedObservations', 0);
 					break;
 				case 'protectaccess':
 					$this->SetValue($Ident, $Value);
