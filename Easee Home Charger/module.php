@@ -66,6 +66,7 @@ class EaseeHomeCharger extends IPSModule {
 		$this->RegisterTimer('EaseeChargerRefresh' . (string)$this->InstanceID, 0, 'IPS_RequestAction(' . (string)$this->InstanceID . ', "Refresh", 0);'); 
 
 		$this->RegisterMessage(0, IPS_KERNELMESSAGE);
+		
 	}
 
 	public function Destroy(){
