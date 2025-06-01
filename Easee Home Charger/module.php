@@ -255,6 +255,7 @@ class EaseeHomeCharger extends IPSModule {
 						if(isset($data->Buffer->Ident)) {
 							$ident =  $data->Buffer->Ident;
 						}
+						
 
 						$observation = $this->GetReceivedObservation($ident);
 
