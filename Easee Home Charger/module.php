@@ -486,8 +486,9 @@ class EaseeHomeCharger extends IPSModule {
 				$oldObservation = $this->GetReceivedObservation($change['Ident']);
 				if($oldObservation!==false) {
 					if($oldObservation['Timestamp']>$change['Timestamp']) {
-						$this->SendDebug(__FUNCTION__, 'Timestamp for this change is older than the last observation. Skipping the update og the variable', 0);
-						return; // Newer observation has already been handeled
+						$this->SendDebug(__FUNCTION__, 'Timestamp for this change is older than the last observation. Skipping the update of the variable', 0);
+						
+						return; 
 					}
 
 					$this->SendDebug(__FUNCTION__, 'Timestamp for this change is newer than the last observation. Updating the variable', 0);
@@ -519,9 +520,15 @@ class EaseeHomeCharger extends IPSModule {
 				$oldObservation = $this->GetReceivedObservation($response['Ident']);
 				if($oldObservation!==false) {
 					if($oldObservation['Timestamp']>$response['Timestamp']) {
-						return; // Newer observation has already been handeled
+						$this->SendDebug(__FUNCTION__, 'Timestamp for this change is older than the last observation. Skipping the update of the variable', 0);
+
+						return;
 					}
+				}  else {
+					$this->SendDebug(__FUNCTION__, 'This observation do not correspond with a earlier sent command. Skipping update', 0);
 				}
+
+				$this->SendDebug(__FUNCTION__, 'Timestamp for this change is newer than the last observation. Checking if it matches a earlier sent command...', 0);
 
 				if($oldObservation['Ticks']==$response['Ticks'] && $response['WasAccepted']) {
 					$this->SetValueEx($oldObservation['Ident'], $oldObservation['Value']);

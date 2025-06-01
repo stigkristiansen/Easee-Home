@@ -37,7 +37,7 @@ class Observations {
                             $change['Value'] = (float)$Observation->value; 
                             break;
                     }
-                } else if(isset($Observation->serialnumber)) {
+                } else if(isset($Observation->serialNumber)) {
                     if(!isset($Observation->wasAccepted) || !isset($Observation->ticks)) {
                         throw new Exception('Observation is invalid! Missing "wasAccepted" and/or "ticks"');
                     }
@@ -45,7 +45,7 @@ class Observations {
                     $change['WasAccepted'] = $Observation->wasAccepted;
                     $change['Ticks'] = $Observation->ticks;
                 } else {
-                    throw new Exception('Observation is invalid! MIssing "mid" or "serialnumber"');        
+                    throw new Exception('Observation is invalid! Missing "mid" or "serialNumber"');        
                 }
                 
                 return $change;
