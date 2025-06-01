@@ -129,7 +129,7 @@ class EaseeHomeCharger extends IPSModule {
 					break;
 				case 'lockcable':
 					// $this->SetValue($Ident, $Value);
-					$this->DisableAction($Ident); // Disable variable in visualization until command has finished
+					//$this->DisableAction($Ident); // Disable variable in visualization until command has finished
 					
 					$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargerLockState', 'Ident'=> $Ident, 'ChargerId'=>$chargerId, 'State' => $Value];
 
