@@ -139,7 +139,7 @@ class EaseeHomeCharger extends IPSModule {
 					
 					$change = [
 						'Ident' => $Ident,
-                		'Timestamp' => strtotime(time()),
+                		'Timestamp' => time(),
 						'Value' => $Value
 					];
 
