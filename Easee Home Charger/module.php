@@ -485,7 +485,7 @@ class EaseeHomeCharger extends IPSModule {
 				$this->SendDebug(__FUNCTION__, sprintf('Observation Id %d is an Id that corresponds to Ident "%s"', $Data->id, $change['Ident']), 0);
 				$oldObservation = $this->GetReceivedObservation($change['Ident']);
 				if($oldObservation!==false) {
-					if($oldObservation['timestamp']>$change['timestamp']) {
+					if($oldObservation['Timestamp']>$change['Timestamp']) {
 						return; // Newer observation has already been handeled
 					}
 				}

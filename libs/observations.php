@@ -20,7 +20,7 @@ class Observations {
         if(isset($observations[$Observation->id])) {
             if($observations[$Observation->id]['IsVariable']) {
                 $change = ['Ident' => $observations[$Observation->id]['Ident']];
-                $change['timestamp'] = strtotime($Observation->timestamp);
+                $change['Timestamp'] = strtotime($Observation->timestamp);
                 
                 if(isset($Observation->mid)) {
                     switch($observations[$Observation->id]['Type']) {
