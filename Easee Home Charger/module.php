@@ -128,10 +128,18 @@ class EaseeHomeCharger extends IPSModule {
 					//$this->InitTimer(); // Reset timer back to configured interval 
 					break;
 				case 'lockcable':
-					$this->SetValue($Ident, $Value);
+					// $this->SetValue($Ident, $Value);
 					$this->DisableAction($Ident); // Disable variable in visualization until command has finished
 					
 					$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargerLockState', 'Ident'=> $Ident, 'ChargerId'=>$chargerId, 'State' => $Value];
+
+					$change = [
+						'Ident' => $Ident,
+                		'Timestamp' => strtotime(time()),
+						'Value' => $Value
+					]
+
+					$this->UpdateReceivedObservations($Change);
 					break;
 				case 'protectaccess':
 					$this->SetValue($Ident, $Value);
@@ -211,7 +219,10 @@ class EaseeHomeCharger extends IPSModule {
 						// Send message back to parent to subscribe
 						$chargerId = $this->ReadPropertyString('ProductId');
 						$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'Subscribe','ChargerId'=>$chargerId, 'WithCurrentState' => true];
+						
 						$this->SendDataToParent(json_encode(['DataID' => '{B62C0F65-7B59-0CD8-8C92-5DA32FBBD317}', 'Buffer' => $request]));
+						
+						break;
 					case 'getchargerstate':
 						if(isset($result->chargerOpMode)) {
 							$this->SetValueEx('Status', $result->chargerOpMode);
@@ -239,16 +250,27 @@ class EaseeHomeCharger extends IPSModule {
 						}
 						break;
 					case 'setchargerlockstate':
-						$ident = 'LockCable';
-
-						if(isset($result->commandId)) {
-							$commandId =  $result->commandId;
+						if(isset($data->Buffer->Ident)) {
+							$ident =  $data->Buffer->Ident;
 						}
 
-						$ticks = -1;
-						if(isset($result->ticks)) {
-							$ticks = $result->ticks;
+						$observation = $this->GetReceivedObservation($Ident);
+
+						if($observation!==false) {
+							if(isset($result->commandId)) {
+								$observation['Id'] =  $result->commandId;
+							} else {
+								$observation['Id'] = 0;
+							}
+
+							if(isset($result->ticks)) {
+								$observation['Ticks'] = $result->ticks;
+							} else {
+								$observation['Ticks'] = 0;
+							}	
 						}
+
+						$this->UpdateReceivedObservations($observation);
 
 						break;
 					case 'setchargingstate':
