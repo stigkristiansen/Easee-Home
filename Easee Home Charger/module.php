@@ -486,15 +486,20 @@ class EaseeHomeCharger extends IPSModule {
 				$oldObservation = $this->GetReceivedObservation($change['Ident']);
 				if($oldObservation!==false) {
 					if($oldObservation['Timestamp']>$change['Timestamp']) {
+						$this->SendDebug(__FUNCTION__, 'Timestamp for this change is older than the last observation. Skipping the update og the variable', 0);
 						return; // Newer observation has already been handeled
 					}
+
+					$this->SendDebug(__FUNCTION__, 'Timestamp for this change is newer than the last observation. Updating the variable', 0);
+				} else {
+					$this->SendDebug(__FUNCTION__, 'This is the first observation for this ident. Updating the variable', 0);
 				}
 
 				$this->SetValueEx($change['Ident'], $change['Value']);
 
 				$this->UpdateReceivedObservations($change);
 			} else {
-				$this->SendDebug(__FUNCTION__, sprintf('Observation Id %d is not corresponding to an Ident', $Data->id), 0);
+				$this->SendDebug(__FUNCTION__, sprintf('Observation Id %d is not corresponding to an Ident. There is nothing to update', $Data->id), 0);
 			}
 		} catch(Exception $e) {
 			IPS_LogMessage(IPS_GetInstance($this->InstanceID)['ModuleInfo']['ModuleName'], $e->getMessage());
