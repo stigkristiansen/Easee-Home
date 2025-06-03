@@ -545,7 +545,7 @@ class EaseeHomeCharger extends IPSModule {
 				$oldObservation = $this->GetReceivedObservation($response['Ident']);
 				if($oldObservation!==false) {
 					if($oldObservation['Timestamp']>$response['Timestamp']) {
-						$this->SendDebug(__FUNCTION__, 'Timestamp for this change is older than the last observation. Skipping the update of the variable', 0);
+						$this->SendDebug(__FUNCTION__, 'Timestamp for this change is older than the last observation. Skipping update', 0);
 
 						return;
 					}
@@ -563,8 +563,6 @@ class EaseeHomeCharger extends IPSModule {
 				} else {
 					$this->SendDebug(__FUNCTION__, 'This CommandResponse do not match a earlier sent command. Skipping update', 0);
 				}
-
-				
 			} else {
 				$this->SendDebug(__FUNCTION__, sprintf('Observation Id %d is not corresponding to an Ident', $Data->id), 0);
 			}
@@ -572,7 +570,6 @@ class EaseeHomeCharger extends IPSModule {
 			IPS_LogMessage(IPS_GetInstance($this->InstanceID)['ModuleInfo']['ModuleName'], $e->getMessage());
 			$this->SendDebug(__FUNCTION__, $e->getMessage(), 0);
 		}	
-		
 	}
 	
 	private function GetCommandStateRequest(string $ChargerId, string $Value) : ?array {
