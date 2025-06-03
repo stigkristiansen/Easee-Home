@@ -558,11 +558,13 @@ class EaseeHomeCharger extends IPSModule {
 				if(isset($oldObservation['Ticks']) && $oldObservation['Ticks']==$response['Ticks'] && isset($response['WasAccepted']) && $response['WasAccepted']) {
 					$this->SendDebug(__FUNCTION__, 'This CommandResponse match a earlier sent command. Updating...', 0);
 					$this->SetValueEx($oldObservation['Ident'], $oldObservation['Value']);
+
+					$this->UpdateReceivedObservations($response);
 				} else {
 					$this->SendDebug(__FUNCTION__, 'This CommandResponse do not match a earlier sent command. Skipping update', 0);
 				}
 
-				$this->UpdateReceivedObservations($response);
+				
 			} else {
 				$this->SendDebug(__FUNCTION__, sprintf('Observation Id %d is not corresponding to an Ident', $Data->id), 0);
 			}
