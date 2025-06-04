@@ -378,7 +378,7 @@ class Easee {
             
             //$url = self::ENDPOINT . '/api/chargers/' . $ChargerId .'/state';
 
-            $url = self::ENDPOINT2 . '/state' . '/' . $ChargerId .'/observations?{30,42,109}';
+            $url = self::ENDPOINT2 . '/state' . '/' . $ChargerId .'/observations?30,42,109';
 
             $result = self::EvaluateResult(self::request('get', $url), $url);
             
