@@ -98,7 +98,7 @@ class EaseeHomeCharger extends IPSModule {
 		$this->SetBuffer(self::RECEIVED_OBSERVATIONS, json_encode([]));
 		
 		if (IPS_GetKernelRunlevel() == KR_READY) {
-			//$this->InitTimer();
+			$this->InitTimer();
 		}
 	}
 
@@ -106,7 +106,7 @@ class EaseeHomeCharger extends IPSModule {
 		parent::MessageSink($TimeStamp, $SenderID, $Message, $Data);
 
 		if ($Message == IPS_KERNELMESSAGE && $Data[0] == KR_READY) {
-			//$this->InitTimer();
+			$this->InitTimer();
 		}
 	}
 
