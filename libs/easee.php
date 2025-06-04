@@ -192,6 +192,7 @@ class Easee {
     private $userProfile;
 
     const ENDPOINT = 'https://api.easee.cloud';
+    const ENDPOINT2 = 'https://api.easee.com';
     
     public function __construct(String $Username='', string $Password='', string $ApiKey = '', string $AccessToken='', string $RefreshToken='', DateTime $Expires = null) {
         $this->username = $Username;
@@ -377,7 +378,7 @@ class Easee {
             
             //$url = self::ENDPOINT . '/api/chargers/' . $ChargerId .'/state';
 
-            $url = self::ENDPOINT . '/state' . '/' . $ChargerId .'/observations?{30,42,109}';
+            $url = self::ENDPOINT2 . '/state' . '/' . $ChargerId .'/observations?{30,42,109}';
 
             $result = self::EvaluateResult(self::request('get', $url), $url);
             
