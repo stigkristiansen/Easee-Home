@@ -262,6 +262,10 @@ class Charger extends Observations {
             'IsVariable' => false,
             'Description' => 'IS ENABLED'
         ],
+        33 => [
+            'IsVariable' => false,
+            'Description' => 'CIRCUIT SEQUENCE NUMBER'
+        ],
         36 => [
             'IsVariable' => false,
             'Description' => 'WIFI SSID'

@@ -370,10 +370,15 @@ class Easee {
 
     public function GetChargerState(string $ChargerId) {
         
+        // https://api.easee.com/state/{product id}/observations?{comma separated list of observations ids}
+
         try{
             $this->Connect();
             
-            $url = self::ENDPOINT . '/api/chargers/' . $ChargerId .'/state';
+            //$url = self::ENDPOINT . '/api/chargers/' . $ChargerId .'/state';
+
+            $url = self::ENDPOINT . '/state' . '/' . $ChargerId .'/observations?{30,42,109}';
+
             $result = self::EvaluateResult(self::request('get', $url), $url);
             
             return $result;
