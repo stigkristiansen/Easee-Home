@@ -10,6 +10,24 @@ class Observations {
 
     const Observation = [];
 
+    static function GetObservationIdsWithVariable() {
+        $observations = get_called_class()::Observations;
+    
+        $ids = [];
+        foreach($observations as $id => $observation) {
+            if(isset($observation['IsVariable']) && $observation['IsVariable']) {
+                $ids[] = $id;
+            }
+        }
+        
+        if(count($ids)>0) {
+            return implode(',', $ids);
+        } else {
+            return false;
+        }
+    }
+    
+
     static function GetObservation($Observation) {
         if(!isset($Observation->id) || !isset($Observation->timestamp)) {
             throw new Exception('Observation is invalid! Missing "timestamp" and/or "id"');

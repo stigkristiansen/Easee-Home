@@ -462,9 +462,13 @@ class EaseeHomeCharger extends IPSModule {
 			} else {
 				$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerConfig','ChargerId'=>$ChargerId, 'Ident'=>$Ident];
 			}
-			
-			$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerState','ChargerId'=>$ChargerId];
-				
+
+			$ids = Charger::GetObservationIdsWithVariable();
+
+			if($ids!==false) {
+				$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerState','ChargerId'=>$ChargerId, 'ObserationIds'=>$ids];
+			}
+
 			return $request;
 		}
 
