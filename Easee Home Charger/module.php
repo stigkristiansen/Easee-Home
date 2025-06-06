@@ -239,6 +239,12 @@ class EaseeHomeCharger extends IPSModule {
 							$this->SetValueEx('TotalEnergi', $result->lifetimeEnergy);
 						}
 
+						if(isset($result->observations)) {
+							foreach($result->observations as $observation) {
+								$this->HandleProductUpdate($observation);
+							}
+						}
+						
 						break;
 					case 'getproducts':
 						break;
