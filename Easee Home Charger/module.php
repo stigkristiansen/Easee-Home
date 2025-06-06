@@ -243,7 +243,7 @@ class EaseeHomeCharger extends IPSModule {
 						if(isset($result->observations)) {
 							$mid = $this->ReadPropertyString('ProductId');
 							foreach($result->observations as $observation) {
-								$observation->mid = $mid
+								$observation->mid = $mid;
 								$this->HandleProductUpdate($observation);
 							}
 						}
