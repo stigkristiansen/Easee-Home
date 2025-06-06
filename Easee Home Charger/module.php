@@ -226,7 +226,7 @@ class EaseeHomeCharger extends IPSModule {
 						
 						break;
 					case 'getchargerstate':
-						if(isset($result->chargerOpMode)) {
+						/*if(isset($result->chargerOpMode)) {
 							$this->SetValueEx('Status', $result->chargerOpMode);
 						}
 						if(isset($result->voltage)) {
@@ -238,7 +238,8 @@ class EaseeHomeCharger extends IPSModule {
 						if(isset($result->lifetimeEnergy)) {
 							$this->SetValueEx('TotalEnergi', $result->lifetimeEnergy);
 						}
-
+						*/
+						
 						if(isset($result->observations)) {
 							foreach($result->observations as $observation) {
 								$this->HandleProductUpdate($observation);
