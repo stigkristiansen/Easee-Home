@@ -24,7 +24,6 @@ class SignalR {
     private $verifyTLS;
 
 
-
     public function __construct(string $AccessToken, bool $VerifyTLS=true, int $ForcedProtocol = self::PROTOCOL_WEBSOCKETS ) {
         $this->accessToken = $AccessToken;
         $this->forcedProtocol = $ForcedProtocol;
@@ -193,6 +192,14 @@ class Easee {
 
     //const ENDPOINT = 'https://api.easee.cloud';
     const ENDPOINT = 'https://api.easee.com';
+
+    const CARGING_STATE = [
+        'AUTHORIZE' => 0,
+        'UNAUTHORIZE' => 1,
+        'PAUSE' => 2,
+        'RESUME' => 3,
+        'TOGGLE' => 4
+    ];
         
     public function __construct(String $Username='', string $Password='', string $ApiKey = '', string $AccessToken='', string $RefreshToken='', DateTime $Expires = null) {
         $this->username = $Username;
@@ -369,11 +376,9 @@ class Easee {
         }
     }
 
-    public function GetChargerState(string $ChargerId, string $ObservationIds) {
+    public function GetChargerObservations(string $ChargerId, string $ObservationIds) {
         try{
             $this->Connect();
-
-
         
             $url = self::ENDPOINT . '/state' . '/' . $ChargerId .'/observations?ids=' . $ObservationIds ;
 
@@ -432,14 +437,28 @@ class Easee {
     }
 
 
-    public function SetChargingState(string $ChargerId, bool $State) {
+    public function SetChargingState(string $ChargerId, int $State) {
         try{
             $this->Connect();
             
-            if($State) {
-                $url = self::ENDPOINT . '/api/chargers/' . $ChargerId .'/commands/start_charging';
-            } else {
-                $url = self::ENDPOINT . '/api/chargers/' . $ChargerId .'/commands/stop_charging';
+            switch($State) {
+                case self::CARGING_STATE['AUTHORIZE']:
+                    $url = self::ENDPOINT . '/api/chargers/' . $ChargerId .'/commands/start_charging';
+                    break;
+                case self::CARGING_STATE['UNAUTHORIZE']:    
+                    $url = self::ENDPOINT . '/api/chargers/' . $ChargerId .'/commands/stop_charging';
+                    break;
+                case self::CARGING_STATE['PAUSE']:
+                    $url = self::ENDPOINT . '/api/chargers/' . $ChargerId .'/commands/pause_charging';
+                    break;
+                case self::CARGING_STATE['RESUME']:
+                    $url = self::ENDPOINT . '/api/chargers/' . $ChargerId .'/commands/resume_charging';
+                    break;
+                case self::CARGING_STATE['TOGGLE']:
+                    $url = self::ENDPOINT . '/api/chargers/' . $ChargerId .'/commands/resume_charging';
+                    break;
+                default:
+                    throw new Exception('$State has a invalid value');
             }
 
             $result = self::EvaluateResult(self::request('post', $url), $url);

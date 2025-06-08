@@ -218,28 +218,14 @@ class EaseeHomeCharger extends IPSModule {
 						$this->HandleCommandResponse($result);
 						break;
 					case 'subscribe':
-						// Send message back to parent to subscribe
+						// Send message back to parent to subscribe to SignalR
 						$chargerId = $this->ReadPropertyString('ProductId');
 						$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'Subscribe','ChargerId'=>$chargerId, 'WithCurrentState' => true];
 						
 						$this->SendDataToParent(json_encode(['DataID' => '{B62C0F65-7B59-0CD8-8C92-5DA32FBBD317}', 'Buffer' => $request]));
 						
 						break;
-					case 'getchargerstate':
-						/*if(isset($result->chargerOpMode)) {
-							$this->SetValueEx('Status', $result->chargerOpMode);
-						}
-						if(isset($result->voltage)) {
-							$this->SetValueEx('Voltage', $result->voltage);
-						}
-						if(isset($result->outputCurrent)) {
-							$this->SetValueEx('Current', $result->outputCurrent);
-						}
-						if(isset($result->lifetimeEnergy)) {
-							$this->SetValueEx('TotalEnergi', $result->lifetimeEnergy);
-						}
-						*/
-						
+					case 'getchargerobservations':
 						if(isset($result->observations)) {
 							$mid = $this->ReadPropertyString('ProductId');
 							foreach($result->observations as $observation) {
@@ -247,7 +233,6 @@ class EaseeHomeCharger extends IPSModule {
 								$this->HandleProductUpdate($observation);
 							}
 						}
-						
 						break;
 					case 'getproducts':
 						break;
@@ -264,7 +249,6 @@ class EaseeHomeCharger extends IPSModule {
 						if(isset($data->Buffer->Ident)) {
 							$ident =  $data->Buffer->Ident;
 						}
-
 
 						$observation = $this->GetReceivedObservation($ident);
 
@@ -320,113 +304,6 @@ class EaseeHomeCharger extends IPSModule {
 						$this->EnableAction('ProtectAccess');
 						
 						break;
-					case 'getcommandstate':
-						$commandId = -1;
-						if(isset($result->id)) {
-							$commandId =  $result->id;
-						}
-
-						$ticks = -1;
-						if(isset($result->ticks)) {
-							$ticks = $result->ticks;
-						}
-
-						$resultCode = -1;
-						if(isset($result->resultCode)) {
-							$resultCode = $result->resultCode;
-						}
-
-						$ident = '';
-						if(isset($data->Buffer->Ident)) {
-							$ident = $data->Buffer->Ident;
-						}
-
-						$count = -1;
-						if(isset($data->Buffer->Count)) {
-							$count = $data->Buffer->Count;
-						}
-
-						$wasAccepted = null;
-						if(isset($result->wasAccepted)) {
-							$wasAccepted = $result->wasAccepted;
-						}
-
-						if($commandId>=0 && $ticks>=0 && $resultCode>=0 && strlen($ident)>0 && $count>=0 && $wasAccepted!==null) {
-							//$this->SendDebug(__FUNCTION__, sprintf('WasAccepted: "%s" ResultCode: %d ', $wasAccepted?'true':'false', $resultCode), 0);
-							switch($resultCode) {
-								case 2: // Expired
-								case 3: // Executed
-									if(!$wasAccepted) {
-										$this->SendDebug(__FUNCTION__, 'Command was not accepted. Resetting value and querying for charger status immediately', 0);										
-										$sleep = '';
-
-										if(strtolower($ident)=='startcharging') {
-											$this->SetValue($ident, 0);
-										} else {
-											$this->SetValue($ident, !$this->GetValue($ident));
-										}	
-									} else {
-										$this->SendDebug(__FUNCTION__, 'Command was accepted.', 0);
-										$this->SendDebug(__FUNCTION__, 'Command state was executed or expired. Querying for new charger status in 10s', 0);										
-										
-										if(strtolower($ident)=='startcharging') {
-											$this->SetValue($ident, 0);
-										}
-
-										$sleep = 'sleep(10);';
-									}
-																			
-									$script = $sleep . "IPS_RequestAction(" . (string)$this->InstanceID . " ,'Refresh', 0);";
-									$this->RegisterOnceTimer('EaseeChargerRefreshOnce' . (string)$this->InstanceID, $script); 
-
-									$this->EnableAction($ident);
-									
-									break;
-								case 4: // Rejected
-									$this->SendDebug(__FUNCTION__, 'Command was rejected. Resetting value and querying for charger status immediately', 0);
-									
-									// Reset value
-									if(strtolower($ident)=='startcharging') {
-										$this->SetValue($ident, 0);
-									} else {
-										$this->SetValue($ident, !$this->GetValue($ident));
-									}
-																			
-									$script = "IPS_RequestAction(" . (string)$this->InstanceID . " ,'Refresh', 0);";
-									$this->RegisterOnceTimer('EaseeChargerRefreshOnce' . (string)$this->InstanceID, $script); 
-
-									$this->EnableAction($ident);
-									break;
-								default:
-									// 1 = Sent
-									if($count<30) { // Retry 30 times to se if command can complete
-										$count++;
-
-										$this->SendDebug(__FUNCTION__, 'Waiting 1s to throttle down the queries', 0);
-										//sleep(1);
-
-										$value = ['CommandId'=>$commandId, 'Ticks'=>$ticks, 'Ident'=> $data->Buffer->Ident, 'Count'=>$count];
-										$script = "sleep(1);IPS_RequestAction(" . (string)$this->InstanceID . " ,'GetCommandState', '" . json_encode($value) . "');";
-										
-										$this->SendDebug(__FUNCTION__, sprintf('Recalling GetCommandState. Count is: %d', $count), 0);
-
-										//$this->RegisterOnceTimer('EaseeChargerGetCommandState' . (string)$this->InstanceID, $script); 
-									} else {
-										$this->SendDebug(__FUNCTION__, sprintf('This was the last call to GetCommandState for now. Count is %d', $count), 0);
-										$this->SendDebug(__FUNCTION__, 'querying for charger status immediately', 0);
-
-										$script = "IPS_RequestAction(" . (string)$this->InstanceID . " ,'Refresh', 0);";
-
-										$this->RegisterOnceTimer('EaseeChargerRefreshOnce' . (string)$this->InstanceID, $script); 
-									}
-
-									break;
-							}
-						} else {
-							throw new Exception('Invalid data receieved from parent. Missing or invalid CommandId, Ticks, WasAccepted, ResultCode, Ident or Count');
-						}
-
-						break;
 					default:
 						throw new Exception(sprintf('Unknown function "%s()" receeived in repsponse from gateway', $function));
 				}
@@ -475,7 +352,7 @@ class EaseeHomeCharger extends IPSModule {
 			$ids = Charger::GetObservationIdsWithVariable();
 
 			if($ids!==false) {
-				$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerState','ChargerId'=>$ChargerId, 'ObserationIds'=>$ids];
+				$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerObservations','ChargerId'=>$ChargerId, 'ObserationIds'=>$ids];
 			}
 
 			return $request;
@@ -584,49 +461,7 @@ class EaseeHomeCharger extends IPSModule {
 			$this->SendDebug(__FUNCTION__, $e->getMessage(), 0);
 		}	
 	}
-	
-	private function GetCommandStateRequest(string $ChargerId, string $Value) : ?array {
-		if(strlen($ChargerId)>0) {
-			$jsonValue = json_decode($Value);
-
-			$jsonError = false;
-			$list = '';
-			if(!isset($jsonValue->CommandId)) {
-				$jsonError = true;
-			}
-
-			if(!isset($jsonValue->Ticks)) {
-				$jsonError = true;
-			}
-
-			if(!isset($jsonValue->Ident)) {
-				$jsonError = true;
-			}
-
-			if(!isset($jsonValue->Count)) {
-				$jsonError = true;
-			}
-
-			if($jsonError) {
-				$this->SendDebug(__FUNCTION__, sprintf('One or more values (CommandId, Ticks, Ident, or Count) are missing in "%s', $Value), 0);
-				return null;
-			}
-
-			$request[] = ['ChildId'=>(string)$this->InstanceID,
-						'Function'=>'GetCommandState',
-						'ChargerId'=>$ChargerId,
-						'CommandId'=>$jsonValue->CommandId,
-						'Ticks'=>$jsonValue->Ticks,
-						'Ident'=>$jsonValue->Ident,
-						'Count'=>$jsonValue->Count 
-					];
-
-			return $request;
-		}
-
-		return [];
-	}
-
+		
 	private function SetValueEx(string $Ident, $Value) {
 		$oldValue = $this->GetValue($Ident);
 		//if($oldValue!=$Value) {
