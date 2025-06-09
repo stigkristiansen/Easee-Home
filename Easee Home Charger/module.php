@@ -22,12 +22,15 @@ class EaseeHomeCharger extends IPSModule {
 		$this->RegisterPropertyString('Site', '');
 
 		$this->RegisterProfileIntegerEx('EHCH.ChargerOpMode', 'Electricity', '', '', [
+			[0, 'Offline', '', -1],
 			[1, 'Disconnected', '', -1],
 			[2, 'Awaiting Start ', '', -1],
 			[3, 'Charging ', '', -1],
 			[4, 'Completed ', '', -1],
 			[5, 'Error' , '', -1],
-			[6, 'Ready To Charge' , '', -1]
+			[6, 'Ready To Charge' , '', -1],
+			[7, 'Awaiting authentication' , '', -1],
+			[8, 'De-authenticating' , '', -1]
 		]);
 
 		$this->RegisterProfileIntegerEx('EHCH.StartCharging', 'Power', '', '', [
@@ -55,7 +58,7 @@ class EaseeHomeCharger extends IPSModule {
 
 		$this->RegisterVariableFloat('Current', 'Current', '~Ampere', 4);
 
-		$this->RegisterVariableFloat('TotalEnergi', 'Total Energi', '~Electricity', 5);
+		$this->RegisterVariableFloat('TotalEnergi', 'Total Energie', '~Electricity', 5);
 		
 		$this->RegisterVariableBoolean('LockCable', 'Lock Cable', 'EHCH.LockCable', 6);
 		$this->EnableAction('LockCable');
@@ -227,9 +230,9 @@ class EaseeHomeCharger extends IPSModule {
 						break;
 					case 'getchargerobservations':
 						if(isset($result->observations)) {
-							$mid = $this->ReadPropertyString('ProductId');
+							$mid = $this->ReadPropertyString('ProductId');  // GetChargerObservations returns without the mid-propery.  Add it to all returned observations
 							foreach($result->observations as $observation) {
-								$observation->mid = $mid;
+								$observation->mid = $mid; 
 								$this->HandleProductUpdate($observation);
 							}
 						}
@@ -270,28 +273,7 @@ class EaseeHomeCharger extends IPSModule {
 
 						break;
 					case 'setchargingstate':
-						if(strlen($ident)==0) {
-							$ident = 'StartCharging';
-						}
 						
-						$commandId = -1;
-						if(isset($result->commandId)) {
-							$commandId =  $result->commandId;
-						}
-
-						$ticks = -1;
-						if(isset($result->ticks)) {
-							$ticks = $result->ticks;
-						}
-
-						if($commandId>=0 && $ticks>=0) {
-							$value = ['CommandId'=>$commandId, 'Ticks'=>$ticks, 'Ident' => $ident, 'Count' => 0] ;
-							$script = "IPS_RequestAction(" . (string)$this->InstanceID . " ,'GetCommandState', '" . json_encode($value) . "');";
-															
-							//$this->RegisterOnceTimer('EaseeChargerGetCommandState' . (string)$this->InstanceID, $script); // Call GetCommandState in a new thread	
-						} else {
-							throw new Exception('Invalid data receieved from parent. Missing or invalid CommandId of Ticks');
-						}
 
 						break;
 					case 'setchargeraccesslevel':

@@ -179,6 +179,15 @@ class SignalR {
 
 }
 
+enum ChargingState: int = {
+    AUTHORIZE = 0;
+    UNAUTHORIZE = 1;
+    PAUSE = 2;
+    RESUME = 3;
+    TOGGLE = 4;
+}
+
+
 class Easee {
     private $username;
     private $password;
@@ -193,14 +202,6 @@ class Easee {
     //const ENDPOINT = 'https://api.easee.cloud';
     const ENDPOINT = 'https://api.easee.com';
 
-    const CARGING_STATE = [
-        'AUTHORIZE' => 0,
-        'UNAUTHORIZE' => 1,
-        'PAUSE' => 2,
-        'RESUME' => 3,
-        'TOGGLE' => 4
-    ];
-        
     public function __construct(String $Username='', string $Password='', string $ApiKey = '', string $AccessToken='', string $RefreshToken='', DateTime $Expires = null) {
         $this->username = $Username;
         $this->password = $Password;
@@ -362,19 +363,6 @@ class Easee {
         }
     }
 
-    public function GetCommandState(string $ChargerId, int $CommandId, int $Ticks) {
-        try {
-            $this->Connect();
-            
-            $url = self::ENDPOINT . '/api/commands/' . $ChargerId .'/' . (string)$CommandId . '/' . (string)$Ticks;
-            $result = self::EvaluateResult(self::request('get', $url), $url);
-            
-            return $result;
-
-        } catch(Exception $e) {
-            throw new Exception($e->getMessage(), $e->getCode());
-        }
-    }
 
     public function GetChargerObservations(string $ChargerId, string $ObservationIds) {
         try{
@@ -437,25 +425,25 @@ class Easee {
     }
 
 
-    public function SetChargingState(string $ChargerId, int $State) {
+    public function SetChargingState(string $ChargerId, ChargingSate $State) {
         try{
             $this->Connect();
             
             switch($State) {
-                case self::CARGING_STATE['AUTHORIZE']:
+                case ChargingState::AUTHORIZE:
                     $url = self::ENDPOINT . '/api/chargers/' . $ChargerId .'/commands/start_charging';
                     break;
-                case self::CARGING_STATE['UNAUTHORIZE']:    
+                case ChargingState::UNAUTHORIZE:    
                     $url = self::ENDPOINT . '/api/chargers/' . $ChargerId .'/commands/stop_charging';
                     break;
-                case self::CARGING_STATE['PAUSE']:
+                case ChargingState::PAUSE:
                     $url = self::ENDPOINT . '/api/chargers/' . $ChargerId .'/commands/pause_charging';
                     break;
-                case self::CARGING_STATE['RESUME']:
+                case ChargingState::RESUME:
                     $url = self::ENDPOINT . '/api/chargers/' . $ChargerId .'/commands/resume_charging';
                     break;
-                case self::CARGING_STATE['TOGGLE']:
-                    $url = self::ENDPOINT . '/api/chargers/' . $ChargerId .'/commands/resume_charging';
+                case ChargingState::TOGGLE:
+                    $url = self::ENDPOINT . '/api/chargers/' . $ChargerId .'/commands/toggle_charging';
                     break;
                 default:
                     throw new Exception('$State has a invalid value');
