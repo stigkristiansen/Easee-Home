@@ -179,7 +179,7 @@ class SignalR {
 
 }
 
-enum ChargingState: int = {
+enum ChargingState: int {
     AUTHORIZE = 0;
     UNAUTHORIZE = 1;
     PAUSE = 2;
