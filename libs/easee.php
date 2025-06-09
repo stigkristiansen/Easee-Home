@@ -180,11 +180,11 @@ class SignalR {
 }
 
 enum ChargingState: int {
-    AUTHORIZE = 0;
-    UNAUTHORIZE = 1;
-    PAUSE = 2;
-    RESUME = 3;
-    TOGGLE = 4;
+    case AUTHORIZE = 0;
+    case UNAUTHORIZE = 1;
+    case PAUSE = 2;
+    case RESUME = 3;
+    case TOGGLE = 4;
 }
 
 
