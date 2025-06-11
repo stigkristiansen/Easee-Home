@@ -122,10 +122,6 @@ class EaseeHomeCharger extends IPSModule {
 			$request = [];
 			
 			switch (strtolower($Ident)) {
-				case 'getcommandstate':
-					//$request = $this->GetCommandStateRequest($chargerId, $Value);
-					
-					break;
 				case 'refresh':
 					$request = $this->RefreshRequest($chargerId, $Value);
 					
@@ -142,15 +138,16 @@ class EaseeHomeCharger extends IPSModule {
                 		'Timestamp' => time(),
 						'Value' => $Value
 					];
-
 					
 					$this->UpdateReceivedObservations($change);
 					break;
 				case 'protectaccess':
-					$this->SetValue($Ident, $Value);
-					$this->DisableAction($Ident); // Disable variable in visualization  until command has finished
+					//$this->SetValue($Ident, $Value);
+					//$this->DisableAction($Ident); // Disable variable in visualization  until command has finished
 					
-					$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargerAccessLevel', 'Ident'=> $Ident, 'ChargerId'=>$chargerId, 'UseKey' => $Value];
+					//$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargerAccessLevel', 'Ident'=> $Ident, 'ChargerId'=>$chargerId, 'UseKey' => $Value];
+					$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargerConfig', 'Ident'=> $Ident, 'ChargerId'=>$chargerId, 'Config' => ['authorizationRequired' => $Value]];
+					
 					break;
 				case 'startcharging':
 					if($Value>0){

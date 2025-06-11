@@ -424,7 +424,6 @@ class Easee {
         }
     }
 
-
     public function SetChargingState(string $ChargerId, ChargingSate $State) {
         try{
             $this->Connect();
