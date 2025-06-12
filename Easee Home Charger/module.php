@@ -384,6 +384,9 @@ class EaseeHomeCharger extends IPSModule {
 
 		try{
 			$change = Charger::GetObservation($Data);
+
+			$this->SendDebug(__FUNCTION__, sprintf('GetObservation returned %s', json_encode($change)), 0);
+
 			if($change!==false) {
 				$this->SendDebug(__FUNCTION__, sprintf('Observation Id %d is an Id that corresponds to Ident "%s"', $Data->id, $change['Ident']), 0);
 				$oldObservation = $this->GetReceivedObservation($change['Ident']);
