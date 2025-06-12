@@ -146,6 +146,14 @@ class EaseeHomeCharger extends IPSModule {
 					//$this->DisableAction($Ident); // Disable variable in visualization  until command has finished
 					
 					//$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargerAccessLevel', 'Ident'=> $Ident, 'ChargerId'=>$chargerId, 'UseKey' => $Value];
+					$change = [
+						'Ident' => $Ident,
+                		'Timestamp' => time(),
+						'Value' => $Value
+					];
+					
+					$this->UpdateReceivedObservations($change);
+
 					$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargerConfig', 'Ident'=> $Ident, 'ChargerId'=>$chargerId, 'Config' => ['authorizationRequired' => $Value]];
 					
 					break;
@@ -246,6 +254,7 @@ class EaseeHomeCharger extends IPSModule {
 						}
 						break;
 					case 'setchargerlockstate':
+					case 'setchargerconfig':
 						if(isset($data->Buffer->Ident)) {
 							$ident =  $data->Buffer->Ident;
 						}
@@ -264,9 +273,9 @@ class EaseeHomeCharger extends IPSModule {
 							} else {
 								$observation['Ticks'] = 0;
 							}	
-						}
 
-						$this->UpdateReceivedObservations($observation);
+							$this->UpdateReceivedObservations($observation);
+						}
 
 						break;
 					case 'setchargingstate':
