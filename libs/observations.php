@@ -51,7 +51,7 @@ class Observations {
                                 $change['Value'] = (bool)$Observation->value;
 
                             } else if(is_string($Observation->value)) {
-                                switch(strtolower($test)) {
+                                switch(strtolower($Observation->value)) {
                                     case '1':
                                     case 'true':
                                         $change['Value'] = true;
