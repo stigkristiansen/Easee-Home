@@ -27,6 +27,7 @@ class Observations {
         }
     }
     
+    
 
     static function GetObservation($Observation) {
         if(!isset($Observation->id) || !isset($Observation->timestamp)) {
