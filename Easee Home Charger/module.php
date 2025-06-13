@@ -141,10 +141,10 @@ class EaseeHomeCharger extends IPSModule {
 					break;
 				case 'protectaccess':
 					$config = [
-						'authorizationRequired' = $Value,
-						'localPreAuthorizeEnabled' = $Value,
-						'localAuthorizeOfflineEnabled' = $Value,
-						'allowOfflineTxForUnknownId' = $Value
+						'authorizationRequired' => $Value,
+						'localPreAuthorizeEnabled' => $Value,
+						'localAuthorizeOfflineEnabled' => $Value,
+						'allowOfflineTxForUnknownId' => $Value
 					];
 
 					$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargerConfig', 'Ident'=> $Ident, 'ChargerId'=>$chargerId, 'Config' => $config];
