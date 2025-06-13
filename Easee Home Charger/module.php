@@ -140,7 +140,14 @@ class EaseeHomeCharger extends IPSModule {
 
 					break;
 				case 'protectaccess':
-					$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargerConfig', 'Ident'=> $Ident, 'ChargerId'=>$chargerId, 'Config' => ['authorizationRequired' => $Value]];
+					$config = [
+						'authorizationRequired' = $Value,
+						'localPreAuthorizeEnabled' = $Value,
+						'localAuthorizeOfflineEnabled' = $Value,
+						'allowOfflineTxForUnknownId' = $Value
+					];
+
+					$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargerConfig', 'Ident'=> $Ident, 'ChargerId'=>$chargerId, 'Config' => $config];
 
 					$change = [
 						'Ident' => $Ident,
@@ -331,7 +338,7 @@ class EaseeHomeCharger extends IPSModule {
 				$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerConfig','ChargerId'=>$ChargerId, 'Ident'=>$Ident];
 			}
 			*/
-			
+
 			$ids = Charger::GetObservationIdsWithVariable();
 
 			if($ids!==false) {

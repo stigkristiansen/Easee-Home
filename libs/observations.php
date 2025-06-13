@@ -243,6 +243,10 @@ class Equalizer extends Observations {
 class Charger extends Observations {
 
     const Observations = [
+        5  => [
+            'IsVariable' => false,
+            'Description'  => 'Undocumentet, messages and errors....'
+        ],
         11 => [
             'IsVariable' => false,
             'Description'  => 'CHARGER OFFLINE REASON'
