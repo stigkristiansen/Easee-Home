@@ -125,12 +125,9 @@ class EaseeHomeCharger extends IPSModule {
 				case 'refresh':
 					$request = $this->RefreshRequest($chargerId, $Value);
 					
-					//$this->InitTimer(); // Reset timer back to configured interval 
+					$this->InitTimer(); // Reset timer back to configured interval 
 					break;
 				case 'lockcable':
-					// $this->SetValue($Ident, $Value);
-					//$this->DisableAction($Ident); // Disable variable in visualization until command has finished
-					
 					$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargerLockState', 'Ident'=> $Ident, 'ChargerId'=>$chargerId, 'State' => $Value];
 
 					$change = [
@@ -140,12 +137,11 @@ class EaseeHomeCharger extends IPSModule {
 					];
 					
 					$this->UpdateReceivedObservations($change);
+
 					break;
 				case 'protectaccess':
-					//$this->SetValue($Ident, $Value);
-					//$this->DisableAction($Ident); // Disable variable in visualization  until command has finished
-					
-					//$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargerAccessLevel', 'Ident'=> $Ident, 'ChargerId'=>$chargerId, 'UseKey' => $Value];
+					$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargerConfig', 'Ident'=> $Ident, 'ChargerId'=>$chargerId, 'Config' => ['authorizationRequired' => $Value]];
+
 					$change = [
 						'Ident' => $Ident,
                 		'Timestamp' => time(),
@@ -154,8 +150,6 @@ class EaseeHomeCharger extends IPSModule {
 					
 					$this->UpdateReceivedObservations($change);
 
-					$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargerConfig', 'Ident'=> $Ident, 'ChargerId'=>$chargerId, 'Config' => ['authorizationRequired' => $Value]];
-					
 					break;
 				case 'startcharging':
 					if($Value>0){
@@ -331,12 +325,13 @@ class EaseeHomeCharger extends IPSModule {
 
 	private function RefreshRequest(string $ChargerId, $Ident) : array {
 		if(strlen($ChargerId)>0) {
-			if($Ident=='0') {
+			/*if($Ident=='0') {
 				$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerConfig','ChargerId'=>$ChargerId];
 			} else {
 				$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerConfig','ChargerId'=>$ChargerId, 'Ident'=>$Ident];
 			}
-
+			*/
+			
 			$ids = Charger::GetObservationIdsWithVariable();
 
 			if($ids!==false) {
