@@ -26,7 +26,7 @@ class Observations {
             return false;
         }
     }
-    
+
     
 
     static function GetObservation($Observation) {
@@ -44,7 +44,19 @@ class Observations {
                 if(isset($Observation->mid)) {
                     switch($observations[$Observation->id]['Type']) {
                         case Observations::BOOLEAN:
-                            $change['Value'] = (bool)$Observation->value; 
+                            switch($Observation->value) {
+                                case true:
+                                case 1:
+                                case "1":
+                                case "True":
+                                case "true":
+                                case "TRUE":
+                                    $change['Value'] = true;
+                                    break;
+                                default:
+                                    $change['Value'] = false;
+                            }
+                             
                             break;
                         case Observations::INTEGER:
                             $change['Value'] = (int)$Observation->value; 
