@@ -44,17 +44,21 @@ class Observations {
                 if(isset($Observation->mid)) {
                     switch($observations[$Observation->id]['Type']) {
                         case Observations::BOOLEAN:
-                            switch($Observation->value) {
-                                case true:
-                                case 1:
-                                case "1":
-                                case "True":
-                                case "true":
-                                case "TRUE":
-                                    $change['Value'] = true;
-                                    break;
-                                default:
-                                    $change['Value'] = false;
+                            if(is_bool($Observation->value)) {
+                                $change['Value'] = $Observation->value;
+
+                            } else if(is_numeric($Observation->value)) {
+                                $change['Value'] = (bool)$Observation->value;
+
+                            } else if(is_string($Observation->value)) {
+                                switch(strtolower($test)) {
+                                    case '1':
+                                    case 'true':
+                                        $change['Value'] = true;
+                                        break;
+                                    default:
+                                        $change['Value'] = false;
+                                }
                             }
                              
                             break;
