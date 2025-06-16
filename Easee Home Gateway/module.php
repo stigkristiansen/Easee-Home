@@ -202,7 +202,7 @@ class EaseeHomeGateway extends IPSModule {
 
 						break;
 					case 6: // Ping
-						$this->SendDebug(__FUNCTION__, 'Received PING. Sending PING back to SignalR', 0);
+						$this->SendDebug(__FUNCTION__, 'Received PING. Sending PING back to SignalR...', 0);
 						$this->SendDataToParent(json_encode(['DataID' => '{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}', 'Buffer' => SignalR::Ping()]));
 						break;
 				}
