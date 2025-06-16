@@ -338,13 +338,6 @@ class EaseeHomeCharger extends IPSModule {
 
 	private function RefreshRequest(string $ChargerId, $Ident) : array {
 		if(strlen($ChargerId)>0) {
-			/*if($Ident=='0') {
-				$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerConfig','ChargerId'=>$ChargerId];
-			} else {
-				$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerConfig','ChargerId'=>$ChargerId, 'Ident'=>$Ident];
-			}
-			*/
-
 			$ids = Charger::GetObservationIdsWithVariable();
 
 			if($ids!==false) {
@@ -414,6 +407,7 @@ class EaseeHomeCharger extends IPSModule {
 
 				if(isset($oldObservation['IsEnabled']) && $oldObservation['IsEnabled']==true) {
 					$this->EnableAction($change['Ident']);
+					$this->InitTimer();
 				}
 
 				$this->UpdateReceivedObservations($change);
