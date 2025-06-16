@@ -128,7 +128,7 @@ class EaseeHomeCharger extends IPSModule {
 					$this->InitTimer(); // Reset timer back to configured interval 
 					break;
 				case 'lockcable':
-					$this->DisableActionAction($Ident);
+					$this->DisableAction($Ident);
 
 					$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargerLockState', 'Ident'=> $Ident, 'ChargerId'=>$chargerId, 'State' => $Value];
 
@@ -143,8 +143,8 @@ class EaseeHomeCharger extends IPSModule {
 
 					break;
 				case 'protectaccess':
-					$this->DisableActionAction($Ident);
-					
+					$this->DisableAction($Ident);
+
 					$config = [
 						'authorizationRequired' => $Value,
 						'localPreAuthorizeEnabled' => $Value,
