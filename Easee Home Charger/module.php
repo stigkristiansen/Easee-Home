@@ -128,18 +128,23 @@ class EaseeHomeCharger extends IPSModule {
 					$this->InitTimer(); // Reset timer back to configured interval 
 					break;
 				case 'lockcable':
+					$this->DisableActionAction($Ident);
+
 					$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargerLockState', 'Ident'=> $Ident, 'ChargerId'=>$chargerId, 'State' => $Value];
 
 					$change = [
 						'Ident' => $Ident,
                 		'Timestamp' => time(),
-						'Value' => $Value
+						'Value' => $Value,
+						'IsEnabled' => true
 					];
 					
 					$this->UpdateReceivedObservations($change);
 
 					break;
 				case 'protectaccess':
+					$this->DisableActionAction($Ident);
+					
 					$config = [
 						'authorizationRequired' => $Value,
 						'localPreAuthorizeEnabled' => $Value,
@@ -152,7 +157,8 @@ class EaseeHomeCharger extends IPSModule {
 					$change = [
 						'Ident' => $Ident,
                 		'Timestamp' => time(),
-						'Value' => $Value
+						'Value' => $Value,
+						'IsEnabled' => true
 					];
 					
 					$this->UpdateReceivedObservations($change);
@@ -405,6 +411,10 @@ class EaseeHomeCharger extends IPSModule {
 				}
 
 				$this->SetValueEx($change['Ident'], $change['Value']);
+
+				if(isset($oldObservation['IsEnabled']) && $oldObservation['IsEnabled']==true) {
+					$this->EnableAction($change['Ident']);
+				}
 
 				$this->UpdateReceivedObservations($change);
 			} else {
