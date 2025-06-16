@@ -40,13 +40,13 @@ class EaseeHomeCharger extends IPSModule {
 		]);
 
 		$this->RegisterProfileBooleanEx('EHCH.LockCable', 'Lock', '', '', [
-			[true, 'Locking...', '', -1],
-			[false, 'Unlocking...', '', -1]
+			[true, 'In progress', '', -1],
+			[false, 'In progress...', '', -1]
 		]);
 
 		$this->RegisterProfileBooleanEx('EHCH.ProtectAccess', 'Lock', '', '', [
-			[true, 'Protecting...', '', -1],
-			[false, 'Unprotecting...', '', -1]
+			[true, 'In progress...', '', -1],
+			[false, 'In progress...', '', -1]
 		]);
 
 		$this->RegisterVariableInteger('StartCharging', 'Charging', 'EHCH.StartCharging', 1);
@@ -445,6 +445,11 @@ class EaseeHomeCharger extends IPSModule {
 				if(isset($oldObservation['Ticks']) && $oldObservation['Ticks']==$response['Ticks'] && isset($response['WasAccepted']) && $response['WasAccepted']) {
 					$this->SendDebug(__FUNCTION__, 'This CommandResponse match a earlier sent command. Updating...', 0);
 					$this->SetValueEx($oldObservation['Ident'], $oldObservation['Value']);
+
+					if(isset($oldObservation['IsEnabled']) && $oldObservation['IsEnabled']==true) {
+						$this->EnableAction($oldObservation['Ident']);
+						$this->InitTimer();
+					}
 
 					$this->UpdateReceivedObservations($response);
 				} else {
