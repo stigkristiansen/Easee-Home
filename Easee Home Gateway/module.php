@@ -438,7 +438,7 @@ class EaseeHomeGateway extends IPSModule {
 						throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "ChargerId" and/or "Ident" is missing. The request was "%s"', $request));
 					}
 
-					if(!(isset($request->State) && is_bool($request->State))) {
+					if(!(isset($request->State) && is_numeric($request->State))) {
 						throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "Status" is missing or is a invalid type. The request was "%s"', $request));
 					}
 
