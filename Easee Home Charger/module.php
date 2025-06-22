@@ -190,7 +190,7 @@ class EaseeHomeCharger extends IPSModule {
 								$state = ChargingState::TOGGLE;
 								break;
 							default:
-								$state = 
+								throw new Exception(sprintf('ReqestAction called with unkown Value "%s"', $Value));
 						}
 						
 						$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargingState', 'Ident'=> $Ident, 'ChargerId'=>$chargerId, 'State' => $state];
