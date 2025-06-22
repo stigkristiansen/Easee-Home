@@ -175,20 +175,22 @@ class EaseeHomeCharger extends IPSModule {
 
 						switch($Value) {
 							case 1:
-								$state = ChargingSate::AUTHORIZE;
+								$state = ChargingState::AUTHORIZE;
 								break;
 							case 2:
-								$state = ChargingSate::UNAUTHORIZE;
+								$state = ChargingState::UNAUTHORIZE;
 								break;
 							case 3:
-								$state = ChargingSate::PAUSE;
+								$state = ChargingState::PAUSE;
 								break;
 							case 4:
-								$state = ChargingSate::RESUME;
+								$state = ChargingState::RESUME;
 								break;
 							case 5:
-								$state = ChargingSate::TOGGLE;
+								$state = ChargingState::TOGGLE;
 								break;
+							default:
+								$state = 
 						}
 						
 						$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargingState', 'Ident'=> $Ident, 'ChargerId'=>$chargerId, 'State' => $state];
