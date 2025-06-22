@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 include __DIR__ . "/../libs/traits.php";
 include __DIR__ . "/../libs/observations.php";
+include __DIR__ . "/../libs/easee.php";
 
 class EaseeHomeCharger extends IPSModule {
 	use Profiles;
@@ -35,12 +36,15 @@ class EaseeHomeCharger extends IPSModule {
 
 		$this->RegisterProfileIntegerEx('EHCH.StartCharging', 'Power', '', '', [
 			[0, ' ', '', -1],
-			[1, 'Start', '', -1],
-			[2, 'Stop ', '', -1]
+			[1, 'Authorize ', '', -1],
+			[2, 'Unauthorize ', '', -1],
+			[3, 'Pause ', '', -1],
+			[4, 'Resume ', '', -1],
+			[5, 'Toggle ', '', -1]
 		]);
 
 		$this->RegisterProfileBooleanEx('EHCH.LockCable', 'Lock', '', '', [
-			[true, 'In progress', '', -1],
+			[true, 'In progress...', '', -1],
 			[false, 'In progress...', '', -1]
 		]);
 
@@ -166,10 +170,37 @@ class EaseeHomeCharger extends IPSModule {
 					break;
 				case 'startcharging':
 					if($Value>0){
-						$this->SetValue($Ident, $Value);
+						//$this->SetValue($Ident, $Value);
 						$this->DisableAction($Ident); // Disable variable in visualization until command has finished
+
+						switch($Value) {
+							case 1:
+								$state = ChargingSate::AUTHORIZE;
+								break;
+							case 2:
+								$state = ChargingSate::UNAUTHORIZE;
+								break;
+							case 3:
+								$state = ChargingSate::PAUSE;
+								break;
+							case 4:
+								$state = ChargingSate::RESUME;
+								break;
+							case 5:
+								$state = ChargingSate::TOGGLE;
+								break;
+						}
 						
-						$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargingState', 'Ident'=> $Ident, 'ChargerId'=>$chargerId, 'State' => $Value==1?true:false];
+						$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargingState', 'Ident'=> $Ident, 'ChargerId'=>$chargerId, 'State' => $state];
+
+						$change = [
+							'Ident' => $Ident,
+							'Timestamp' => time(),
+							'Value' => $Value,
+							'IsEnabled' => true
+						];
+						
+						$this->UpdateReceivedObservations($change);
 					}
 					break;
 				default:
