@@ -415,6 +415,7 @@ class EaseeHomeCharger extends IPSModule {
 				}
 
 				if(isset($change['CustomHandling']) && strlen($change['CustomHandling'])>0) {
+					$this->SendDebug(__FUNCTION__, sprintf('Updating "%s" through custom handler...', $change['Ident']), 0);
 					self::{$change['CustomHandling']}($change['Ident'], $change['Value']);
 				} else {
 					$this->SetValueEx($change['Ident'], $change['Value']);
@@ -461,6 +462,7 @@ class EaseeHomeCharger extends IPSModule {
 					$this->SendDebug(__FUNCTION__, 'This CommandResponse match a earlier sent command. Updating...', 0);
 
 					if(isset($response['CustomHandling']) && strlen($response['CustomHandling'])>0) {
+						$this->SendDebug(__FUNCTION__, sprintf('Updating "%s" through custom handler...', $oldObservation['Ident']), 0);
 						self::{$response['CustomHandling']}($oldObservation['Ident'], $oldObservation['Value']);
 					} else {
 						$this->SetValueEx($oldObservation['Ident'], $oldObservation['Value']);
@@ -485,7 +487,7 @@ class EaseeHomeCharger extends IPSModule {
 	}
 
 	private function HandleChargerOpMode(string $Ident, $Value) {
-		$this->SendDebug(__FUNCTION__, 'Updating ChargerOpMode through CustomHandler...', 0);
+		$this->SendDebug(__FUNCTION__, 'Executing custom handler for ChargerOpMode', 0);
 
 		$this->SetValueEx($Ident, $Value);
 
