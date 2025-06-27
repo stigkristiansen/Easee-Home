@@ -40,6 +40,10 @@ class Observations {
             if($observations[$Observation->id]['IsVariable']) {
                 $change = ['Ident' => $observations[$Observation->id]['Ident']];
                 $change['Timestamp'] = strtotime($Observation->timestamp);
+
+                if(isset($observations[$Observation->id]['CustomHandling'])) {
+                    $change['CustomHandling'] = $observations[$Observation->id]['CustomHandling'];
+                } 
                 
                 if(isset($Observation->mid)) {
                     switch($observations[$Observation->id]['Type']) {
@@ -283,6 +287,11 @@ class Charger extends Observations {
             'IsVariable' => false,
             'Description' => 'Undocumented'
         ],
+        26 => [
+            'IsVariable' => false,
+            'Ident' => 'SetChargingState',
+            'Description' => 'Undocumented'
+        ],
         30 => [
             'IsVariable' => true,
             'Description' => 'LOCK CABLE PERMANENTLY',
@@ -438,15 +447,19 @@ class Charger extends Observations {
             'Caption' => 'Status',
             'Type' => Observations::INTEGER,
             'Enable' => false,
+            'CustomHandling' => 'HandleChargerOpMode',
             'Profile' => 'EHCH.ChargerOpMode',
             'Icon' => 'Electricity',
             'Assoc' => [
+                [0, 'Offline', '', -1],
 				[1, 'Disconnected', '', -1],
-				[2, 'Awaiting Start ', '', -1],
-				[3, 'Charging ', '', -1],
+				[2, 'Awaiting Start... ', '', -1],
+				[3, 'Charging... ', '', -1],
 				[4, 'Completed ', '', -1],
 				[5, 'Error' , '', -1],
-				[6, 'Ready To Charge' , '', -1]
+				[6, 'Ready To Charge' , '', -1],
+                [7, 'Awaiting Authentication...' , '', -1],
+                [8, 'De-authenticating...' , '', -1]
 			]
         ],
         110 => [

@@ -25,19 +25,19 @@ class EaseeHomeCharger extends IPSModule {
 		$this->RegisterProfileIntegerEx('EHCH.ChargerOpMode', 'Electricity', '', '', [
 			[0, 'Offline', '', -1],
 			[1, 'Disconnected', '', -1],
-			[2, 'Awaiting Start ', '', -1],
-			[3, 'Charging ', '', -1],
+			[2, 'Awaiting Start... ', '', -1],
+			[3, 'Charging... ', '', -1],
 			[4, 'Completed ', '', -1],
 			[5, 'Error' , '', -1],
 			[6, 'Ready To Charge' , '', -1],
-			[7, 'Awaiting authentication' , '', -1],
-			[8, 'De-authenticating' , '', -1]
-		]);
+			[7, 'Awaiting Authentication...' , '', -1],
+			[8, 'De-authenticating...' , '', -1]
+	]);
 
 		$this->RegisterProfileIntegerEx('EHCH.StartCharging', 'Power', '', '', [
 			[0, ' ', '', -1],
-			[1, 'Authorize ', '', -1],
-			[2, 'Unauthorize ', '', -1],
+			[1, 'Authorized ', '', -1],
+			[2, 'Unauthorized ', '', -1],
 			[3, 'Pause ', '', -1],
 			[4, 'Resume ', '', -1],
 			[5, 'Toggle ', '', -1]
@@ -276,6 +276,7 @@ class EaseeHomeCharger extends IPSModule {
 						break;
 					case 'setchargerlockstate':
 					case 'setchargerconfig':
+					case 'setchargingstate':
 						if(isset($data->Buffer->Ident)) {
 							$ident =  $data->Buffer->Ident;
 						}
@@ -297,10 +298,6 @@ class EaseeHomeCharger extends IPSModule {
 
 							$this->UpdateReceivedObservations($observation);
 						}
-
-						break;
-					case 'setchargingstate':
-						
 
 						break;
 					case 'setchargeraccesslevel':
@@ -417,7 +414,11 @@ class EaseeHomeCharger extends IPSModule {
 					$this->SendDebug(__FUNCTION__, 'This is the first observation for this ident. Updating the variable', 0);
 				}
 
-				$this->SetValueEx($change['Ident'], $change['Value']);
+				if(isset($change['CustomHandling']) && strlen($change['CustomHandling'])>0) {
+					self::{$change['CustomHandling']}($change['Ident'], $change['Value']);
+				} else {
+					$this->SetValueEx($change['Ident'], $change['Value']);
+				}
 
 				if(isset($oldObservation['IsEnabled']) && $oldObservation['IsEnabled']==true) {
 					$this->EnableAction($change['Ident']);
@@ -458,7 +459,12 @@ class EaseeHomeCharger extends IPSModule {
 
 				if(isset($oldObservation['Ticks']) && $oldObservation['Ticks']==$response['Ticks'] && isset($response['WasAccepted']) && $response['WasAccepted']) {
 					$this->SendDebug(__FUNCTION__, 'This CommandResponse match a earlier sent command. Updating...', 0);
-					$this->SetValueEx($oldObservation['Ident'], $oldObservation['Value']);
+
+					if(isset($response['CustomHandling']) && strlen($response['CustomHandling'])>0) {
+						self::{$response['CustomHandling']}($oldObservation['Ident'], $oldObservation['Value']);
+					} else {
+						$this->SetValueEx($oldObservation['Ident'], $oldObservation['Value']);
+					}
 
 					if(isset($oldObservation['IsEnabled']) && $oldObservation['IsEnabled']==true) {
 						$this->EnableAction($oldObservation['Ident']);
@@ -476,6 +482,13 @@ class EaseeHomeCharger extends IPSModule {
 			IPS_LogMessage(IPS_GetInstance($this->InstanceID)['ModuleInfo']['ModuleName'], $e->getMessage());
 			$this->SendDebug(__FUNCTION__, $e->getMessage(), 0);
 		}	
+	}
+
+	private HandleChargerOpMode(string $Ident, $Value) {
+		$this->SendDebug(__FUNCTION__, 'Updating ChargerOpMode through CustomHandler...', 0);
+
+		$this->SetValueEx($Ident, $Value);
+
 	}
 		
 	private function SetValueEx(string $Ident, $Value) {
