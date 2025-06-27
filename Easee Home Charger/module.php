@@ -484,7 +484,7 @@ class EaseeHomeCharger extends IPSModule {
 		}	
 	}
 
-	private HandleChargerOpMode(string $Ident, $Value) {
+	private function HandleChargerOpMode(string $Ident, $Value) {
 		$this->SendDebug(__FUNCTION__, 'Updating ChargerOpMode through CustomHandler...', 0);
 
 		$this->SetValueEx($Ident, $Value);
