@@ -53,6 +53,11 @@ class EaseeHomeCharger extends IPSModule {
 			[false, 'In progress...', '', -1]
 		]);
 
+		$this->RegisterProfileBooleanEx('EHCH.Authorize', 'Key-skeleton', '', '', [
+			[true, 'Authorized', '', -1],
+			[false, 'De-authorized', '', -1]
+		]);
+
 		$this->RegisterVariableInteger('StartCharging', 'Charging', 'EHCH.StartCharging', 1);
 		$this->EnableAction('StartCharging');
 
@@ -69,6 +74,9 @@ class EaseeHomeCharger extends IPSModule {
 		
 		$this->RegisterVariableBoolean('ProtectAccess', 'Protect Access', 'EHCH.ProtectAccess', 7);
 		$this->EnableAction('ProtectAccess');
+
+		$this->RegisterVariableBoolean('Authorize', 'Authorize', 'EHCH.Authorize', 6);
+		$this->EnableAction('LockCable');
 
 		$this->RegisterTimer('EaseeChargerRefresh' . (string)$this->InstanceID, 0, 'IPS_RequestAction(' . (string)$this->InstanceID . ', "Refresh", 0);'); 
 
@@ -489,8 +497,31 @@ class EaseeHomeCharger extends IPSModule {
 	private function HandleChargerOpMode(string $Ident, $Value) {
 		$this->SendDebug(__FUNCTION__, 'Executing custom handler for ChargerOpMode', 0);
 
-		$this->SetValueEx($Ident, $Value);
+		// Handle Variable "Autorize" according to value of Op Mode
+		switch($Value) {
+			case 0:
+			case 1:
+			case 5:
+			case 8:
+				$this->SetValueEx('Authorize', false);
+				$this->DisableAction('Authorize');
+				break;
+			case 7:
+				$this->SetValueEx('Authorize', false);
+				$this->EnableAction('Authorize');
+				break;
+			case 2:
+			case 3:
+			case 4:
+			case 6:
+				$this->SetValueEx('Authorize', true);
+				$this->EnableAction('Authorize');
+				break;
+			default:
+				throw new Exception(sprintf('Invalid vale for Charger Op Mode: %d', $Value));
+		}
 
+		$this->SetValueEx($Ident, $Value);
 	}
 		
 	private function SetValueEx(string $Ident, $Value) {

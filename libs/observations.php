@@ -644,6 +644,20 @@ class Charger extends Observations {
         251 => [
             'IsVariable' => false,
             'Description' => 'CLOUD DISCONNECT REASON'
-        ]
+        ],
+        900 => [
+            'IsVariable' => true,
+            'Description' => 'Authorize',
+            'Ident' => 'Authorize',
+            'Caption' => 'Authorize',
+            'Type' => Observations::BOOLEAN,
+            'Enable' => true,
+            'Profile' => 'EHCH.Authorize',
+            'Icon' => 'Key-skeleton',
+            'Assoc' => [
+                [true, 'Authorized', '', -1],
+			    [false, 'De-authorized', '', -1]
+			]
+        ],
     ];
 }
