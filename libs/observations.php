@@ -656,7 +656,7 @@ class Charger extends Observations {
             'Icon' => 'Key-skeleton',
             'Assoc' => [
                 [true, 'Authorized', '', -1],
-			    [false, 'De-authorized', '', -1]
+			    [false, 'Unauthorized', '', -1]
 			]
         ],
     ];

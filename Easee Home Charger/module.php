@@ -36,8 +36,8 @@ class EaseeHomeCharger extends IPSModule {
 
 		$this->RegisterProfileIntegerEx('EHCH.StartCharging', 'Power', '', '', [
 			[0, ' ', '', -1],
-			[1, 'Authorized ', '', -1],
-			[2, 'Unauthorized ', '', -1],
+			[1, 'Authorize ', '', -1],
+			[2, 'Unauthorize ', '', -1],
 			[3, 'Pause ', '', -1],
 			[4, 'Resume ', '', -1],
 			[5, 'Toggle ', '', -1]
@@ -55,7 +55,7 @@ class EaseeHomeCharger extends IPSModule {
 
 		$this->RegisterProfileBooleanEx('EHCH.Authorize', 'Key-skeleton', '', '', [
 			[true, 'Authorized', '', -1],
-			[false, 'De-authorized', '', -1]
+			[false, 'Unauthorized', '', -1]
 		]);
 
 		$this->RegisterVariableInteger('StartCharging', 'Charging', 'EHCH.StartCharging', 1);
@@ -91,6 +91,7 @@ class EaseeHomeCharger extends IPSModule {
 			$this->DeleteProfile('EHCH.StartCharging');
 			$this->DeleteProfile('EHCH.LockCable');
 			$this->DeleteProfile('EHCH.ProtectAccess');
+			$this->DeleteProfile('EHCH.Authorize');
 		}
 
 		//Never delete this line!
@@ -176,17 +177,24 @@ class EaseeHomeCharger extends IPSModule {
 					$this->UpdateReceivedObservations($change);
 
 					break;
+				case 'authorize':
 				case 'startcharging':
-					if($Value>0){
-						//$this->SetValue($Ident, $Value);
+					if($Ident = 'authorize') { 
+						$value = $Value?1:2;
+					} else {
+						$value = $Value;
+					}
+
+					if($value>0){
+						//$this->SetValue($Ident, $value);
 						//$this->DisableAction($Ident); // Disable variable in visualization until command has finished
 
-						$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargingState', 'Ident'=> $Ident, 'ChargerId'=>$chargerId, 'State' => $Value];
+						$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargingState', 'Ident'=> $Ident, 'ChargerId'=>$chargerId, 'State' => $value];
 
 						$change = [
 							'Ident' => $Ident,
 							'Timestamp' => time(),
-							'Value' => $Value,
+							'Value' => $value,
 							'IsEnabled' => true
 						];
 						
