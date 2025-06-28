@@ -659,5 +659,21 @@ class Charger extends Observations {
 			    [false, 'Unauthorized', '', -1]
 			]
         ],
+        901 => [
+            'IsVariable' => true,
+            'Description' => 'Charging',
+            'Ident' => 'StartCharging',
+            'Caption' => 'Charging',
+            'Type' => Observations::INTEGER,
+            'Enable' => true,
+            'Profile' => 'EHCH.StartCharging',
+            'Icon' => 'Power',
+            'Assoc' => [
+                [0, ' ', '', -1],
+                [3, 'Pause ', '', -1],
+                [4, 'Resume ', '', -1],
+                [5, 'Toggle ', '', -1]
+			]
+        ]
     ];
 }

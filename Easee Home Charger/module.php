@@ -36,8 +36,6 @@ class EaseeHomeCharger extends IPSModule {
 
 		$this->RegisterProfileIntegerEx('EHCH.StartCharging', 'Power', '', '', [
 			[0, ' ', '', -1],
-			[1, 'Authorize ', '', -1],
-			[2, 'Unauthorize ', '', -1],
 			[3, 'Pause ', '', -1],
 			[4, 'Resume ', '', -1],
 			[5, 'Toggle ', '', -1]
