@@ -186,7 +186,7 @@ class EaseeHomeCharger extends IPSModule {
 					}
 
 					if($value>0){
-						//$this->SetValue($Ident, $value);
+						$this->SetValue($Ident, $value);
 						//$this->DisableAction($Ident); // Disable variable in visualization until command has finished
 
 						$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargingState', 'Ident'=> $Ident, 'ChargerId'=>$chargerId, 'State' => $value];
@@ -202,7 +202,7 @@ class EaseeHomeCharger extends IPSModule {
 					}
 					break;
 				default:
-					throw new Exception(sprintf('ReqestAction called with unkown Ident "%s"', $Ident));
+					throw new Exception(sprintf('ReqestAction called for unkown Ident "%s"', $Ident));
 			}
 
 			if($request!=[]) {
@@ -213,7 +213,6 @@ class EaseeHomeCharger extends IPSModule {
 				$this->SendDebug(__FUNCTION__, sprintf('Sending a request to the gateway: %s', json_encode($request)), 0);
 				$this->SendDataToParent(json_encode(['DataID' => '{B62C0F65-7B59-0CD8-8C92-5DA32FBBD317}', 'Buffer' => $request]));
 			}
-
 
 		} catch(Exception $e) {
 			$this->LogMessage(sprintf('RequestAction failed. The error was "%s"',  $e->getMessage()), KL_ERROR);
@@ -504,6 +503,9 @@ class EaseeHomeCharger extends IPSModule {
 
 	private function HandleChargerOpMode(string $Ident, $Value) {
 		$this->SendDebug(__FUNCTION__, 'Executing custom handler for ChargerOpMode', 0);
+
+		// Set Variable for Charging back to blank
+		$this->SetValueEx('StartCharging', 0);
 
 		// Handle Variable "Autorize" according to value of Op Mode
 		switch($Value) {
