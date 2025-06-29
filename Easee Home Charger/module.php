@@ -457,7 +457,9 @@ class EaseeHomeCharger extends IPSModule {
 		try{
 			$response = Charger::GetObservation($Data);
 			if($response!==false) {
+				
 				$this->SendDebug(__FUNCTION__, sprintf('Observation Id %d is an Id that corresponds to Ident "%s"', $Data->id, $response['Ident']), 0);
+				
 				$oldObservation = $this->GetReceivedObservation($response['Ident']);
 				if($oldObservation!==false) {
 					if($oldObservation['Timestamp']>$response['Timestamp']) {
@@ -467,11 +469,24 @@ class EaseeHomeCharger extends IPSModule {
 					}
 				}  else {
 					$this->SendDebug(__FUNCTION__, 'This observation do not correspond with a earlier sent command. Skipping update', 0);
+					
+					return;
+				}
+
+				if(isset($response['WasAccepted']) && !$response['WasAccepted']) {
+					$this->SendDebug(__FUNCTION__, sprintf('The parameter "WasAccepted" was set to false. Stopping the process...'), 0);
+					
+					if(isset($oldObservation['IsEnabled']) && $oldObservation['IsEnabled']==true) {
+						$this->EnableAction($oldObservation['Ident']);
+						$this->InitTimer();
+					}
+
+					return;
 				}
 
 				$this->SendDebug(__FUNCTION__, 'Timestamp for this change is newer than the last observation. Checking if it matches a earlier sent command...', 0);
 
-				if(isset($oldObservation['Ticks']) && $oldObservation['Ticks']==$response['Ticks'] && isset($response['WasAccepted']) && $response['WasAccepted']) {
+				if(isset($oldObservation['Ticks']) && $oldObservation['Ticks']==$response['Ticks']) {
 					$this->SendDebug(__FUNCTION__, 'This CommandResponse match a earlier sent command. Updating...', 0);
 
 					if(isset($response['CustomHandling']) && strlen($response['CustomHandling'])>0) {
