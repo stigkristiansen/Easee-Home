@@ -199,7 +199,7 @@ class EaseeHomeCharger extends IPSModule {
 						
 						$this->UpdateReceivedObservations($change);
 					}
-					
+
 					break;
 				default:
 					throw new Exception(sprintf('ReqestAction called for unkown Ident "%s"', $Ident));
@@ -349,7 +349,7 @@ class EaseeHomeCharger extends IPSModule {
 
 	private function DelayTimer(){
 		$this->SendDebug(__FUNCTION__, 'Delaying the refresh timer for 60 sec', 0);
-		$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, 60); 
+		$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, 60000); 
 	}
 
 	private function RefreshRequest(string $ChargerId, $Ident) : array {
