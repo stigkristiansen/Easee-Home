@@ -177,14 +177,15 @@ class EaseeHomeCharger extends IPSModule {
 					break;
 				case 'authorize':
 				case 'startcharging':
-					if($Ident = 'authorize') { 
+					$this->SetValue($Ident, $Value);
+
+					if(strtolower($Ident) == 'authorize') { 
 						$value = $Value?1:2;
 					} else {
 						$value = $Value;
 					}
 
 					if($value>0){
-						$this->SetValue($Ident, $value);
 						//$this->DisableAction($Ident); // Disable variable in visualization until command has finished
 
 						$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargingState', 'Ident'=> $Ident, 'ChargerId'=>$chargerId, 'State' => $value];
@@ -198,6 +199,7 @@ class EaseeHomeCharger extends IPSModule {
 						
 						$this->UpdateReceivedObservations($change);
 					}
+					
 					break;
 				default:
 					throw new Exception(sprintf('ReqestAction called for unkown Ident "%s"', $Ident));
@@ -205,7 +207,7 @@ class EaseeHomeCharger extends IPSModule {
 
 			if($request!=[]) {
 				if(strtolower($Ident)!='refresh') {
-					$this->PauseTimer();
+					$this->DelayTimer();
 				}
 
 				$this->SendDebug(__FUNCTION__, sprintf('Sending a request to the gateway: %s', json_encode($request)), 0);
@@ -313,16 +315,6 @@ class EaseeHomeCharger extends IPSModule {
 						}
 
 						break;
-					case 'setchargeraccesslevel':
-						$this->SendDebug(__FUNCTION__, 'Quering for new charger status in 10s', 0);
-						
-						$script = "sleep(10);IPS_RequestAction(" . (string)$this->InstanceID . " ,'Refresh', 0);";
-
-						$this->RegisterOnceTimer('EaseeChargerRefreshOnce' . (string)$this->InstanceID, $script);  // Call Refresh in a new thread
-
-						$this->EnableAction('ProtectAccess');
-						
-						break;
 					default:
 						throw new Exception(sprintf('Unknown function "%s()" receeived in repsponse from gateway', $function));
 				}
@@ -342,22 +334,22 @@ class EaseeHomeCharger extends IPSModule {
 			$this->EnableAction('ProtectAccess');
 			$this->EnableAction('LockCable');
 																			
-			$script = "sleep(10);IPS_RequestAction(" . (string)$this->InstanceID . " ,'Refresh', 0);";
-			$this->RegisterOnceTimer('EaseeChargerRefreshOnce' . (string)$this->InstanceID, $script); 
+			//$script = "sleep(10);IPS_RequestAction(" . (string)$this->InstanceID . " ,'Refresh', 0);";
+			//$this->RegisterOnceTimer('EaseeChargerRefreshOnce' . (string)$this->InstanceID, $script); 
 		}
 	}
 
 	private function InitTimer(){
-		if($this->GetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID)==0) {
+		//if($this->GetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID)==0) {
 			$sec = $this->ReadPropertyInteger('UpdateInterval');
 			$this->SendDebug(__FUNCTION__, sprintf('Setting refresh timer to %ds', $sec), 0);
 			$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, $sec*1000); 				
-		}
+		//}
 	}
 
-	private function PauseTimer(){
-		$this->SendDebug(__FUNCTION__, 'Pausing the refresh timer', 0);
-		$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, 0); 
+	private function DelayTimer(){
+		$this->SendDebug(__FUNCTION__, 'Delaying the refresh timer for 60 sec', 0);
+		$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, 60); 
 	}
 
 	private function RefreshRequest(string $ChargerId, $Ident) : array {
