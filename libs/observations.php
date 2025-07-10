@@ -670,9 +670,13 @@ class Charger extends Observations {
             'Icon' => 'Power',
             'Assoc' => [
                 [0, ' ', '', -1],
+                [1, 'Start', '', -1],
+                [2, 'Stop', '', -1],
                 [3, 'Pause ', '', -1],
                 [4, 'Resume ', '', -1],
-                [5, 'Toggle ', '', -1]
+                [5, 'Toggle ', '', -1],
+                [6, 'Override Schedule', '', -1]
+
 			]
         ]
     ];
