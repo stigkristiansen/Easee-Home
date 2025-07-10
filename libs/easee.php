@@ -444,10 +444,10 @@ class Easee {
                     break;
                 case ChargingState::TOGGLE:
                     $url = self::ENDPOINT . '/api/chargers/' . $ChargerId .'/commands/toggle_charging';
-                    break
+                    break;
                 case ChargingState::OVERRIDE:
                     $url = self::ENDPOINT . '/api/chargers/' . $ChargerId .'/commands/override_schedule';
-                    break
+                    break;
                 default:
                     throw new Exception('$State has a invalid value');
             }
