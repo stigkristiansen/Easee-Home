@@ -458,8 +458,11 @@ class EaseeHomeGateway extends IPSModule {
 						case 5:
 							$state = ChargingState::TOGGLE;
 							break;
+						case 6:
+							$state = ChargingState::OVERRIDE;
+							break;
 						default:
-							throw new Exception(sprintf('ReqestAction called with unkown Value for State: %d', $request->State));
+							throw new Exception(sprintf('HandleAsyncRequest: %s was called with unkown Value for State: %d', $function, $request->State));
 					}
 
 					$this->ExecuteEaseeRequest($childId, 'SetChargingState', array($request->ChargerId, $state), $request->Ident);
