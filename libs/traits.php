@@ -1,5 +1,38 @@
 <?php
 
+trait Buffer {
+    private function Lock(string $Id) : bool {
+		for ($i=0;$i<500;$i++){
+			if (IPS_SemaphoreEnter("EaseeHome" . (string)$this->InstanceID . $Id, 1)){
+				if($i==0) {
+					$msg = sprintf('Created the Lock with id "%s"', $Id);
+				} else {
+					$msg = sprintf('Released and recreated the Lock with id "%s"', $Id);
+				}
+				$this->SendDebug(__FUNCTION__, $msg, 0);
+				return true;
+			} else {
+				if($i==0) {
+					$this->SendDebug(__FUNCTION__, sprintf('Waiting for the Lock with id "%s" to be released', $Id), 0);
+				}
+				IPS_Sleep(mt_rand(1, 5));
+			}
+		}
+        
+		$this->LogMessage(sprintf('Timedout waiting for the Lock with id "%s" to be released', $Id), KL_ERROR);
+        $this->SendDebug(__FUNCTION__, sprintf('Timedout waiting for the Lock with id "%s" to be released', $Id), 0);
+        
+		return false;
+    }
+
+    private function Unlock(string $Id) {
+        IPS_SemaphoreLeave("EaseeHome" . (string)$this->InstanceID . $Id);
+
+		$this->SendDebug(__FUNCTION__, sprintf('Removed the Lock with id "%s"', $Id), 0);
+    }
+
+}
+
 
 trait Profiles {
     protected function DeleteProfile($Name) {

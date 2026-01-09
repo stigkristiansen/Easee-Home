@@ -3,11 +3,13 @@
 declare(strict_types=1);
 
 include __DIR__ . "/../libs/easee.php";
+include __DIR__ . "/../libs/traits.php";
 
-class EaseeHomeGateway extends IPSModule
-{
-	public function Create()
-	{
+
+class EaseeHomeGateway extends IPSModule {
+	use Buffer;
+
+	public function Create() {
 		//Never delete this line!
 		parent::Create();
 
@@ -19,6 +21,8 @@ class EaseeHomeGateway extends IPSModule
 		$this->RegisterTimer('EaseeHomeRefreshToken' . (string)$this->InstanceID, 0, 'IPS_RequestAction(' . (string)$this->InstanceID . ', "RefreshToken", 0);'); 
 
 		$this->RegisterMessage(0, IPS_KERNELMESSAGE);
+
+		$this->RequireParent('{D68FD31F-0E90-7019-F16C-1949BD3079EF}');
 	}
 
 	public function Destroy()
@@ -32,6 +36,9 @@ class EaseeHomeGateway extends IPSModule
 		//Never delete this line!
 		parent::ApplyChanges();
 
+		$this->RegisterMessage($this->InstanceID, FM_CONNECT);
+        $this->RegisterMessage($this->InstanceID, FM_DISCONNECT);
+
 		if (IPS_GetKernelRunlevel() == KR_READY) {
             $this->InitEasee();
         }
@@ -42,14 +49,185 @@ class EaseeHomeGateway extends IPSModule
 
 		if ($Message == IPS_KERNELMESSAGE && $Data[0] == KR_READY) {
 			$this->InitEasee();
+			return;
+		}
+
+		$this->HandleParentMessages($TimeStamp, $SenderID, $Message, $Data);
+		
+    }
+
+	private function HandleParentMessages($TimeStamp, $SenderID, $Message, $Data) {
+		$this->SendDebug(__FUNCTION__, sprintf('Instance %d sendt message %d: %s', $SenderID, $Message, json_encode($Data)), 0);
+		
+		switch ($Message) {
+			case FM_CONNECT:
+				$localConfig = IPS_GetInstance($this->InstanceID);
+				$parentConfig = IPS_GetInstance($localConfig['ConnectionID']);
+				if($parentConfig['ModuleInfo']['ModuleID']!='{D68FD31F-0E90-7019-F16C-1949BD3079EF}') {
+					$this->SendDebug(__FUNCTION__, 'The gateway can only connect to a WebSocket client instance', 0);
+					IPS_DisconnectInstance($this->InstanceID);
+					return;
+				} 
+			case IM_CHANGESTATUS:
+				$this->StartSignalR();
+		}		
+	}
+
+	private function RegisterParentMessages(bool $Enable) {
+		$parent = $this->GetConnectionId();
+
+		if($Enable) {
+			$this->SendDebug(__FUNCTION__, 'Registering for receiving parent instance messages', 0);	
+			
+			$this->RegisterMessage($parent, IM_CHANGESETTINGS);
+			$this->RegisterMessage($parent, IM_CHANGESTATUS);
+			$this->RegisterMessage($parent, IM_DISCONNECT);
+			$this->RegisterMessage($parent, IM_CONNECT);
+		} else {
+			$this->SendDebug(__FUNCTION__, 'Unregistering for receiving parent instance messages', 0);	
+			
+			$this->UnregisterMessage($parent, IM_CHANGESETTINGS);
+			$this->UnregisterMessage($parent, IM_CHANGESTATUS);
+			$this->UnregisterMessage($parent, IM_DISCONNECT);
+			$this->UnregisterMessage($parent, IM_CONNECT);
+		}
+		
+	}
+
+	public function GetConfigurationForParent() {
+		$config['Type'] = 0;
+		$config['VerifyCertificate'] = !$this->ReadPropertyBoolean('SkipSSLCheck');
+		
+		$config['URL'] = SignalR::BuildWebSocketUrl();
+	
+		return json_encode($config);
+	}
+
+	private function StartSignalR($Token=null) {
+		if($Token==null) {
+			$token = $this->GetTokenFromBuffer();
+		} else {
+			$token = $Token;
+		}
+				
+		if($token!=null) {
+			$this->SendDebug(__FUNCTION__, 'Preparing WebSockets for communication through SignalR...', 0);
+			$config = json_decode($this->GetConfigurationForParent(), true);
+
+			$headers[] = ['Name' => 'Authorization', 'Value' => 'Bearer ' . $token->AccessToken];	
+			$headers[] = ['Name' => 'User-Agent', 'Value' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36'];
+    	    $headers[] = ['Name' => 'Accept-Encoding', 'Value' => 'gzip, deflate, br, zstd'];
+        	$headers[] = ['Name' => 'Accept-Language', 'Value' => 'en-US,en;q=0.9,nb;q=0.8,en-GB;q=0.7,no;q=0.6'];
+		
+			$config['Active'] = true;
+        	$config['Headers'] = json_encode($headers);
+
+			$this->RegisterParentMessages(false);
+			
+			$parent = $this->GetConnectionId();
+        	IPS_SetConfiguration($parent, json_encode($config));
+        	IPS_ApplyChanges($parent);
+
+			$hasActiveParent = false;
+			for($i=1;$i<=100;$i++) {
+				if($this->HasActiveParent()) {
+					$hasActiveParent = true;
+					$this->SendDebug(__FUNCTION__, 'Websocket I/O instance is set active. Sending handshake...', 0);
+					break;
+				}
+				IPS_Sleep(100);
+			}
+
+			if(!$hasActiveParent) {
+				$this->SendDebug(__FUNCTION__, 'Timed out waiting for active WebSocket client!', 0);
+				return;
+			}
+
+			$this->SendDebug(__FUNCTION__, 'Sending ' . SignalR::Handshake() . '...', 0);
+			
+			$this->SendDataToParent(json_encode(['DataID' => '{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}', 'Buffer' => SignalR::Handshake()]));
+
+			$this->RegisterParentMessages(true);
 		}
     }
+
+	private function SubscribeToSignalR(string $Serial, bool $WithCurrentStage) {
+		$this->SendDebug(__FUNCTION__, 'Sending ' . SignalR::Subscribe($Serial, $WithCurrentStage) . '...', 0);
+		
+		$this->SendDataToParent(json_encode(['DataID' => '{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}', 'Buffer' => SignalR::Subscribe($Serial, $WithCurrentStage)]));
+	}
+
+	private function GetConnectionId() {
+		$config = IPS_GetInstance($this->InstanceID);
+		return $config['ConnectionID'];
+	}
+
+	public function ReceiveData($JSONString) {
+		$this->SendDebug(__FUNCTION__, sprintf('Received data from Easee Cloud. The data was "%s"', $JSONString), 0);
+
+		$buffer = json_decode($JSONString, true)['Buffer'];
+		$data = explode(chr(0x1E), $buffer);
+		unset($data[sizeof($data)-1]);
+
+		$this->SendDebug(__FUNCTION__, sprintf('Received command(s) are: %s', json_encode($data)), 0);
+
+		foreach($data as $info) {
+			
+			$decodedInfo = json_decode($info, true);
+			
+			if(isset($decodedInfo['type'])) {
+				switch($decodedInfo['type']) {
+					case 1:
+						$forwardingData =[
+							'Function' => $decodedInfo['target'],
+							'Success' => true
+						];
+
+						foreach($decodedInfo['arguments'] as $argument) {
+							switch(strtolower($decodedInfo['target'])) {
+								case 'productupdate':
+									$forwardingData['SerialNumber'] = $argument['mid'];
+									break;
+								case 'commandresponse':
+									$forwardingData['SerialNumber'] = $argument['serialNumber'];
+									break;
+							}
+
+							$forwardingData['Result'] = $argument;
+
+							$this->SendDebug(__FUNCTION__, sprintf('Sending to children: %s', json_encode($forwardingData)), 0);
+							
+							$this->SendDataToChildren(json_encode(["DataID" => "{47508B62-3B4E-67BE-0F29-0B82A2C62B58}", "Buffer" => $forwardingData]));
+						}
+
+						break;
+					case 6: // Ping
+						$this->SendDebug(__FUNCTION__, 'Received PING. Sending PING back to SignalR...', 0);
+						$this->SendDataToParent(json_encode(['DataID' => '{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}', 'Buffer' => SignalR::Ping()]));
+						break;
+				}
+			}
+
+			if($decodedInfo==[]) {
+				$this->SendDebug(__FUNCTION__, 'The handshake was successful, sending instructions to all children to start a subscription for SignalR data', 0);
+
+				$instruction = [
+					'Function' => 'Subscribe',
+					'Success' => true,
+					'Result' => ''
+				];
+			
+				$this->SendDataToChildren(json_encode(["DataID" => "{47508B62-3B4E-67BE-0F29-0B82A2C62B58}", "ChildId" => '##AllChildren##', "Buffer" => $instruction]));
+			}
+		}
+	}
 
 	public function ForwardData($JSONString) {
 		$this->SendDebug(__FUNCTION__, sprintf('Received a request from a child. The request was "%s"', $JSONString), 0);
 
 		$data = json_decode($JSONString);
 		$requests = json_encode($data->Buffer);
+
 		$script = "IPS_RequestAction(" . (string)$this->InstanceID . ", 'Async', '" . $requests . "');";
 
 		$this->SendDebug(__FUNCTION__, 'Executing the request(s) in a new thread...', 0);
@@ -125,7 +303,7 @@ class EaseeHomeGateway extends IPSModule
 		}
 	}
 
-	private function InitEasee() : ?object {
+	private function InitEasee() : object {
 		$this->SendDebug(__FUNCTION__, 'Initializing the Easee Class...', 0);
 
 		$this->SetTimerInterval('EaseeHomeRefreshToken' . (string)$this->InstanceID, 0); // Disable the timer
@@ -145,7 +323,6 @@ class EaseeHomeGateway extends IPSModule
 		
 		if($this->ReadPropertyBoolean('SkipSSLCheck')) {
 			$easee->DisableSSLCheck();
-			
 		}
 		
 		try {
@@ -160,6 +337,9 @@ class EaseeHomeGateway extends IPSModule
 
 			$this->SetTimerInterval('EaseeHomeRefreshToken' . (string)$this->InstanceID, $expiresIn*1000); 
 			$this->SendDebug(__FUNCTION__, sprintf('Token Refresh Timer set to %s second(s)', (string)$expiresIn), 0);
+
+			$this->StartSignalR($token);
+
 		} catch(Exception $e) {
 			$this->LogMessage(sprintf('Failed to connect to Easee Cloud API. The error was "%s"',  $e->getMessage()), KL_ERROR);
 			$this->SendDebug(__FUNCTION__, sprintf('Failed to connec to Easee Cloud API. The error was "%s"', $e->getMessage()), 0);
@@ -176,49 +356,39 @@ class EaseeHomeGateway extends IPSModule
 		foreach($requests as $request) {
 		
 			if(!isset($request->Function)||!isset($request->ChildId)) {
-				throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "Function" and/or "ChildId" is missing. The request was "%s"', $request));
+				throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "Function" and/or "ChildId" is missing. The request was "%s"', $Request));
 			}
 
 			$function = strtolower($request->Function);
 			$childId =  strtolower($request->ChildId);
 			
 			switch($function) {
+				case 'subscribe':
+					if(!isset($request->ChargerId)) {
+						throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "ChargerId" is missing. The request was "%s"', $Request));
+					}
+					
+					if(!isset($request->WithCurrentState)) {
+						throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "WithCurrentState" is missing. The request was "%s"', $Request));
+					}
+
+					$this->SendDebug(__FUNCTION__, sprintf('Sending a SignalR Subscribe request to the Easee Cloud for device with product id %s', $request->ChargerId), 0);
+
+					$this->SendDataToParent(json_encode(['DataID' => '{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}', 'Buffer' => SignalR::Subscribe($request->ChargerId, $request->WithCurrentState)]));
+					break;
 				case 'getproducts':
 					$this->ExecuteEaseeRequest($childId, 'GetProducts');
 					break;
-				case 'getcommandstate':
-					if(!isset($request->ChargerId)) {
-						throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "ChargerId" is missing. The request was "%s"', $request));
-					}
-
-					if(!(isset($request->CommandId) && is_integer($request->CommandId))) {
-						throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "CommandId" is missing or is a invalid type. The request was "%s"', $request));
-					}
-
-					if(!(isset($request->Ticks) && is_integer($request->Ticks))) {
-						throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "Tiks" is missing or is a invalid type. The request was "%s"', $request));
-					}
-
-					if(!(isset($request->Ident) && is_string($request->Ident))) {
-						throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "Ident" is missing or is a invalid type. The request was "%s"', $request));
-					}
-
-					if(!(isset($request->Count) && is_integer($request->Count))) {
-						throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "Count" is missing or is a invalid type. The request was "%s"', $request));
-					}
-
-					$this->ExecuteEaseeRequest($childId, 'GetCommandState', array($request->ChargerId, $request->CommandId, $request->Ticks), $request->Ident, $request->Count);
-					break;
-				case 'getchargerstate':
-					if(!isset($request->ChargerId)) {
-						throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "ChargerId" is missing. The request was "%s"', $request));
+				case 'getchargerobservations':
+					if(!isset($request->ChargerId) || !isset($request->ObserationIds)) {
+						throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "ChargerId" and/or "ObservationIds" is missing. The request was "%s"', $Request));
 					}
 					
-					$this->ExecuteEaseeRequest($childId, 'GetChargerState', array($request->ChargerId));
+					$this->ExecuteEaseeRequest($childId, 'GetChargerObservations', array($request->ChargerId, $request->ObserationIds));
 					break;
 				case 'getchargerconfig':
 					if(!isset($request->ChargerId)) {
-						throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "ChargerId" is missing. The request was "%s"', $request));
+						throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "ChargerId" is missing. The request was "%s"', $Request));
 					}
 
 					if(isset($request->Ident) && is_string($request->Ident)) {
@@ -229,41 +399,77 @@ class EaseeHomeGateway extends IPSModule
 					
 					break;
 				case 'setchargerlockstate':
-					if(!isset($request->ChargerId)) {
-						throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "ChargerId" is missing. The request was "%s"', $request));
+					if(!isset($request->ChargerId) || !isset($request->Ident)) {
+						throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "ChargerId" and/or "Ident" is missing. The request was "%s"', $Request));
 					}
 
 					if(!(isset($request->State) && is_bool($request->State))) {
-						throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "State" is missing or is a invalid type. The request was "%s"', $request));
+						throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "State" is missing or is a invalid type. The request was "%s"', $Request));
 					}
 
-					$this->ExecuteEaseeRequest($childId, 'SetChargerLockState', array($request->ChargerId, $request->State));
+					$this->ExecuteEaseeRequest($childId, 'SetChargerLockState', array($request->ChargerId, $request->State), $request->Ident);
 					break;
 				case 'setchargeraccesslevel':
-					if(!isset($request->ChargerId)) {
-						throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "ChargerId" is missing. The request was "%s"', $request));
+					if(!isset($request->ChargerId) || !isset($request->Ident)) {
+						throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "ChargerId" and/or "Ident" is missing. The request was "%s"', $Request));
 					}
 
 					if(!(isset($request->UseKey) && is_bool($request->UseKey))) {
-						throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "UseKey" is missing or is a invalid type. The request was "%s"', $request));
+						throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "UseKey" is missing or is a invalid type. The request was "%s"', $Request));
 					}
 
-					$this->ExecuteEaseeRequest($childId, 'SetChargerAccessLevel', array($request->ChargerId, $request->UseKey));
+					$this->ExecuteEaseeRequest($childId, 'SetChargerAccessLevel', array($request->ChargerId, $request->UseKey), $request->Ident);
+					break;
+				case 'setchargerconfig':
+					if(!isset($request->ChargerId) || !isset($request->Ident)) {
+						throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "ChargerId" and/or "Ident" is missing. The request was "%s"', $Request));
+					}
+
+					if(!(isset($request->Config) && is_object($request->Config))) {
+						throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "Config" is missing or is a invalid type. The request was "%s"', $Rrequest));
+					}
+
+					$config = json_decode(json_encode($request->Config), true);
+
+					$this->ExecuteEaseeRequest($childId, 'SetChargerConfig', array($request->ChargerId, $config), $request->Ident);
 					break;
 				case 'setchargingstate':
-					if(!isset($request->ChargerId)) {
-						throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "ChargerId" is missing. The request was "%s"', $request));
+					if(!isset($request->ChargerId) || !isset($request->Ident)) {
+						throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "ChargerId" and/or "Ident" is missing. The request was "%s"', $Request));
 					}
 
-					if(!(isset($request->State) && is_bool($request->State))) {
-						throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "Status" is missing or is a invalid type. The request was "%s"', $request));
+					if(!(isset($request->State) && is_numeric($request->State))) {
+						throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "Status" is missing or is a invalid type. The request was "%s"', $Request));
 					}
 
-					$this->ExecuteEaseeRequest($childId, 'SetChargingState', array($request->ChargerId, $request->State));
+					switch($request->State) {
+						case 1:
+							$state = ChargingState::AUTHORIZE;
+							break;
+						case 2:
+							$state = ChargingState::UNAUTHORIZE;
+							break;
+						case 3:
+							$state = ChargingState::PAUSE;
+							break;
+						case 4:
+							$state = ChargingState::RESUME;
+							break;
+						case 5:
+							$state = ChargingState::TOGGLE;
+							break;
+						case 6:
+							$state = ChargingState::OVERRIDE;
+							break;
+						default:
+							throw new Exception(sprintf('HandleAsyncRequest: %s was called with unkown Value for State: %d', $function, $request->State));
+					}
+
+					$this->ExecuteEaseeRequest($childId, 'SetChargingState', array($request->ChargerId, $state), $request->Ident);
 					break;
 				case 'getequalizerstate':
 					if(!isset($request->EqualizerId)) {
-						throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "EqualizerId" is missing. The request was "%s"', $request));
+						throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "EqualizerId" is missing. The request was "%s"', $Request));
 					}
 					
 					$this->ExecuteEaseeRequest($childId, 'GetEqualizerState', array($request->EqualizerId));
@@ -278,7 +484,7 @@ class EaseeHomeGateway extends IPSModule
 		
 		$this->SendDebug(__FUNCTION__, sprintf('Executing Easee::%s() for component with id %s...', $Function, isset($Args[0])?$Args[0]:'N/A'), 0);
 
-		$easee = null;
+		$easee = [];
 				
 		$token = $this->GetTokenFromBuffer();
 		if($token==null) {
@@ -344,7 +550,7 @@ class EaseeHomeGateway extends IPSModule
 			$return['Result'] = $result;
 		}
 		
-		$this->SendDebug(__FUNCTION__, sprintf('Sending the result back to the child with Id %s', (string)$ChildId), 0);
+		$this->SendDebug(__FUNCTION__, sprintf('Sending the result from function %s back to the child with Id %s', $Function, (string)$ChildId), 0);
 		$this->SendDataToChildren(json_encode(["DataID" => "{47508B62-3B4E-67BE-0F29-0B82A2C62B58}", "ChildId" => $ChildId, "Buffer" => $return]));
 	}
 
@@ -382,37 +588,5 @@ class EaseeHomeGateway extends IPSModule
 			$this->Unlock('Token');
 		}
 	}
-
-	private function Lock(string $Id) : bool {
-		for ($i=0;$i<500;$i++){
-			if (IPS_SemaphoreEnter("EaseeHome" . (string)$this->InstanceID . $Id, 1)){
-				if($i==0) {
-					$msg = sprintf('Created the Lock with id "%s"', $Id);
-				} else {
-					$msg = sprintf('Released and recreated the Lock with id "%s"', $Id);
-				}
-				$this->SendDebug(__FUNCTION__, $msg, 0);
-				return true;
-			} else {
-				if($i==0) {
-					$this->SendDebug(__FUNCTION__, sprintf('Waiting for the Lock with id "%s" to be released', $Id), 0);
-				}
-				IPS_Sleep(mt_rand(1, 5));
-			}
-		}
-        
-		$this->LogMessage(sprintf('Timedout waiting for the Lock with id "%s" to be released', $Id), KL_ERROR);
-        $this->SendDebug(__FUNCTION__, sprintf('Timedout waiting for the Lock with id "%s" to be released', $Id), 0);
-        
-		return false;
-    }
-
-    private function Unlock(string $Id)
-    {
-        IPS_SemaphoreLeave("EaseeHome" . (string)$this->InstanceID . $Id);
-
-		$this->SendDebug(__FUNCTION__, sprintf('Removed the Lock with id "%s"', $Id), 0);
-    }
-
 
 }

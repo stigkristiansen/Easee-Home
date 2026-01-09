@@ -4,12 +4,15 @@
     "type": 2,
     "vendor": "Easee",
     "aliases": [],
-    "parentRequirements": [],
+    "parentRequirements": [
+        "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}"
+    ],
     "childRequirements": [
         "{47508B62-3B4E-67BE-0F29-0B82A2C62B58}"
     ],
     "implemented": [
-        "{B62C0F65-7B59-0CD8-8C92-5DA32FBBD317}"
+        "{B62C0F65-7B59-0CD8-8C92-5DA32FBBD317}",
+        "{018EF6B5-AB94-40C6-AA53-46943E824ACF}"
     ],
     "prefix": "EHGW",
     "url": ""
