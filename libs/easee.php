@@ -201,7 +201,7 @@ class Easee {
             
             //$url = self::ENDPOINT . '/api/chargers/' . $ChargerId .'/state';
             
-            $url = self::ENDPOINT . '/state/' . $ChargerId .'/observations?ids=109,114,120,204';
+            $url = self::ENDPOINT . '/state/' . $ChargerId .'/observations?ids=109,114,124,190';
             $result = self::EvaluateResult(self::request('get', $url), $url);
             
             return $result;
