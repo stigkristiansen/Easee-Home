@@ -13,7 +13,8 @@ class Easee {
     private $disableSSL;
     private $userProfile;
 
-    const ENDPOINT = 'https://api.easee.cloud';
+    # const ENDPOINT = 'https://api.easee.cloud';
+    const ENDPOINT = 'https://api.easee.com';
 
     public function __construct(String $Username='', string $Password='', string $ApiKey = '', string $AccessToken='', string $RefreshToken='', DateTime $Expires = null) {
         $this->username = $Username;
