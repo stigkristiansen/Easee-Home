@@ -195,8 +195,13 @@ class Easee {
         
         try{
             $this->Connect();
+
+            // https://api.easee.com/state/{serialNumber}/observations
+            // ?ids=X&ids=Y&ids=Z
             
-            $url = self::ENDPOINT . '/api/chargers/' . $ChargerId .'/state';
+            //$url = self::ENDPOINT . '/api/chargers/' . $ChargerId .'/state';
+            
+            $url = self::ENDPOINT . '/state/' . $ChargerId .'/observations?ids=114&ids=109&ids=120&ids=204';
             $result = self::EvaluateResult(self::request('get', $url), $url);
             
             return $result;
