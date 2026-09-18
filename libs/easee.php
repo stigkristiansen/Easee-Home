@@ -201,46 +201,15 @@ class Easee {
             
             //$url = self::ENDPOINT . '/api/chargers/' . $ChargerId .'/state';
             
-            $url = self::ENDPOINT . '/state/' . $ChargerId .'/observations?ids=109,114';
-            $result1 = self::EvaluateResult(self::request('get', $url), $url);
-
-            IPS_LogMessage('Result from request 1'. $result1);
-
-            $url = self::ENDPOINT . '/state/' . $ChargerId .'/observations?ids=120,204';
-            $result2 = self::EvaluateResult(self::request('get', $url), $url);
-
-            IPS_LogMessage('Result from request 2 '. $result2);
-/*
-            foreach($result1['observations'] as $observation) {
-                    switch($observation['id']) {
-                        case 109:
-                            $result['chargerOpMode'] = $observation['value'];
-                            break;
-                        case 114: 
-                            $result['outputCurrent'] = $observation['value'];
-                            break;
-                    }
-            }       
-
-            foreach($result2['observations'] as $observation) {
-                    switch($observation['id']) {
-                        case 120:
-                            $result['lifetimeEnergy'] = $observation['value'];
-                            break;
-                        case 114: 
-                            $result['voltage'] = $observation['value'];
-                            break;
-                    }
-            }       
+            $url = self::ENDPOINT . '/state/' . $ChargerId .'/observations?ids=109,114,124,190';
+            $result = self::EvaluateResult(self::request('get', $url), $url);
             
-            return json_encode($result);
-*/
-
-            return $result1;
+            return $result;
 
         } catch(Exception $e) {
             throw new Exception($e->getMessage(), $e->getCode());
         }
+        
     }
 
     public function SetChargerAccessLevel(string $ChargerId, bool $UseKey) {
