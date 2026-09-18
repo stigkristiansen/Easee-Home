@@ -204,8 +204,12 @@ class Easee {
             $url = self::ENDPOINT . '/state/' . $ChargerId .'/observations?ids=109,114';
             $result1 = json_decode(self::EvaluateResult(self::request('get', $url), $url),true);
 
+            IPS_LogMessage('Result from request 1'.$url, json_encode($result1));
+
             $url = self::ENDPOINT . '/state/' . $ChargerId .'/observations?ids=120,204';
             $result2 = json_decode(self::EvaluateResult(self::request('get', $url), $url), true);
+
+            IPS_LogMessage('Result from request 2 '.$url, json_encode($result2));
 
             foreach($result1['observations'] as $observation) {
                     switch($observation['id']) {
