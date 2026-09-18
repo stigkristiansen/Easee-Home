@@ -191,6 +191,10 @@ include __DIR__ . "/../libs/traits.php";
 					$ident = '';
 					switch($function) {
 						case 'getchargerstate':
+							
+
+
+
 							if(isset($result->chargerOpMode)) {
 								$this->SetValueEx('Status', $result->chargerOpMode);
 							}

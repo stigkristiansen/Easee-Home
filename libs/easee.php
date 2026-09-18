@@ -196,20 +196,14 @@ class Easee {
         try{
             $this->Connect();
 
-            // https://api.easee.com/state/{serialNumber}/observations
-            // ?ids=X&ids=Y&ids=Z
-            
-            //$url = self::ENDPOINT . '/api/chargers/' . $ChargerId .'/state';
-
             // Define the targeted observation IDs
-            $observationIds = [114, 109, 124, 204];
+            $observationIds = [109, 114, 124, 194];
             $queryString = http_build_query(['ids' => implode(',', $observationIds)]);
 
             $url = self::ENDPOINT . '/state/' . $ChargerId .'/observations?' . $queryString;
             
-            //$url = self::ENDPOINT . '/state/' . $ChargerId .'/observations?ids=109,114,124,190';
             $result = self::EvaluateResult(self::request('get', $url), $url);
-            
+
             return $result;
 
         } catch(Exception $e) {
