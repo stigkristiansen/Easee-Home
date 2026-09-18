@@ -186,11 +186,14 @@ include __DIR__ . "/../libs/traits.php";
 				$success = $data->Buffer->Success;
 				$result = $data->Buffer->Result;
 
+				$this->SendDebug(__FUNCTION__, sprintf('Result is: %s', json_encode($result)), 0);
+
 				if($success) {
 					$function = strtolower($data->Buffer->Function);
 					$ident = '';
 					switch($function) {
 						case 'getchargerstate':
+							
 							if(isset($result->observations)) {
 								foreach($result->observations as $observation) {
 									switch($observation->id) {
