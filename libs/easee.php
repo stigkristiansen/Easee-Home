@@ -202,15 +202,15 @@ class Easee {
             //$url = self::ENDPOINT . '/api/chargers/' . $ChargerId .'/state';
             
             $url = self::ENDPOINT . '/state/' . $ChargerId .'/observations?ids=109,114';
-            $result1 = json_decode(self::EvaluateResult(self::request('get', $url), $url),true);
+            $result1 = self::EvaluateResult(self::request('get', $url), $url);
 
-            IPS_LogMessage('Result from request 1'.$url, json_encode($result1));
+            IPS_LogMessage('Result from request 1'. $result1);
 
             $url = self::ENDPOINT . '/state/' . $ChargerId .'/observations?ids=120,204';
-            $result2 = json_decode(self::EvaluateResult(self::request('get', $url), $url), true);
+            $result2 = self::EvaluateResult(self::request('get', $url), $url);
 
-            IPS_LogMessage('Result from request 2 '.$url, json_encode($result2));
-
+            IPS_LogMessage('Result from request 2 '. $result2);
+/*
             foreach($result1['observations'] as $observation) {
                     switch($observation['id']) {
                         case 109:
@@ -234,7 +234,10 @@ class Easee {
             }       
             
             return json_encode($result);
+*/
 
+            return $result
+            
         } catch(Exception $e) {
             throw new Exception($e->getMessage(), $e->getCode());
         }
