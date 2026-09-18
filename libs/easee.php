@@ -202,10 +202,10 @@ class Easee {
             //$url = self::ENDPOINT . '/api/chargers/' . $ChargerId .'/state';
             
             $url = self::ENDPOINT . '/state/' . $ChargerId .'/observations?ids=109,114';
-            $result1 = json_decode(self::EvaluateResult(self::request('get', $url), $url));
+            $result1 = json_decode(self::EvaluateResult(self::request('get', $url), $url),true);
 
             $url = self::ENDPOINT . '/state/' . $ChargerId .'/observations?ids=120,204';
-            $result2 = json_decode(self::EvaluateResult(self::request('get', $url), $url));
+            $result2 = json_decode(self::EvaluateResult(self::request('get', $url), $url), true);
 
             foreach($result1['observations'] as $observation) {
                     switch($observation['id']) {
