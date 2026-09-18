@@ -191,23 +191,24 @@ include __DIR__ . "/../libs/traits.php";
 					$ident = '';
 					switch($function) {
 						case 'getchargerstate':
-							
-
-
-
-							if(isset($result->chargerOpMode)) {
-								$this->SetValueEx('Status', $result->chargerOpMode);
-							}
-							if(isset($result->voltage)) {
-								$this->SetValueEx('Voltage', $result->voltage);
-							}
-							if(isset($result->outputCurrent)) {
-								$this->SetValueEx('Current', $result->outputCurrent);
-							}
-							if(isset($result->lifetimeEnergy)) {
-								$this->SetValueEx('TotalEnergi', $result->lifetimeEnergy);
-							}
-
+							if(isset($result->observations)) {
+								foreach($result->observations as $observation) {
+									switch($observation->id) {
+										case 109:
+											$this->SetValueEx('Status', $observation->value);
+											break;
+										case 114: 
+											$this->SetValueEx('Current', $observation->value);
+											break;
+										case 124: 
+											$this->SetValueEx('TotalEnergi', $observation->value);
+											break;
+										case 194: 
+											$this->SetValueEx('Voltage', $observation->value);
+											break;
+									}
+								} 
+							}				
 							break;
 						case 'getproducts':
 							break;
