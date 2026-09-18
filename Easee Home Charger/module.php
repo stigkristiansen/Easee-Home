@@ -51,7 +51,7 @@ include __DIR__ . "/../libs/traits.php";
 
 			$this->RegisterVariableFloat('Current', 'Current', '~Ampere', 4);
 
-			$this->RegisterVariableFloat('TotalEnergi', 'Total Energi', '~Electricity', 5);
+			$this->RegisterVariableFloat('TotalEnergi', 'Total Energy', '~Electricity', 5);
 			
 			$this->RegisterVariableBoolean('LockCable', 'Lock Cable', 'EHCH.LockCable', 6);
 			$this->EnableAction('LockCable');
@@ -193,7 +193,6 @@ include __DIR__ . "/../libs/traits.php";
 					$ident = '';
 					switch($function) {
 						case 'getchargerstate':
-							
 							if(isset($result->observations)) {
 								foreach($result->observations as $observation) {
 									switch($observation->id) {
@@ -209,9 +208,21 @@ include __DIR__ . "/../libs/traits.php";
 										case 194: 
 											$this->SetValueEx('Voltage', $observation->value);
 											break;
+										case 30: 
+											$this->SetValueEx('LockCable', $observation->value);
+											break;
+										case 42: 
+											$this->SetValueEx('ProtectAccess', $observation->value);
+											break;
 									}
+									
 								} 
-							}				
+							}
+							
+							$this->EnableAction('LockCable');
+							$this->EnableAction('ProtectAccess');
+							$this->EnableAction('startcharging');
+	
 							break;
 						case 'getproducts':
 							break;
@@ -225,9 +236,9 @@ include __DIR__ . "/../libs/traits.php";
 							}
 							break;
 						case 'setchargerlockstate':
-							$ident = 'LockCable';
+							//$ident = 'LockCable';
 						case 'setchargingstate':
-							if(strlen($ident)==0) {
+							/*if(strlen($ident)==0) {
 								$ident = 'StartCharging';
 							}
 							
@@ -248,7 +259,13 @@ include __DIR__ . "/../libs/traits.php";
 								$this->RegisterOnceTimer('EaseeChargerGetCommandState' . (string)$this->InstanceID, $script); // Call GetCommandState in a new thread	
 							} else {
 								throw new Exception('Invalid data receieved from parent. Missing or invalid CommandId of Ticks');
-							}
+							} */
+							
+							$this->SendDebug(__FUNCTION__, 'Quering for new charger status in 10s', 0);
+							
+							$script = "sleep(10);IPS_RequestAction(" . (string)$this->InstanceID . " ,'Refresh', 0);";
+
+							$this->RegisterOnceTimer('EaseeChargerRefreshOnce' . (string)$this->InstanceID, $script);  // Call Refresh in a new thread
 
 							break;
 						case 'setchargeraccesslevel':
@@ -258,7 +275,7 @@ include __DIR__ . "/../libs/traits.php";
 
 							$this->RegisterOnceTimer('EaseeChargerRefreshOnce' . (string)$this->InstanceID, $script);  // Call Refresh in a new thread
 
-							$this->EnableAction('ProtectAccess');
+							// $this->EnableAction('ProtectAccess');
 							
 							break;
 						case 'getcommandstate':
