@@ -201,10 +201,35 @@ class Easee {
             
             //$url = self::ENDPOINT . '/api/chargers/' . $ChargerId .'/state';
             
-            $url = self::ENDPOINT . '/state/' . $ChargerId .'/observations?ids=190,109,114,124';
-            $result = self::EvaluateResult(self::request('get', $url), $url);
+            $url = self::ENDPOINT . '/state/' . $ChargerId .'/observations?ids=109,114';
+            $result1 = json_decode(self::EvaluateResult(self::request('get', $url), $url));
+
+            $url = self::ENDPOINT . '/state/' . $ChargerId .'/observations?ids=120,204';
+            $result2 = json_decode(self::EvaluateResult(self::request('get', $url), $url));
+
+            foreach($result1['observations'] as $observation) {
+                    switch($observation['id']) {
+                        case 109:
+                            $result['chargerOpMode'] = $observation['value'];
+                            break;
+                        case 114: 
+                            $result['outputCurrent'] = $observation['value'];
+                            break;
+                    }
+            }       
+
+            foreach($result2['observations'] as $observation) {
+                    switch($observation['id']) {
+                        case 120:
+                            $result['lifetimeEnergy'] = $observation['value'];
+                            break;
+                        case 114: 
+                            $result['voltage'] = $observation['value'];
+                            break;
+                    }
+            }       
             
-            return $result;
+            return json_encode($result);
 
         } catch(Exception $e) {
             throw new Exception($e->getMessage(), $e->getCode());
