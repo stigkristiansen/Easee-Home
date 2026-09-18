@@ -236,7 +236,7 @@ class Easee {
             return json_encode($result);
 */
 
-            return $result1
+            return $result1;
 
         } catch(Exception $e) {
             throw new Exception($e->getMessage(), $e->getCode());
