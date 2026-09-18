@@ -205,7 +205,7 @@ class Easee {
             $observationIds = [114, 109, 124, 204];
             $queryString = http_build_query(['ids' => implode(',', $observationIds)]);
 
-            $url = self::ENDPOINT . '/state/' . $ChargerId .'/observations?" . $queryString";
+            $url = self::ENDPOINT . '/state/' . $ChargerId .'/observations?' . $queryString;
             
             //$url = self::ENDPOINT . '/state/' . $ChargerId .'/observations?ids=109,114,124,190';
             $result = self::EvaluateResult(self::request('get', $url), $url);
