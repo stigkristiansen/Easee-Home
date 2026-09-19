@@ -191,7 +191,7 @@ class Easee {
         }
     }
 
-    public function GetChargerSite(string ChargerId) {
+    public function GetChargerSite(string $ChargerId) {
         try {
             $this->Connect();
          
