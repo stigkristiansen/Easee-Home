@@ -217,7 +217,7 @@ class Easee {
             $this->Connect();
             
             $url = self::ENDPOINT . '/api/chargers/' . $ChargerId .'/access';
-            $data = sprintf('{"chargerAccessLevel": %d}', $UseKey?3:1;);
+            $data = sprintf('{"chargerAccessLevel": %d}', $UseKey?3:1);
             
             $result = self::EvaluateResult(self::request('put', $url, $data), $url);
             
