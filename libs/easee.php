@@ -334,7 +334,7 @@ class Easee {
         } 
         
         //if(isset($Result->result->status) && $Result->result->status != 200) {
-        if(isset($Result->result->status) && $Result->result->status != 0) {
+        if(isset($Result->result->status) && $Result->result->status != 0) { 
             throw new Exception(sprintf('%s failed. Error: "%s"', $Url, isset($Result->result->title)?$Result->result->title:(string)$Result->result->status));
         } 
         
