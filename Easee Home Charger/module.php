@@ -195,6 +195,8 @@ include __DIR__ . "/../libs/traits.php";
 						case 'getchargerstate':
 							if(isset($result->observations)) {
 								foreach($result->observations as $observation) {
+									$date = new DateTime($observation->timestamp);
+									$observationTime = $date->getTimestamp();
 									switch($observation->id) {
 										case 109:
 											$this->SetValueEx('Status', $observation->value);
@@ -208,19 +210,37 @@ include __DIR__ . "/../libs/traits.php";
 										case 194: 
 											$this->SetValueEx('Voltage', $observation->value);
 											break;
-										case 30: 
-											$this->SetValueEx('LockCable', $observation->value);
+										case 30:
+											$id = IPS_GetObjectIDByIdent('LockCable', $this->InstanceID);        
+											$properties = IPS_GetVariable($id);
+											
+											if(!HasAction($id) && $properties['VariableChanged'] < $observationTime) {
+												$this->SetValue('LockCable', $observation->value);
+												$this->EnableAction('LockCable');
+											}
+											
+											if(HasAction($id)) {
+												$this->SetValue('LockCable', $observation->value);
+											}
 											break;
 										case 31: 
-											$this->SetValueEx('ProtectAccess', $observation->value);
+											$id = IPS_GetObjectIDByIdent('ProtectAccess', $this->InstanceID);        
+											$properties = IPS_GetVariable($id);
+											
+											if(!HasAction($id) && $properties['VariableChanged'] < $observationTime) {
+												$this->SetValue('ProtectAccess', $observation->value);
+												$this->EnableAction('ProtectAccess');
+											}
+
+											if(HasAction($id)) {
+												$this->SetValue('ProtectAccess', $observation->value);
+											}
 											break;
 									}
 									
 								} 
 							}
 							
-							$this->EnableAction('LockCable');
-							$this->EnableAction('ProtectAccess');
 							$this->EnableAction('StartCharging');
 	
 							break;
@@ -231,8 +251,8 @@ include __DIR__ . "/../libs/traits.php";
 								$this->SetValueEx('LockCable', $result->lockCablePermanently);
 							}
 
-							if(isset($result->authorizationRequired)) {
-								$this->SetValueEx('ProtectAccess', $result->authorizationRequired);
+							if(isset($result->isEnabled)) {
+								$this->SetValueEx('ProtectAccess', $result->isEnabled);
 							}
 							break;
 						case 'enablecharger':
