@@ -211,7 +211,7 @@ class Easee {
             $this->Connect();
 
             // Define the targeted observation IDs
-            $observationIds = [15, 16, 17, 30, 31, 42, 109, 114, 124, 194];
+            $observationIds = [30, 31, 42, 109, 114, 124, 194];
             $queryString = http_build_query(['ids' => implode(',', $observationIds)]);
 
             $url = self::ENDPOINT . '/state/' . $ChargerId .'/observations?' . $queryString;
@@ -248,6 +248,21 @@ class Easee {
             
             $url = self::ENDPOINT . '/api/chargers/' . $ChargerId .'/commands/lock_state';
             $data = ['State' => $State];
+            $result = self::EvaluateResult(self::request('post', $url, $data), $url);
+            
+            return $result;
+
+        } catch(Exception $e) {
+            throw new Exception($e->getMessage());
+        }
+    }
+
+    public function EnableCharger(string $ChargerId, bool $State) {
+        try{
+            $this->Connect();
+                        
+            $url = self::ENDPOINT . '/api/chargers/' . $ChargerId .'/settings';
+            $data = ['enabled' => $State];
             $result = self::EvaluateResult(self::request('post', $url, $data), $url);
             
             return $result;

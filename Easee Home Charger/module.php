@@ -126,7 +126,7 @@ include __DIR__ . "/../libs/traits.php";
 						$this->SetValue($Ident, $Value);
 						$this->DisableAction($Ident); // Disable variable in visualization  until command has finished
 						
-						$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargerAccessLevel','ChargerId'=>$chargerId, 'UseKey' => $Value];
+						$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'EnableCharger','ChargerId'=>$chargerId, 'State' => $Value];
 						break;
 					case 'startcharging':
 						if($Value>0){
@@ -211,7 +211,7 @@ include __DIR__ . "/../libs/traits.php";
 										case 30: 
 											$this->SetValueEx('LockCable', $observation->value);
 											break;
-										case 42: 
+										case 31: 
 											$this->SetValueEx('ProtectAccess', $observation->value);
 											break;
 									}
@@ -221,7 +221,7 @@ include __DIR__ . "/../libs/traits.php";
 							
 							$this->EnableAction('LockCable');
 							$this->EnableAction('ProtectAccess');
-							$this->EnableAction('startcharging');
+							$this->EnableAction('StartCharging');
 	
 							break;
 						case 'getproducts':
@@ -235,6 +235,7 @@ include __DIR__ . "/../libs/traits.php";
 								$this->SetValueEx('ProtectAccess', $result->authorizationRequired);
 							}
 							break;
+						case 'enablecharger':
 						case 'setchargerlockstate':
 							//$ident = 'LockCable';
 						case 'setchargingstate':
@@ -424,7 +425,6 @@ include __DIR__ . "/../libs/traits.php";
 				}
 				
 				$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerState','ChargerId'=>$ChargerId];
-				$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerSite','ChargerId'=>$ChargerId];
 
 				return $request;
 			}
