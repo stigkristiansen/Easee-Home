@@ -211,7 +211,7 @@ class Easee {
             $this->Connect();
 
             // Define the targeted observation IDs
-            $observationIds = [15, 16, 17, 30, 42, 109, 114, 124, 194];
+            $observationIds = [15, 16, 17, 30, 31, 42, 109, 114, 124, 194];
             $queryString = http_build_query(['ids' => implode(',', $observationIds)]);
 
             $url = self::ENDPOINT . '/state/' . $ChargerId .'/observations?' . $queryString;
