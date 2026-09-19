@@ -424,7 +424,8 @@ include __DIR__ . "/../libs/traits.php";
 				}
 				
 				$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerState','ChargerId'=>$ChargerId];
-					
+				$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerSite','ChargerId'=>$ChargerId];
+
 				return $request;
 			}
 		}

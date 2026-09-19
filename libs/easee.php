@@ -191,9 +191,23 @@ class Easee {
         }
     }
 
+    public GetChargerSite(string ChargerId) {
+        try {
+            $this->Connect();
+         
+            $url = self::ENDPOINT . '/api/chargers/' . $ChargerId .'/site';
+            
+            $result = self::EvaluateResult(self::request('get', $url), $url);
+
+            return $result;
+
+        } catch(Exception $e) {
+            throw new Exception($e->getMessage(), $e->getCode());
+        }
+    }
+
     public function GetChargerState(string $ChargerId) {
-        
-        try{
+        try {
             $this->Connect();
 
             // Define the targeted observation IDs
