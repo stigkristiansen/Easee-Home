@@ -219,11 +219,13 @@ include __DIR__ . "/../libs/traits.php";
 											$this->SendDebug(__FUNCTION__, sprintf('LockCable last change timestamp is: %d', $properties['VariableChanged']), 0);
 											
 											if(!HasAction($id) && $properties['VariableChanged'] < $observationTime) {
+												$this->SendDebug(__FUNCTION__, sprintf('HasAction is FALSE and new observation has been received for LockCable, enabeling actions and updating the value...'), 0);
 												$this->SetValue('LockCable', $observation->value);
 												$this->EnableAction('LockCable');
 											}
 											
 											if(HasAction($id)) {
+												$this->SendDebug(__FUNCTION__, sprintf('HasAction is TRUE for LockCable, updating the value...'), 0);
 												$this->SetValue('LockCable', $observation->value);
 											}
 											break;
@@ -235,11 +237,13 @@ include __DIR__ . "/../libs/traits.php";
 											$this->SendDebug(__FUNCTION__, sprintf('ProtectAccess last change timestamp is: %d', $properties['VariableChanged']), 0);
 											
 											if(!HasAction($id) && $properties['VariableChanged'] < $observationTime) {
+												$this->SendDebug(__FUNCTION__, sprintf('HasAction is FALSE new observation has been received for ProtectAccess, enabeling actions and updating the value...'), 0);
 												$this->SetValue('ProtectAccess', $observation->value);
 												$this->EnableAction('ProtectAccess');
 											}
 
 											if(HasAction($id)) {
+												$this->SendDebug(__FUNCTION__, sprintf('HasAction is TRUE for ProtectAccess, updating the value...'), 0);
 												$this->SetValue('ProtectAccess', $observation->value);
 											}
 											break;
