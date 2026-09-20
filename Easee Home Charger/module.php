@@ -193,6 +193,7 @@ include __DIR__ . "/../libs/traits.php";
 					$ident = '';
 					switch($function) {
 						case 'setchargingstate':
+							$this->EnableAction('StartCharging')
 							$this->SetValueEx('StartCharging', 0);
 							break;
 						case 'getchargerstate':
