@@ -56,7 +56,7 @@ include __DIR__ . "/../libs/traits.php";
 			$this->RegisterVariableBoolean('LockCable', 'Lock Cable', 'EHCH.LockCable', 6);
 			$this->EnableAction('LockCable');
 			
-			$this->RegisterVariableBoolean('ProtectAccess', 'Protect Access', 'EHCH.ProtectAccess', 7);
+			$this->RegisterVariableBoolean('ProtectAccess', 'Active Charger', 'EHCH.ProtectAccess', 7);
 			$this->EnableAction('ProtectAccess');
 
 			$this->RegisterTimer('EaseeChargerRefresh' . (string)$this->InstanceID, 0, 'IPS_RequestAction(' . (string)$this->InstanceID . ', "Refresh", 0);'); 
