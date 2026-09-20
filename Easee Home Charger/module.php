@@ -230,7 +230,7 @@ include __DIR__ . "/../libs/traits.php";
 											$this->SendDebug(__FUNCTION__, sprintf('LockCable last change timestamp is: %d', $properties['VariableChanged']), 0);
 											
 											if(!HasAction($id) && $properties['VariableChanged'] <= $observationTime) {
-												$this->SendDebug(__FUNCTION__, sprintf('HasAction is FALSE and new observation has been received for LockCable, enabeling actions...'), 0);
+												$this->SendDebug(__FUNCTION__, sprintf('HasAction is FALSE and new observation has been received for LockCable, enabling actions...'), 0);
 												$this->EnableAction('LockCable');
 											}
 											
@@ -247,7 +247,7 @@ include __DIR__ . "/../libs/traits.php";
 											$this->SendDebug(__FUNCTION__, sprintf('ProtectAccess last change timestamp is: %d', $properties['VariableChanged']), 0);
 											
 											if(!HasAction($id) && $properties['VariableChanged'] <= $observationTime) {
-												$this->SendDebug(__FUNCTION__, sprintf('HasAction is FALSE new observation has been received for ProtectAccess, enabeling actions...'), 0);
+												$this->SendDebug(__FUNCTION__, sprintf('HasAction is FALSE new observation has been received for ProtectAccess, enabling actions...'), 0);
 												$this->EnableAction('ProtectAccess');
 											}
 

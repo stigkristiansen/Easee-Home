@@ -320,7 +320,7 @@ class EaseeHomeGateway extends IPSModule
 				$easee->DisableSSLCheck();
 			}
 
-			$this->SendDebug(__FUNCTION__, sprintf('Execxuting function %s', $Function), 0);
+			$this->SendDebug(__FUNCTION__, sprintf('Executing function %s', $Function), 0);
 
 			if($Args == null) {
 				$result = call_user_func(array($easee, $Function));
