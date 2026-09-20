@@ -255,11 +255,11 @@ include __DIR__ . "/../libs/traits.php";
 							break;
 						case 'getchargerconfig':
 							if(isset($result->lockCablePermanently)) {
-								$this->SetValueEx('LockCable', $result->lockCablePermanently);
+								//$this->SetValueEx('LockCable', $result->lockCablePermanently);
 							}
 
 							if(isset($result->isEnabled)) {
-								$this->SetValueEx('ProtectAccess', $result->isEnabled);
+								//$this->SetValueEx('ProtectAccess', $result->isEnabled);
 							}
 							break;
 						case 'enablecharger':
