@@ -96,8 +96,6 @@ include __DIR__ . "/../libs/traits.php";
 			}
 		}
 
-
-
 		public function RequestAction($Ident, $Value) {
 			try {
 				$this->SendDebug(__FUNCTION__, sprintf('ReqestAction called for Ident "%s" with Value %s', $Ident, (string)$Value), 0);
@@ -129,7 +127,8 @@ include __DIR__ . "/../libs/traits.php";
 						$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'EnableCharger','ChargerId'=>$chargerId, 'State' => $Value];
 						break;
 					case 'startcharging':
-						if($Value>0){
+						$status = $this->GetValue('Status'); 
+						if($Value>0 && $status!=1){ // Status = 1 => Disconnected 
 							$this->SetValue($Ident, $Value);
 							$this->DisableAction($Ident); // Disable variable in visualization until command has finished
 							
