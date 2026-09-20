@@ -38,8 +38,8 @@ include __DIR__ . "/../libs/traits.php";
 			]);
 
 			$this->RegisterProfileBooleanEx('EHCH.ProtectAccess', 'Lock', '', '', [
-				[true, 'Protecting...', '', -1],
-				[false, 'Unprotecting...', '', -1]
+				[true, 'Enabling...', '', -1],
+				[false, 'Disabling...', '', -1]
 			]);
 
 			$this->RegisterVariableInteger('StartCharging', 'Charging', 'EHCH.StartCharging', 1);
