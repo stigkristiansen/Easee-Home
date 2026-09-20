@@ -192,6 +192,9 @@ include __DIR__ . "/../libs/traits.php";
 					$function = strtolower($data->Buffer->Function);
 					$ident = '';
 					switch($function) {
+						case 'setchargingstate':
+							$this->SetValue('startcharging', 0)
+							break;
 						case 'getchargerstate':
 							if(isset($result->observations)) {
 								foreach($result->observations as $observation) {
