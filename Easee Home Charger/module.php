@@ -197,6 +197,9 @@ include __DIR__ . "/../libs/traits.php";
 								foreach($result->observations as $observation) {
 									$date = new DateTime($observation->timestamp);
 									$observationTime = $date->getTimestamp();
+
+									$this->SendDebug(__FUNCTION__, sprintf('Observation timestamp is: %d', $observationTime), 0);
+
 									switch($observation->id) {
 										case 109:
 											$this->SetValueEx('Status', $observation->value);
@@ -213,6 +216,8 @@ include __DIR__ . "/../libs/traits.php";
 										case 30:
 											$id = IPS_GetObjectIDByIdent('LockCable', $this->InstanceID);        
 											$properties = IPS_GetVariable($id);
+
+											$this->SendDebug(__FUNCTION__, sprintf('LockCable last change timestamp is: %d', $properties['VariableChanged']), 0);
 											
 											if(!HasAction($id) && $properties['VariableChanged'] < $observationTime) {
 												$this->SetValue('LockCable', $observation->value);
@@ -226,6 +231,8 @@ include __DIR__ . "/../libs/traits.php";
 										case 31: 
 											$id = IPS_GetObjectIDByIdent('ProtectAccess', $this->InstanceID);        
 											$properties = IPS_GetVariable($id);
+
+											$this->SendDebug(__FUNCTION__, sprintf('ProtectAccess last change timestamp is: %d', $properties['VariableChanged']), 0);
 											
 											if(!HasAction($id) && $properties['VariableChanged'] < $observationTime) {
 												$this->SetValue('ProtectAccess', $observation->value);
