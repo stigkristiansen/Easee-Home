@@ -82,7 +82,7 @@ include __DIR__ . "/../libs/traits.php";
 			parent::ApplyChanges();
 
 			// Renaming display name for variable after switching to enable/disable charger for protection
-			$id = $this->GetIDForIdent('ProtectAccess')
+			$id = $this->GetIDForIdent('ProtectAccess');
 			if ($id > 0) {
  			   IPS_SetName($id, "Enabled Charger");
 			}			
