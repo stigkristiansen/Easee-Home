@@ -56,7 +56,7 @@ include __DIR__ . "/../libs/traits.php";
 			$this->RegisterVariableBoolean('LockCable', 'Lock Cable', 'EHCH.LockCable', 6);
 			$this->EnableAction('LockCable');
 			
-			$this->RegisterVariableBoolean('ProtectAccess', 'Active Charger', 'EHCH.ProtectAccess', 7);
+			$this->RegisterVariableBoolean('ProtectAccess', 'Enabled Charger', 'EHCH.ProtectAccess', 7);
 			$this->EnableAction('ProtectAccess');
 
 			$this->RegisterTimer('EaseeChargerRefresh' . (string)$this->InstanceID, 0, 'IPS_RequestAction(' . (string)$this->InstanceID . ', "Refresh", 0);'); 
@@ -80,6 +80,13 @@ include __DIR__ . "/../libs/traits.php";
 		public function ApplyChanges(){
 			//Never delete this line!
 			parent::ApplyChanges();
+
+			// Renaming display name for variable after switching to enable/disable charger for protection
+			$id = $this->GetIDForIdent('ProtectAccess')
+			if ($id > 0) {
+ 			   IPS_SetName($id, "Enabled Charger");
+			}			
+			
 
 			$this->SetReceiveDataFilter('.*"ChildId":"' . (string)$this->InstanceID .'".*');
 
