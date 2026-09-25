@@ -202,6 +202,12 @@ include __DIR__ . "/../libs/traits.php";
 						case 'setchargingstate':
 							$this->EnableAction('StartCharging');
 							$this->SetValueEx('StartCharging', 0);
+
+							$this->SendDebug(__FUNCTION__, 'Quering for new charger status in 10s', 0);
+							
+							$script = "sleep(10);IPS_RequestAction(" . (string)$this->InstanceID . " ,'Refresh', 0);";
+
+							$this->RegisterOnceTimer('EaseeChargerRefreshOnce' . (string)$this->InstanceID, $script);  // Call Refresh in a new thread
 							break;
 						case 'getchargerstate':
 							if(isset($result->observations)) {
