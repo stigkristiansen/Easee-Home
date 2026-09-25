@@ -141,10 +141,10 @@ include __DIR__ . "/../libs/traits.php";
 						$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'EnableCharger','ChargerId'=>$chargerId, 'State' => $Value];
 						break;
 					case 'startcharging':
-						if($Value==99) {$Value = 1}; // Both Authenticate and Start use 1 as value
+						if($Value==99) {$Value = 1;} // Both Authenticate and Start use 1 as value
 
 						$status = $this->GetValue('Status'); 
-						if($Value>1 ){ // Status = 1 => Offline Status = 1 => Disconnected 
+						if($Value>1 ){ // Status = 0 => Offline Status = 1 => Disconnected 
 							$this->SetValue($Ident, $Value);
 							$this->DisableAction($Ident); // Disable variable in visualization until command has finished
 							
