@@ -18,12 +18,15 @@ include __DIR__ . "/../libs/traits.php";
 			$this->RegisterPropertyString('Site', '');
 
 			$this->RegisterProfileIntegerEx('EHCH.ChargerOpMode', 'Electricity', '', '', [
+				[0, 'Offline', '', -1],
 				[1, 'Disconnected', '', -1],
-				[2, 'Awaiting Start ', '', -1],
-				[3, 'Charging ', '', -1],
+				[2, 'Awaiting Start... ', '', -1],
+				[3, 'Charging... ', '', -1],
 				[4, 'Completed ', '', -1],
 				[5, 'Error' , '', -1],
-				[6, 'Ready To Charge' , '', -1]
+				[6, 'Ready To Charge' , '', -1],
+				[7, 'Awaiting Authentication...' , '', -1],
+				[8, 'De-authenticating...' , '', -1]
 			]);
 
 			$this->RegisterProfileIntegerEx('EHCH.StartCharging', 'Power', '', '', [
