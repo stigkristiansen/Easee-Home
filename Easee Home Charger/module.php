@@ -31,8 +31,13 @@ include __DIR__ . "/../libs/traits.php";
 
 			$this->RegisterProfileIntegerEx('EHCH.StartCharging', 'Power', '', '', [
 				[0, ' ', '', -1],
+				[99, 'Authenticate', '', -1],
 				[1, 'Start', '', -1],
-				[2, 'Stop ', '', -1]
+				[2, 'Stop', '', -1],
+				[3, 'Pause ', '', -1],
+				[4, 'Resume ', '', -1],
+				[5, 'Toggle ', '', -1],
+				[6, 'Override Schedule', '', -1]
 			]);
 
 			$this->RegisterProfileBooleanEx('EHCH.LockCable', 'Lock', '', '', [
@@ -136,8 +141,10 @@ include __DIR__ . "/../libs/traits.php";
 						$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'EnableCharger','ChargerId'=>$chargerId, 'State' => $Value];
 						break;
 					case 'startcharging':
+						if($Value=='99') {$Value = 1}; // Both Authenticate and Start use 1 as value
+
 						$status = $this->GetValue('Status'); 
-						if($Value>0 && $status!=1){ // Status = 1 => Disconnected 
+						if($Value>0 && ($status!=1 || $state!=0)){ // Status = 1 => Disconnected 
 							$this->SetValue($Ident, $Value);
 							$this->DisableAction($Ident); // Disable variable in visualization until command has finished
 							
