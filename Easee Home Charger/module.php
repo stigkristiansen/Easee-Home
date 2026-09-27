@@ -209,7 +209,7 @@ include __DIR__ . "/../libs/traits.php";
 					$function = strtolower($data->Buffer->Function);
 					$ident = '';
 					switch($function) {
-						case 'setchargingstate':
+						/*case 'setchargingstate':
 							$this->EnableAction('StartCharging');
 							$this->SetValueEx('StartCharging', 0);
 
@@ -218,7 +218,7 @@ include __DIR__ . "/../libs/traits.php";
 							$script = "sleep(10);IPS_RequestAction(" . (string)$this->InstanceID . " ,'Refresh', 0);";
 
 							$this->RegisterOnceTimer('EaseeChargerRefreshOnce' . (string)$this->InstanceID, $script);  // Call Refresh in a new thread
-							break;
+							break; */
 						case 'getchargerstate':
 							if(isset($result->observations)) {
 								foreach($result->observations as $observation) {
@@ -227,7 +227,27 @@ include __DIR__ . "/../libs/traits.php";
 
 									switch($observation->id) {
 										case 109:
-											$this->SetValueEx('Status', $observation->value);
+											$idSetChargingState = IPS_GetObjectIDByIdent('SetChargingState', $this->InstanceID);
+
+											$idStatus = IPS_GetObjectIDByIdent('Status', $this->InstanceID);
+											$properties = IPS_GetVariable($idStatus);
+											
+											$this->SendDebug(__FUNCTION__, sprintf('Observation timestamp for Status is: %d', $observationTime), 0);
+											$this->SendDebug(__FUNCTION__, sprintf('Status last change timestamp is: %d', $properties['VariableChanged']), 0);
+											
+											if(!HasAction($idSetChargingState) && $properties['VariableChanged'] <= $observationTime) {
+												$this->SendDebug(__FUNCTION__, sprintf('HasAction is FALSE and new observation has been received for SetChargingState, enabling actions...'), 0);
+												$this->EnableAction('SetChargingState');
+												$this->SetValue('SetChargingState', 0);
+											}
+											
+											if(HasAction($idSetChargingState)) {
+												$this->SendDebug(__FUNCTION__, sprintf('HasAction is TRUE for SetChargingState, updating the Status value...'), 0);
+												$this->SetValue('Status', $observation->value);
+												
+											}
+
+											//$this->SetValueEx('Status', $observation->value);
 											break;
 										case 114: 
 											$this->SetValueEx('Current', $observation->value);
