@@ -250,6 +250,7 @@ include __DIR__ . "/../libs/traits.php";
 												
 											}
 
+											
 											//$this->SetValueEx('Status', $observation->value);
 											break;
 										case 114: 
