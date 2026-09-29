@@ -164,7 +164,8 @@ include __DIR__ . "/../libs/traits.php";
 					if(strtolower($Ident)!='refresh') {
 						$this->PauseTimer();
 					}
-
+					
+					IPS_Sleep(1000); // To be sure the observation timestamp is newer than variable change timestamp when querying for observations
 					$this->SendDebug(__FUNCTION__, sprintf('Sending a request to the gateway: %s', json_encode($request)), 0);
 					$this->SendDataToParent(json_encode(['DataID' => '{B62C0F65-7B59-0CD8-8C92-5DA32FBBD317}', 'Buffer' => $request]));
 				}
@@ -250,7 +251,7 @@ include __DIR__ . "/../libs/traits.php";
 												
 											}
 
-											
+
 											//$this->SetValueEx('Status', $observation->value);
 											break;
 										case 114: 
