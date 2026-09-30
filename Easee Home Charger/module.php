@@ -141,10 +141,13 @@ include __DIR__ . "/../libs/traits.php";
 						$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'EnableCharger','ChargerId'=>$chargerId, 'State' => $Value];
 						break;
 					case 'startcharging':
-						if($Value==99) {$Value = 1;} // Both Authenticate and Start use 1 as value
+						if($Value==99) { // Both Authenticate and Start use 1 as value
+							$Value = 1;
+						} 
 
 						$status = $this->GetValue('Status'); 
-						if($status>1 ){ // Status = 0 => Offline Status = 1 => Disconnected 
+						$enabled = $this->GetValue('ProtectAccess');
+						if($status>1 && $enabled!=false) { // Status = 0 => Offline Status = 1 => Disconnected 
 							$this->SetValue($Ident, $Value);
 							$this->DisableAction($Ident); // Disable variable in visualization until command has finished
 							
@@ -161,7 +164,8 @@ include __DIR__ . "/../libs/traits.php";
 					if(strtolower($Ident)!='refresh') {
 						$this->PauseTimer();
 					}
-
+					
+					IPS_Sleep(1000); // To be sure the observation timestamp is newer than variable change timestamp when querying for observations
 					$this->SendDebug(__FUNCTION__, sprintf('Sending a request to the gateway: %s', json_encode($request)), 0);
 					$this->SendDataToParent(json_encode(['DataID' => '{B62C0F65-7B59-0CD8-8C92-5DA32FBBD317}', 'Buffer' => $request]));
 				}
@@ -209,7 +213,7 @@ include __DIR__ . "/../libs/traits.php";
 					$function = strtolower($data->Buffer->Function);
 					$ident = '';
 					switch($function) {
-						case 'setchargingstate':
+						/*case 'setchargingstate':
 							$this->EnableAction('StartCharging');
 							$this->SetValueEx('StartCharging', 0);
 
@@ -218,7 +222,7 @@ include __DIR__ . "/../libs/traits.php";
 							$script = "sleep(10);IPS_RequestAction(" . (string)$this->InstanceID . " ,'Refresh', 0);";
 
 							$this->RegisterOnceTimer('EaseeChargerRefreshOnce' . (string)$this->InstanceID, $script);  // Call Refresh in a new thread
-							break;
+							break; */
 						case 'getchargerstate':
 							if(isset($result->observations)) {
 								foreach($result->observations as $observation) {
@@ -227,7 +231,28 @@ include __DIR__ . "/../libs/traits.php";
 
 									switch($observation->id) {
 										case 109:
-											$this->SetValueEx('Status', $observation->value);
+											$idSetChargingState = IPS_GetObjectIDByIdent('SetChargingState', $this->InstanceID);
+
+											$idStatus = IPS_GetObjectIDByIdent('Status', $this->InstanceID);
+											$properties = IPS_GetVariable($idStatus);
+											
+											$this->SendDebug(__FUNCTION__, sprintf('Observation timestamp for Status is: %d', $observationTime), 0);
+											$this->SendDebug(__FUNCTION__, sprintf('Status last change timestamp is: %d', $properties['VariableChanged']), 0);
+											
+											if(!HasAction($idSetChargingState) && $properties['VariableChanged'] <= $observationTime) {
+												$this->SendDebug(__FUNCTION__, sprintf('HasAction is FALSE and new observation has been received for SetChargingState, enabling actions...'), 0);
+												$this->EnableAction('SetChargingState');
+												$this->SetValue('SetChargingState', 0);
+											}
+											
+											if(HasAction($idSetChargingState)) {
+												$this->SendDebug(__FUNCTION__, sprintf('HasAction is TRUE for SetChargingState, updating the Status value...'), 0);
+												$this->SetValue('Status', $observation->value);
+												
+											}
+
+
+											//$this->SetValueEx('Status', $observation->value);
 											break;
 										case 114: 
 											$this->SetValueEx('Current', $observation->value);
