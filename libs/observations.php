@@ -312,7 +312,7 @@ class Charger extends Observations {
         ],
         31 => [
             'IsVariable' => true,
-            'Description' => 'IS ENABLED'
+            'Description' => 'IS ENABLED',
             'Ident' => 'ProtectAccess',
             'Caption' => 'Enable',
             'Type' => Observations::BOOLEAN,
