@@ -183,7 +183,7 @@ class EaseeHomeCharger extends IPSModule {
 						$Value = 1;
 					}
 
-					if($value>0){
+					if($Value>0){
 						$this->DisableAction($Ident); // Disable variable in visualization until command has finished
 
 						$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargingState', 'Ident'=> $Ident, 'ChargerId'=>$chargerId, 'State' => $value];
