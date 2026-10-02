@@ -417,7 +417,7 @@ class EaseeHomeCharger extends IPSModule {
 				$variableId = IPS_GetObjectIDByIdent($change['Ident'], $this->InstanceID);
 				$variableProperties = IPS_GetVariable($variableId);
 				
-				if(!HasAction($variableId) && $variableProperties['VariableChanged'] <= $change['Timpestamp'] && $change['Enable']) {
+				if(!HasAction($variableId) && $variableProperties['VariableChanged'] <= $change['Timestamp'] && $change['Enable']) {
 					$this->SendDebug(__FUNCTION__, sprintf('HasAction is FALSE and new observation has been received for "%s", enabling action...', $change['Ident']), 0);
 					$this->EnableAction($change['Ident']);
 				}
