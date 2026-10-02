@@ -491,10 +491,12 @@ class EaseeHomeCharger extends IPSModule {
 						
 						$this->EnableAction($oldObservation['Ident']);
 						$this->InitTimer();
-					} */
+					} 
 
 					return;
-				}
+				} */
+
+				return;
 
 				$this->SendDebug(__FUNCTION__, 'Timestamp for this change is newer than the last observation. Checking if it matches a earlier sent command...', 0);
 
