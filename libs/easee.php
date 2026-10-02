@@ -491,7 +491,7 @@ class Easee {
     }
 
     private function EvaluateResult($Result, string $Url) {
-        //IPS_LogMessage('Result from request '.$Url, json_encode($Result));
+        IPS_LogMessage('Result from request '.$Url, json_encode($Result));
 
         if($Result->httpcode==429) {
             throw new Exception(sprintf('Easee Cloud API call to "%s" is rate limited', $Url), 429);
