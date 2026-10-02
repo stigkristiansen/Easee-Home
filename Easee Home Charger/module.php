@@ -462,7 +462,24 @@ class EaseeHomeCharger extends IPSModule {
 				
 				$this->SendDebug(__FUNCTION__, sprintf('Observation Id %d is an Id that corresponds to Ident "%s"', $Data->id, $response['Ident']), 0);
 				
-								
+				if($response['WasAccepted']) {
+					$this->SendDebug(__FUNCTION__, sprintf('The command for changing %s was accepted by the cloud api', $response['Ident']), 0);					
+				} else {
+					$this->SendDebug(__FUNCTION__, sprintf('The command for changing %s was not accepted by the cloud api. Stopping the process...', $response['Ident']), 0);
+				
+					$this->EnableAction($response['Ident']);
+
+					switch(strtolower($response['Ident'])) {
+						case 'lockcable':
+						case 'prototectaccess':
+							$this->SetValue($response['Ident'], !$this->GetValue($response['Ident']));
+							break;
+						case 'setchargingstate':
+							$this->SetValue($response['Ident'], 0);
+							break;
+					}	
+				}
+
 				/* $oldObservation = $this->GetReceivedObservation($response['Ident']);
 				
 				if($oldObservation!==false) {
@@ -495,10 +512,8 @@ class EaseeHomeCharger extends IPSModule {
 
 					return;
 				} */
-
-				return;
-
-				$this->SendDebug(__FUNCTION__, 'Timestamp for this change is newer than the last observation. Checking if it matches a earlier sent command...', 0);
+				
+				/*$this->SendDebug(__FUNCTION__, 'Timestamp for this change is newer than the last observation. Checking if it matches a earlier sent command...', 0);
 
 				if(isset($oldObservation['Ticks']) && $oldObservation['Ticks']==$response['Ticks']) {
 					$this->SendDebug(__FUNCTION__, 'This CommandResponse match a earlier sent command. Updating...', 0);
@@ -518,7 +533,7 @@ class EaseeHomeCharger extends IPSModule {
 					$this->UpdateReceivedObservations($response);
 				} else {
 					$this->SendDebug(__FUNCTION__, 'This CommandResponse do not match a earlier sent command. Skipping update', 0);
-				}
+				}*/
 			} else {
 				$this->SendDebug(__FUNCTION__, sprintf('Observation Id %d is not corresponding to an Ident', $Data->id), 0);
 			}
