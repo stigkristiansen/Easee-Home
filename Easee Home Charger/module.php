@@ -413,6 +413,24 @@ class EaseeHomeCharger extends IPSModule {
 
 			if($change!==false) {
 				$this->SendDebug(__FUNCTION__, sprintf('Observation Id %d is an Id that corresponds to Ident "%s"', $Data->id, $change['Ident']), 0);
+				
+				$variableId = IPS_GetObjectIDByIdent($change['Ident'], $this->InstanceID);
+				$variableProperties = IPS_GetVariable($variableId);
+				
+				if(!HasAction($variableId) && $variableProperties['VariableChanged'] <= $change['Timpestamp'] && $change['Enable']) {
+					$this->SendDebug(__FUNCTION__, sprintf('HasAction is FALSE and new observation has been received for "%s", enabling action...', $change['Ident']), 0);
+					$this->EnableAction($change['Ident']);
+				}
+
+				if(isset($change['CustomHandling']) && strlen($change['CustomHandling'])>0) {
+					$this->SendDebug(__FUNCTION__, sprintf('Updating "%s" through custom handler...', $change['Ident']), 0);
+					self::{$change['CustomHandling']}($change['Ident'], $change['Value']);
+				} else {
+					$this->SendDebug(__FUNCTION__, sprintf('Updating "%s"...', $change['Ident']), 0);
+					$this->SetValueEx($change['Ident'], $change['Value']);
+				}
+
+				/*
 				$oldObservation = $this->GetReceivedObservation($change['Ident']);
 				if($oldObservation!==false) {
 					if($oldObservation['Timestamp']>$change['Timestamp']) {
@@ -439,6 +457,7 @@ class EaseeHomeCharger extends IPSModule {
 				}
 
 				$this->UpdateReceivedObservations($change);
+				*/
 			} else {
 				$this->SendDebug(__FUNCTION__, sprintf('Observation Id %d is not corresponding to an Ident. There is nothing to update', $Data->id), 0);
 			}
