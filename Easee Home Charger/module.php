@@ -298,6 +298,7 @@ class EaseeHomeCharger extends IPSModule {
 					case 'setchargerlockstate':
 					case 'setchargerconfig':
 					case 'setchargingstate':
+					case 'enablecharger':
 						/*if(isset($data->Buffer->Ident)) {
 							$ident =  $data->Buffer->Ident;
 						} else {
