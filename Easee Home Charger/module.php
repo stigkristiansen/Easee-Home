@@ -100,6 +100,12 @@ class EaseeHomeCharger extends IPSModule {
 		//Never delete this line!
 		parent::ApplyChanges();
 
+			// Renaming display name for variable after switching to enable/disable charger for protection
+			$id = $this->GetIDForIdent('ProtectAccess');
+			if ($id > 0) {
+ 			   IPS_SetName($id, "Enabled");
+			}
+
 		$filter = sprintf('.*"ChildId":"%s".*|.*##AllChildren##.*', (string)$this->InstanceID);
 		
 		$serialNumber = $this->ReadPropertyString('ProductId');
@@ -139,18 +145,19 @@ class EaseeHomeCharger extends IPSModule {
 					$this->InitTimer(); // Reset timer back to configured interval 
 					break;
 				case 'lockcable':
+					$this->SetValue($Ident, $Value);
 					$this->DisableAction($Ident); // Disable variable in visualization until command has finished
 
 					$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargerLockState', 'Ident'=> $Ident, 'ChargerId'=>$chargerId, 'State' => $Value];
 
-					$change = [
+					/*$change = [
 						'Ident' => $Ident,
                 		'Timestamp' => time(),
 						'Value' => $Value,
 						'IsEnabled' => true
 					];
 					
-					$this->UpdateReceivedObservations($change);
+					$this->UpdateReceivedObservations($change); */
 
 					break;
 				case 'protectaccess':
@@ -241,7 +248,7 @@ class EaseeHomeCharger extends IPSModule {
 					$msg = 'Missing "Result"';
 				}
 			} 
-
+			
 			if(strlen($msg)>0) {
 				throw new Exception('Invalid data receieved from parent. ' . $msg);
 			}
@@ -290,15 +297,17 @@ class EaseeHomeCharger extends IPSModule {
 					case 'setchargerlockstate':
 					case 'setchargerconfig':
 					case 'setchargingstate':
-						if(isset($data->Buffer->Ident)) {
+						/*if(isset($data->Buffer->Ident)) {
 							$ident =  $data->Buffer->Ident;
+						} else {
+							throw new Exception('Invalid data receieved from parent. Missing Ident');
 						}
 
 						$observation = $this->GetReceivedObservation($ident);
 
 						if($observation!==false) {
 							if(isset($result->commandId)) {
-								$observation['Id'] =  $result->commandId;
+								$observation['Id'] =  $result->Id;
 							} else {
 								$observation['Id'] = 0;
 							}
@@ -310,7 +319,7 @@ class EaseeHomeCharger extends IPSModule {
 							}	
 
 							$this->UpdateReceivedObservations($observation);
-						}
+						}*/
 
 						break;
 					default:
@@ -446,11 +455,16 @@ class EaseeHomeCharger extends IPSModule {
 
 		try{
 			$response = Charger::GetObservation($Data);
+
+			$this->SendDebug(__FUNCTION__, sprintf('GetObservation returned: %s...', json_encode($response)), 0);
+
 			if($response!==false) {
 				
 				$this->SendDebug(__FUNCTION__, sprintf('Observation Id %d is an Id that corresponds to Ident "%s"', $Data->id, $response['Ident']), 0);
 				
-				$oldObservation = $this->GetReceivedObservation($response['Ident']);
+								
+				/* $oldObservation = $this->GetReceivedObservation($response['Ident']);
+				
 				if($oldObservation!==false) {
 					if($oldObservation['Timestamp']>$response['Timestamp']) {
 						$this->SendDebug(__FUNCTION__, 'Timestamp for this change is older than the last observation. Skipping update', 0);
@@ -461,15 +475,23 @@ class EaseeHomeCharger extends IPSModule {
 					$this->SendDebug(__FUNCTION__, 'This observation do not correspond with a earlier sent command. Skipping update', 0);
 					
 					return;
-				}
+				} 
 
 				if(isset($response['WasAccepted']) && !$response['WasAccepted']) {
 					$this->SendDebug(__FUNCTION__, sprintf('The parameter "WasAccepted" was set to false. Stopping the process...'), 0);
 					
-					if(isset($oldObservation['IsEnabled']) && $oldObservation['IsEnabled']==true) {
+					$this->EnableAction($response['Ident']);
+					
+					$properties = IPS_GetVariable(IPS_GetObjectIDByIdent($response['Ident'], $this->InstanceID));
+					
+					
+					
+					
+					/*if(isset($oldObservation['IsEnabled']) && $oldObservation['IsEnabled']==true) {
+						
 						$this->EnableAction($oldObservation['Ident']);
 						$this->InitTimer();
-					}
+					} */
 
 					return;
 				}
