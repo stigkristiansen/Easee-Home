@@ -42,7 +42,7 @@ class Observations {
                 $change['Timestamp'] = strtotime($Observation->timestamp);
                 
                 if(isset($observations[$Observation->id]['Enable'])) {
-                    $change['Enable'] => $observations[$Observation->id]['Enable'];
+                    $change['Enable'] = $observations[$Observation->id]['Enable'];
                 }
 
                 if(isset($observations[$Observation->id]['CustomHandling'])) {
