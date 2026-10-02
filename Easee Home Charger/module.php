@@ -170,7 +170,7 @@ class EaseeHomeCharger extends IPSModule {
 						'allowOfflineTxForUnknownId' => $Value
 					]; */
 
-					$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'EnableCharger','ChargerId'=>$chargerId, 'State' => $Value];
+					$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'EnableCharger', 'Ident'=> $Ident, 'ChargerId'=>$chargerId, 'State' => $Value];
 					//$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargerConfig', 'Ident'=> $Ident, 'ChargerId'=>$chargerId, 'Config' => $config];
 
 					/*$change = [
