@@ -311,8 +311,18 @@ class Charger extends Observations {
             ]
         ],
         31 => [
-            'IsVariable' => false,
+            'IsVariable' => true,
             'Description' => 'IS ENABLED'
+            'Ident' => 'ProtectAccess',
+            'Caption' => 'Enable',
+            'Type' => Observations::BOOLEAN,
+            'Enable' => true,
+            'Profile' => 'EHCH.ProtectAccess',
+            'Icon' => 'Lock',
+            'Assoc' => [
+				[true, 'Enabling...', '', -1],
+				[false, 'Disabling...', '', -1]
+			]
         ],
         33 => [
             'IsVariable' => false,
@@ -339,18 +349,8 @@ class Charger extends Observations {
             'Description' => 'LOCAL AUTHORIZATION REQUIRED'
         ],
         42 => [
-            'IsVariable' => true,
+            'IsVariable' => false,
             'Description' => 'AUTHORIZATION REQUIRED',
-            'Ident' => 'ProtectAccess',
-            'Caption' => 'Protect Access',
-            'Type' => Observations::BOOLEAN,
-            'Enable' => true,
-            'Profile' => 'EHCH.ProtectAccess',
-            'Icon' => 'Lock',
-            'Assoc' => [
-				[true, 'Protecting...', '', -1],
-				[false, 'Unprotecting...', '', -1]
-			]
         ],
         44 => [
             'IsVariable' => false,
