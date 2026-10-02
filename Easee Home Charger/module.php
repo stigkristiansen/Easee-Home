@@ -145,7 +145,7 @@ class EaseeHomeCharger extends IPSModule {
 					$this->InitTimer(); // Reset timer back to configured interval 
 					break;
 				case 'lockcable':
-					$this->SetValue($Ident, $Value);
+					$this->SetValueEx($Ident, $Value);
 					$this->DisableAction($Ident); // Disable variable in visualization until command has finished
 
 					$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargerLockState', 'Ident'=> $Ident, 'ChargerId'=>$chargerId, 'State' => $Value];
@@ -163,28 +163,29 @@ class EaseeHomeCharger extends IPSModule {
 				case 'protectaccess':
 					$this->DisableAction($Ident); // Disable variable in visualization until command has finished
 
-					$config = [
+					/*$config = [
 						'authorizationRequired' => $Value,
 						'localPreAuthorizeEnabled' => $Value,
 						'localAuthorizeOfflineEnabled' => $Value,
 						'allowOfflineTxForUnknownId' => $Value
-					];
+					]; */
 
-					$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargerConfig', 'Ident'=> $Ident, 'ChargerId'=>$chargerId, 'Config' => $config];
+					$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'EnableCharger','ChargerId'=>$chargerId, 'State' => $Value];
+					//$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargerConfig', 'Ident'=> $Ident, 'ChargerId'=>$chargerId, 'Config' => $config];
 
-					$change = [
+					/*$change = [
 						'Ident' => $Ident,
                 		'Timestamp' => time(),
 						'Value' => $Value,
 						'IsEnabled' => true
-					];
+					]; 
 					
 					$this->UpdateReceivedObservations($change);
-
+					*/
 					break;
 				//case 'authorize':
 				case 'startcharging':
-					$this->SetValue($Ident, $Value);
+					$this->SetValueEx($Ident, $Value);
 
 					if($Value==99) {
 						$Value = 1;
@@ -491,10 +492,10 @@ class EaseeHomeCharger extends IPSModule {
 					switch(strtolower($response['Ident'])) {
 						case 'lockcable':
 						case 'prototectaccess':
-							$this->SetValue($response['Ident'], !$this->GetValue($response['Ident']));
+							$this->SetValueEx($response['Ident'], !$this->GetValue($response['Ident']));
 							break;
 						case 'setchargingstate':
-							$this->SetValue($response['Ident'], 0);
+							$this->SetValueEx($response['Ident'], 0);
 							break;
 					}	
 				}
@@ -596,7 +597,7 @@ class EaseeHomeCharger extends IPSModule {
 	}
 		
 	private function SetValueEx(string $Ident, $Value) {
-		$oldValue = $this->GetValue($Ident);
+		//$oldValue = $this->GetValue($Ident);
 		//if($oldValue!=$Value) {
 			$this->SetValue($Ident, $Value);
 			$this->SendDebug(__FUNCTION__, sprintf('Modified variable with Ident "%s". New value is  "%s"', $Ident, is_bool($Value)?$Value?"true":"false":(string)$Value), 0);

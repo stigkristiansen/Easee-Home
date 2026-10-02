@@ -411,6 +411,21 @@ class Easee {
         }
     }
 
+    public function EnableCharger(string $ChargerId, bool $State) {
+        try{
+            $this->Connect();
+                        
+            $url = self::ENDPOINT . '/api/chargers/' . $ChargerId .'/settings';
+            $data = ['enabled' => $State];
+            $result = self::EvaluateResult(self::request('post', $url, $data), $url);
+            
+            return $result;
+
+        } catch(Exception $e) {
+            throw new Exception($e->getMessage());
+        }
+    }
+
     public function SetChargerConfig(string $ChargerId, array $Config) {
         try{
             $this->Connect();
