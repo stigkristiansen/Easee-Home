@@ -257,7 +257,15 @@ class Charger extends Observations {
     const Observations = [
         5  => [
             'IsVariable' => false,
-            'Description'  => 'Undocumentet, messages and errors....'
+            'Description'  => 'Undocumented, messages and errors....'
+        ],
+        6  => [
+            'IsVariable' => false,
+            'Description'  => 'Undocumented'
+        ],
+        8  => [
+            'IsVariable' => false,
+            'Description'  => 'Undocumented'
         ],
         11 => [
             'IsVariable' => false,
@@ -274,6 +282,10 @@ class Charger extends Observations {
         17 => [
             'IsVariable' => false,
             'Description' => 'ALLOW OFFLINE TX FOR UNKNOWN ID'
+        ],
+        20  => [
+            'IsVariable' => false,
+            'Description'  => 'SITE STRUCTURE'
         ],
         21 => [
             'IsVariable' => false,
@@ -389,6 +401,19 @@ class Charger extends Observations {
             'IsVariable' => false,
             'Description' => 'MAX CURRENT OFFLINE FALLBACK P3'
         ],
+        54 => [
+            'IsVariable' => false,
+            'Description' => 'RELEASE CABLE AT POWER OFF'
+        ],
+        58 => [
+            'IsVariable' => false,
+            'Description' => 'Undocumented'
+        ],
+        59 => [
+            'IsVariable' => false,
+            'Description' => 'Undocumented'
+        ],
+        
         62 => [
             'IsVariable' => false,
             'Description' => 'CHARGING SCHEDULE'
@@ -420,6 +445,22 @@ class Charger extends Observations {
         75 => [
             'IsVariable' => false,
             'Description' => 'Circuit Total Phase Conductor Current L3'
+        ],
+        76 => [
+            'IsVariable' => false,
+            'Description' => 'NUMBER OF CARS CONNECTED'
+        ],
+        77 => [
+            'IsVariable' => false,
+            'Description' => 'NUMBER OF CARS CHARGING'
+        ],
+        78 => [
+            'IsVariable' => false,
+            'Description' => 'NUMBER OF CARS IN QUEUE'
+        ],
+        79 => [
+            'IsVariable' => false,
+            'Description' => 'NUMBER OF CARS FULLY CHARGED'
         ],
         80 => [
             'IsVariable' => false,
@@ -537,6 +578,10 @@ class Charger extends Observations {
             'IsVariable' => false,
             'Description' => 'LIFETIME HOURS'
         ],
+        129 => [
+            'IsVariable' => false,
+            'Description' => 'CHARGING SESSION'
+        ],
         130 => [
             'IsVariable' => false,
             'Description' => 'CELL RSSI'
@@ -621,6 +666,10 @@ class Charger extends Observations {
         219 => [
             'IsVariable' => false,
             'Description' => 'Undocumented'
+        ],
+        223 => [
+            'IsVariable' => false,
+            'Description' => 'CHARGE SESSION START'
         ],
         224 => [
             'IsVariable' => false,
