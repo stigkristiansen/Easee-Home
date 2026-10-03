@@ -197,16 +197,16 @@ class EaseeHomeCharger extends IPSModule {
 					if($Value>0){
 						$this->DisableAction($Ident); // Disable variable in visualization until command has finished
 
-						$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargingState', 'Ident'=> $Ident, 'ChargerId'=>$chargerId, 'State' => $value];
+						$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargingState', 'Ident'=> $Ident, 'ChargerId'=>$chargerId, 'State' => $Value];
 
-						$change = [
+						/*$change = [
 							'Ident' => $Ident,
 							'Timestamp' => time(),
 							'Value' => $value,
 							'IsEnabled' => true
 						];
 						
-						$this->UpdateReceivedObservations($change);
+						$this->UpdateReceivedObservations($change);*/
 					}
 
 					break;
