@@ -302,30 +302,6 @@ class EaseeHomeCharger extends IPSModule {
 					case 'setchargerconfig':
 					case 'setchargingstate':
 					case 'enablecharger':
-						/*if(isset($data->Buffer->Ident)) {
-							$ident =  $data->Buffer->Ident;
-						} else {
-							throw new Exception('Invalid data receieved from parent. Missing Ident');
-						}
-
-						$observation = $this->GetReceivedObservation($ident);
-
-						if($observation!==false) {
-							if(isset($result->commandId)) {
-								$observation['Id'] =  $result->Id;
-							} else {
-								$observation['Id'] = 0;
-							}
-
-							if(isset($result->ticks)) {
-								$observation['Ticks'] = $result->ticks;
-							} else {
-								$observation['Ticks'] = 0;
-							}	
-
-							$this->UpdateReceivedObservations($observation);
-						}*/
-
 						break;
 					default:
 						throw new Exception(sprintf('Unknown function "%s()" receeived in repsponse from gateway', $function));

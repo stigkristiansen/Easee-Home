@@ -304,6 +304,7 @@ class Charger extends Observations {
             'Description' => 'Circuit Max Current P3'
         ],
         25 => [
+            'Link' => 901;
             'IsVariable' => false,
             'Description' => 'Undocumented'
         ],
@@ -569,7 +570,7 @@ class Charger extends Observations {
             'IsVariable' => true,
             'Description' => 'LIFETIME ENERGY',
             'Ident' => 'TotalEnergi',
-            'Caption' => 'Total Energi',
+            'Caption' => 'Total Energy',
             'Type' => Observations::FLOAT,
             'Enable' => false,
             'Profile' => '~Electricity'
