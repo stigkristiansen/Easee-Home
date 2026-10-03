@@ -474,7 +474,7 @@ class EaseeHomeCharger extends IPSModule {
 						case 'prototectaccess':
 							$this->SetValueEx($response['Ident'], !$this->GetValue($response['Ident']));
 							break;
-						case 'setchargingstate':
+						case 'startcharging':
 							$this->SetValueEx($response['Ident'], 0);
 							break;
 					}	
