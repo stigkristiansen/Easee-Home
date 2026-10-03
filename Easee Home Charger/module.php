@@ -556,18 +556,15 @@ class EaseeHomeCharger extends IPSModule {
 			case 5:
 			case 8:
 				$this->SetValueEx('Authorize', false);
-				//$this->DisableAction('Authorize');
 				break;
 			case 7:
 				$this->SetValueEx('Authorize', false);
-				//$this->EnableAction('Authorize');
-				break;
+				break; 
 			case 2:
 			case 3:
 			case 4:
 			case 6:
 				$this->SetValueEx('Authorize', true);
-				//$this->EnableAction('Authorize');
 				break;
 			default:
 				throw new Exception(sprintf('Invalid vale for Charger Op Mode: %d', $Value));

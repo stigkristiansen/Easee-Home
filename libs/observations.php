@@ -37,12 +37,16 @@ class Observations {
         $observations = get_called_class()::Observations;
         
         if(isset($observations[$Observation->id])) {
+            $change = [];
+
             if(isset($observations[$Observation->id]['Link']) && isset($observations[$observations[$Observation->id]['Link']])) {
                 $Observation->id = $observations[$Observation->id]['Link'];
+                $change['Linked'] = true;
             }
 
             if($observations[$Observation->id]['IsVariable']) {
-                $change = ['Ident' => $observations[$Observation->id]['Ident']];
+                //$change = ['Ident' => $observations[$Observation->id]['Ident']];
+                $change = ['Ident'] = $observations[$Observation->id]['Ident'];
                 $change['Timestamp'] = strtotime($Observation->timestamp);
                 
                 if(isset($observations[$Observation->id]['Enable'])) {
@@ -714,7 +718,7 @@ class Charger extends Observations {
             'Ident' => 'Authorize',
             'Caption' => 'Authorize',
             'Type' => Observations::BOOLEAN,
-            'Enable' => true,
+            'Enable' => false,
             'Profile' => 'EHCH.Authorize',
             'Icon' => 'Key-skeleton',
             'Assoc' => [
