@@ -415,7 +415,7 @@ class Easee {
         try{
             $this->Connect();
                         
-            $url = self::ENDPOINT . '/api/chargersbbb/' . $ChargerId .'/settings';
+            $url = self::ENDPOINT . '/api/chargers/' . $ChargerId .'/settings';
             $data = ['enabled' => $State];
             $result = self::EvaluateResult(self::request('post', $url, $data), $url);
             
