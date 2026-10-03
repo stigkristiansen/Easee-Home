@@ -37,6 +37,10 @@ class Observations {
         $observations = get_called_class()::Observations;
         
         if(isset($observations[$Observation->id])) {
+            if(isset($observations[$Observation->id]['Link']) && isset($observations[$observations[$Observation->id]['Link']])) {
+                $Observation->id = $observations[$Observation->id]['Link'];
+            }
+
             if($observations[$Observation->id]['IsVariable']) {
                 $change = ['Ident' => $observations[$Observation->id]['Ident']];
                 $change['Timestamp'] = strtotime($Observation->timestamp);
@@ -295,6 +299,11 @@ class Charger extends Observations {
             'IsVariable' => false,
             'Ident' => 'SetChargingState',
             'Description' => 'Undocumented'
+        ],
+         29 => [
+            'Link' => 31,
+            'IsVariable' => false,
+            'Description' => 'CommandResponse returns Id 29 when toggeling enabled/disabled charger. ProduktUpdate returns Id 31 for the same situation'
         ],
         30 => [
             'IsVariable' => true,
