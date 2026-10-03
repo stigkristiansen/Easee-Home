@@ -46,7 +46,7 @@ class Observations {
 
             if($observations[$Observation->id]['IsVariable']) {
                 //$change = ['Ident' => $observations[$Observation->id]['Ident']];
-                $change = ['Ident'] = $observations[$Observation->id]['Ident'];
+                $change['Ident'] = $observations[$Observation->id]['Ident'];
                 $change['Timestamp'] = strtotime($Observation->timestamp);
                 
                 if(isset($observations[$Observation->id]['Enable'])) {
