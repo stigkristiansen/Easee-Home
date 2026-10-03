@@ -362,7 +362,7 @@ class EaseeHomeCharger extends IPSModule {
 					$this->SendDebug(__FUNCTION__, 'The Observation Id is linked to another Observation Id', 0);
 				}
 				
-				$this->SendDebug(__FUNCTION__, sprintf('Observation Id %d is an Id that corresponds to Ident "%s"', $Data->id, $response['Ident']), 0);
+				$this->SendDebug(__FUNCTION__, sprintf('Observation Id %d is an id that corresponds to Ident "%s"', $Data->id, $response['Ident']), 0);
 				
 				if($response['WasAccepted']) {
 					$this->SendDebug(__FUNCTION__, sprintf('The command for changing %s was accepted by the cloud api', $response['Ident']), 0);					
