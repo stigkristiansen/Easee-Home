@@ -69,12 +69,14 @@ class EaseeHomeCharger extends IPSModule {
 
 		$this->RegisterVariableFloat('Current', 'Current', '~Ampere', 4);
 
-		$this->RegisterVariableFloat('TotalEnergi', 'Total Energie', '~Electricity', 5);
+		$this->RegisterVariableFloat('TotalEnergi', 'Total Energy', '~Electricity', 5);
 		
-		$this->RegisterVariableBoolean('LockCable', 'Lock Cable', 'EHCH.LockCable', 6);
+		$this->RegisterVariableBoolean('Authorize', 'Authorized Status', 'EHCH.Authorize', 6);
+
+		$this->RegisterVariableBoolean('LockCable', 'Lock Cable', 'EHCH.LockCable', 7);
 		$this->EnableAction('LockCable');
 		
-		$this->RegisterVariableBoolean('ProtectAccess', 'Enabled', 'EHCH.ProtectAccess', 7);
+		$this->RegisterVariableBoolean('ProtectAccess', 'Enabled', 'EHCH.ProtectAccess', 8);
 		$this->EnableAction('ProtectAccess');
 
 		$this->RegisterTimer('EaseeChargerRefresh' . (string)$this->InstanceID, 0, 'IPS_RequestAction(' . (string)$this->InstanceID . ', "Refresh", 0);'); 
@@ -90,6 +92,7 @@ class EaseeHomeCharger extends IPSModule {
 			$this->DeleteProfile('EHCH.StartCharging');
 			$this->DeleteProfile('EHCH.LockCable');
 			$this->DeleteProfile('EHCH.ProtectAccess');
+			$this->DeleteProfile('EHCH.Authorize');
 		}
 
 		//Never delete this line!
@@ -577,18 +580,18 @@ class EaseeHomeCharger extends IPSModule {
 			case 5:
 			case 8:
 				$this->SetValueEx('Authorize', false);
-				$this->DisableAction('Authorize');
+				//$this->DisableAction('Authorize');
 				break;
 			case 7:
 				$this->SetValueEx('Authorize', false);
-				$this->EnableAction('Authorize');
+				//$this->EnableAction('Authorize');
 				break;
 			case 2:
 			case 3:
 			case 4:
 			case 6:
 				$this->SetValueEx('Authorize', true);
-				$this->EnableAction('Authorize');
+				//$this->EnableAction('Authorize');
 				break;
 			default:
 				throw new Exception(sprintf('Invalid vale for Charger Op Mode: %d', $Value));
