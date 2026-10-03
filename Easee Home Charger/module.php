@@ -9,8 +9,6 @@ include __DIR__ . "/../libs/easee.php";
 class EaseeHomeCharger extends IPSModule {
 	use Profiles;
 	use Buffer;
-
-	const RECEIVED_OBSERVATIONS = 'ReceivedObservations';
 	
 	public function Create(){
 		//Never delete this line!
@@ -103,11 +101,11 @@ class EaseeHomeCharger extends IPSModule {
 		//Never delete this line!
 		parent::ApplyChanges();
 
-			// Renaming display name for variable after switching to enable/disable charger for protection
-			$id = $this->GetIDForIdent('ProtectAccess');
-			if ($id > 0) {
- 			   IPS_SetName($id, "Enabled");
-			}
+		// Renaming display name for variable after switching to enable/disable charger for protection
+		$id = $this->GetIDForIdent('ProtectAccess');
+		if ($id > 0) {
+			IPS_SetName($id, "Enabled");
+		}
 
 		$filter = sprintf('.*"ChildId":"%s".*|.*##AllChildren##.*', (string)$this->InstanceID);
 		
@@ -117,8 +115,6 @@ class EaseeHomeCharger extends IPSModule {
 		}
 		
 		$this->SetReceiveDataFilter($filter);
-
-		$this->SetBuffer(self::RECEIVED_OBSERVATIONS, json_encode([]));
 		
 		if (IPS_GetKernelRunlevel() == KR_READY) {
 			$this->InitTimer();
@@ -153,40 +149,13 @@ class EaseeHomeCharger extends IPSModule {
 
 					$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargerLockState', 'Ident'=> $Ident, 'ChargerId'=>$chargerId, 'State' => $Value];
 
-					/*$change = [
-						'Ident' => $Ident,
-                		'Timestamp' => time(),
-						'Value' => $Value,
-						'IsEnabled' => true
-					];
-					
-					$this->UpdateReceivedObservations($change); */
-
 					break;
 				case 'protectaccess':
 					$this->DisableAction($Ident); // Disable variable in visualization until command has finished
-
-					/*$config = [
-						'authorizationRequired' => $Value,
-						'localPreAuthorizeEnabled' => $Value,
-						'localAuthorizeOfflineEnabled' => $Value,
-						'allowOfflineTxForUnknownId' => $Value
-					]; */
-
-					$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'EnableCharger', 'Ident'=> $Ident, 'ChargerId'=>$chargerId, 'State' => $Value];
-					//$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargerConfig', 'Ident'=> $Ident, 'ChargerId'=>$chargerId, 'Config' => $config];
-
-					/*$change = [
-						'Ident' => $Ident,
-                		'Timestamp' => time(),
-						'Value' => $Value,
-						'IsEnabled' => true
-					]; 
 					
-					$this->UpdateReceivedObservations($change);
-					*/
+					$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'EnableCharger', 'Ident'=> $Ident, 'ChargerId'=>$chargerId, 'State' => $Value];
+
 					break;
-				//case 'authorize':
 				case 'startcharging':
 					$this->SetValueEx($Ident, $Value);
 
@@ -198,15 +167,6 @@ class EaseeHomeCharger extends IPSModule {
 						$this->DisableAction($Ident); // Disable variable in visualization until command has finished
 
 						$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargingState', 'Ident'=> $Ident, 'ChargerId'=>$chargerId, 'State' => $Value];
-
-						/*$change = [
-							'Ident' => $Ident,
-							'Timestamp' => time(),
-							'Value' => $value,
-							'IsEnabled' => true
-						];
-						
-						$this->UpdateReceivedObservations($change);*/
 					}
 
 					break;
@@ -328,11 +288,9 @@ class EaseeHomeCharger extends IPSModule {
 	}
 
 	private function InitTimer(){
-		//if($this->GetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID)==0) {
 			$sec = $this->ReadPropertyInteger('UpdateInterval');
 			$this->SendDebug(__FUNCTION__, sprintf('Setting refresh timer to %ds', $sec), 0);
 			$this->SetTimerInterval('EaseeChargerRefresh' . (string)$this->InstanceID, $sec*1000); 				
-		//}
 	}
 
 	private function DelayTimer(){
@@ -352,36 +310,6 @@ class EaseeHomeCharger extends IPSModule {
 		}
 
 		return [];
-	}
-
-	private function GetReceivedObservation($Ident) {
-		if($this->Lock(self::RECEIVED_OBSERVATIONS)) {
-			$receivedObservations = json_decode($this->GetBuffer(self::RECEIVED_OBSERVATIONS), true);	
-			$this->Unlock(self::RECEIVED_OBSERVATIONS);
-			if($receivedObservations!==null && isset($receivedObservations[$Ident])) {
-				return $receivedObservations[$Ident];
-			}
-
-			return false;
-		}
-
-		return false;
-	}
-
-	private function UpdateReceivedObservations($Observation) {
-		if($this->Lock(self::RECEIVED_OBSERVATIONS)) {
-			$receivedObservations = json_decode($this->GetBuffer(self::RECEIVED_OBSERVATIONS), true);	
-			
-			if($receivedObservations!==null) {
-				$receivedObservations[$Observation['Ident']] = $Observation;
-				$jsonList = json_encode($receivedObservations);
-				$this->SetBuffer(self::RECEIVED_OBSERVATIONS, $jsonList);
-
-				$this->SendDebug(__FUNCTION__, sprintf('New list of received observations: %s', $jsonList), 0);
-			}
-
-			$this->Unlock(self::RECEIVED_OBSERVATIONS);
-		}
 	}
 
 	private function HandleProductUpdate($Data) {
@@ -410,35 +338,6 @@ class EaseeHomeCharger extends IPSModule {
 					$this->SendDebug(__FUNCTION__, sprintf('Updating "%s"...', $change['Ident']), 0);
 					$this->SetValueEx($change['Ident'], $change['Value']);
 				}
-
-				/*
-				$oldObservation = $this->GetReceivedObservation($change['Ident']);
-				if($oldObservation!==false) {
-					if($oldObservation['Timestamp']>$change['Timestamp']) {
-						$this->SendDebug(__FUNCTION__, 'Timestamp for this change is older than the last observation. Skipping the update of the variable', 0);
-						
-						return; 
-					}
-
-					$this->SendDebug(__FUNCTION__, 'Timestamp for this change is newer than the last observation. Updating the variable', 0);
-				} else {
-					$this->SendDebug(__FUNCTION__, 'This is the first observation for this ident. Updating the variable', 0);
-				}
-
-				if(isset($change['CustomHandling']) && strlen($change['CustomHandling'])>0) {
-					$this->SendDebug(__FUNCTION__, sprintf('Updating "%s" through custom handler...', $change['Ident']), 0);
-					self::{$change['CustomHandling']}($change['Ident'], $change['Value']);
-				} else {
-					$this->SetValueEx($change['Ident'], $change['Value']);
-				}
-
-				if(isset($oldObservation['IsEnabled']) && $oldObservation['IsEnabled']==true) {
-					$this->EnableAction($change['Ident']);
-					$this->InitTimer();
-				}
-
-				$this->UpdateReceivedObservations($change);
-				*/
 			} else {
 				$this->SendDebug(__FUNCTION__, sprintf('Observation Id %d is not corresponding to an Ident. There is nothing to update', $Data->id), 0);
 			}
@@ -479,61 +378,6 @@ class EaseeHomeCharger extends IPSModule {
 							break;
 					}	
 				}
-
-				/* $oldObservation = $this->GetReceivedObservation($response['Ident']);
-				
-				if($oldObservation!==false) {
-					if($oldObservation['Timestamp']>$response['Timestamp']) {
-						$this->SendDebug(__FUNCTION__, 'Timestamp for this change is older than the last observation. Skipping update', 0);
-
-						return;
-					}
-				}  else {
-					$this->SendDebug(__FUNCTION__, 'This observation do not correspond with a earlier sent command. Skipping update', 0);
-					
-					return;
-				} 
-
-				if(isset($response['WasAccepted']) && !$response['WasAccepted']) {
-					$this->SendDebug(__FUNCTION__, sprintf('The parameter "WasAccepted" was set to false. Stopping the process...'), 0);
-					
-					$this->EnableAction($response['Ident']);
-					
-					$properties = IPS_GetVariable(IPS_GetObjectIDByIdent($response['Ident'], $this->InstanceID));
-					
-					
-					
-					
-					/*if(isset($oldObservation['IsEnabled']) && $oldObservation['IsEnabled']==true) {
-						
-						$this->EnableAction($oldObservation['Ident']);
-						$this->InitTimer();
-					} 
-
-					return;
-				} */
-				
-				/*$this->SendDebug(__FUNCTION__, 'Timestamp for this change is newer than the last observation. Checking if it matches a earlier sent command...', 0);
-
-				if(isset($oldObservation['Ticks']) && $oldObservation['Ticks']==$response['Ticks']) {
-					$this->SendDebug(__FUNCTION__, 'This CommandResponse match a earlier sent command. Updating...', 0);
-
-					if(isset($response['CustomHandling']) && strlen($response['CustomHandling'])>0) {
-						$this->SendDebug(__FUNCTION__, sprintf('Updating "%s" through custom handler...', $oldObservation['Ident']), 0);
-						self::{$response['CustomHandling']}($oldObservation['Ident'], $oldObservation['Value']);
-					} else {
-						$this->SetValueEx($oldObservation['Ident'], $oldObservation['Value']);
-					}
-
-					if(isset($oldObservation['IsEnabled']) && $oldObservation['IsEnabled']==true) {
-						$this->EnableAction($oldObservation['Ident']);
-						$this->InitTimer();
-					}
-
-					$this->UpdateReceivedObservations($response);
-				} else {
-					$this->SendDebug(__FUNCTION__, 'This CommandResponse do not match a earlier sent command. Skipping update', 0);
-				}*/
 			} else {
 				$this->SendDebug(__FUNCTION__, sprintf('Observation Id %d is not corresponding to an Ident', $Data->id), 0);
 			}
