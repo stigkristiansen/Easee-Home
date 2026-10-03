@@ -42,10 +42,11 @@ class Observations {
             if(isset($observations[$Observation->id]['Link']) && isset($observations[$observations[$Observation->id]['Link']])) {
                 $Observation->id = $observations[$Observation->id]['Link'];
                 $change['Linked'] = true;
-            }
+             } else {
+                $change['Linked'] = false;
+             }
 
             if($observations[$Observation->id]['IsVariable']) {
-                //$change = ['Ident' => $observations[$Observation->id]['Ident']];
                 $change['Ident'] = $observations[$Observation->id]['Ident'];
                 $change['Timestamp'] = strtotime($Observation->timestamp);
                 
@@ -742,8 +743,8 @@ class Charger extends Observations {
                 [3, 'Pause ', '', -1],
                 [4, 'Resume ', '', -1],
                 [5, 'Toggle ', '', -1],
-                [6, 'Override Schedule', '', -1]
-
+                [6, 'Override Schedule', '', -1],
+			    [99, 'Authenticate', '', -1]
 			]
         ]
     ];

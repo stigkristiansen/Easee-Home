@@ -358,6 +358,9 @@ class EaseeHomeCharger extends IPSModule {
 			$this->SendDebug(__FUNCTION__, sprintf('GetObservation returned: %s...', json_encode($response)), 0);
 
 			if($response!==false) {
+				if($response['Linked']) {
+					$this->SendDebug(__FUNCTION__, 'The Observation Id is linked to another Observation Id', 0);
+				}
 				
 				$this->SendDebug(__FUNCTION__, sprintf('Observation Id %d is an Id that corresponds to Ident "%s"', $Data->id, $response['Ident']), 0);
 				
