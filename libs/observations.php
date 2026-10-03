@@ -304,7 +304,7 @@ class Charger extends Observations {
             'Description' => 'Circuit Max Current P3'
         ],
         25 => [
-            'Link' => 901;
+            'Link' => 901,
             'IsVariable' => false,
             'Description' => 'Undocumented'
         ],
