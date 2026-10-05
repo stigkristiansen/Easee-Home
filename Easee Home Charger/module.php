@@ -231,7 +231,7 @@ include __DIR__ . "/../libs/traits.php";
 
 									switch($observation->id) {
 										case 109:
-											$idSetChargingState = IPS_GetObjectIDByIdent('StartCharging', $this->InstanceID);
+											$idStartCharging = IPS_GetObjectIDByIdent('StartCharging', $this->InstanceID);
 
 											$idStatus = IPS_GetObjectIDByIdent('Status', $this->InstanceID);
 											$properties = IPS_GetVariable($idStatus);
@@ -239,14 +239,14 @@ include __DIR__ . "/../libs/traits.php";
 											$this->SendDebug(__FUNCTION__, sprintf('Observation timestamp for Status is: %d', $observationTime), 0);
 											$this->SendDebug(__FUNCTION__, sprintf('Status last change timestamp is: %d', $properties['VariableChanged']), 0);
 											
-											if(!HasAction($idSetChargingState) && $properties['VariableChanged'] <= $observationTime) {
-												$this->SendDebug(__FUNCTION__, sprintf('HasAction is FALSE and new observation has been received for SetChargingState, enabling actions...'), 0);
+											if(!HasAction($idStartCharging) && $properties['VariableChanged'] <= $observationTime) {
+												$this->SendDebug(__FUNCTION__, sprintf('HasAction is FALSE for StartCharging and new observation has been received for Status, enabling actions...'), 0);
 												$this->EnableAction('SetChargingState');
 												$this->SetValue('SetChargingState', 0);
 											}
 											
-											if(HasAction($idSetChargingState)) {
-												$this->SendDebug(__FUNCTION__, sprintf('HasAction is TRUE for SetChargingState, updating the Status value...'), 0);
+											if(HasAction($idStartCharging)) {
+												$this->SendDebug(__FUNCTION__, sprintf('HasAction is TRUE for StartCharging, updating the Status value...'), 0);
 												$this->SetValue('Status', $observation->value);
 												
 											}
