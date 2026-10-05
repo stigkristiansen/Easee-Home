@@ -27,8 +27,6 @@ class Observations {
         }
     }
 
-    
-
     static function GetObservation($Observation) {
         if(!isset($Observation->id) || !isset($Observation->timestamp)) {
             throw new Exception('Observation is invalid! Missing "timestamp" and/or "id"');
@@ -331,6 +329,7 @@ class Charger extends Observations {
             'Type' => Observations::BOOLEAN,
             'Enable' => true,
             'Profile' => 'EHCH.LockCable',
+            'Position' => 7,
             'Icon' => 'Lock',
             'Assoc' => [
                 [true, 'Locking...', '', -1],
@@ -345,6 +344,7 @@ class Charger extends Observations {
             'Type' => Observations::BOOLEAN,
             'Enable' => true,
             'Profile' => 'EHCH.ProtectAccess',
+            'Position' => 8,
             'Icon' => 'Lock',
             'Assoc' => [
 				[true, 'Enabling...', '', -1],
@@ -509,6 +509,7 @@ class Charger extends Observations {
             'Enable' => false,
             'CustomHandling' => 'HandleChargerOpMode',
             'Profile' => 'EHCH.ChargerOpMode',
+            'Position' => 2,
             'Icon' => 'Electricity',
             'Assoc' => [
                 [0, 'Offline', '', -1],
@@ -545,7 +546,8 @@ class Charger extends Observations {
             'Caption' => 'Current',
             'Type' => Observations::FLOAT,
             'Enable' => false,
-            'Profile' => '~Ampere'
+            'Profile' => '~Ampere',
+            'Position' => 4
         ],
         116 => [
             'IsVariable' => false,
@@ -578,7 +580,8 @@ class Charger extends Observations {
             'Caption' => 'Total Energy',
             'Type' => Observations::FLOAT,
             'Enable' => false,
-            'Profile' => '~Electricity'
+            'Profile' => '~Electricity',
+            'Position' => 5
         ],
         126 => [
             'IsVariable' => false,
@@ -659,7 +662,8 @@ class Charger extends Observations {
             'Caption' => 'Voltage',
             'Type' => Observations::FLOAT,
             'Enable' => false,
-            'Profile' => '~Volt'
+            'Profile' => '~Volt',
+            'Position' => 3
         ],
         195 => [
             'IsVariable' => false,
@@ -721,6 +725,7 @@ class Charger extends Observations {
             'Type' => Observations::BOOLEAN,
             'Enable' => false,
             'Profile' => 'EHCH.Authorize',
+            'Position' => 6,
             'Icon' => 'Key-skeleton',
             'Assoc' => [
                 [true, 'Authorized', '', -1],
@@ -735,6 +740,7 @@ class Charger extends Observations {
             'Type' => Observations::INTEGER,
             'Enable' => true,
             'Profile' => 'EHCH.StartCharging',
+            'Position' => 1,
             'Icon' => 'Power',
             'Assoc' => [
                 [0, ' ', '', -1],

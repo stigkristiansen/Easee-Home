@@ -20,7 +20,39 @@ class EaseeHomeCharger extends IPSModule {
 		$this->RegisterPropertyString('ProductId', '');
 		$this->RegisterPropertyString('Site', '');
 
-		$this->RegisterProfileIntegerEx('EHCH.ChargerOpMode', 'Electricity', '', '', [
+		foreach(Charger::Observations as $observation) {
+			if($observation['IsVariable']) {
+				switch($observation['Type']) {
+					case Observations::BOOLEAN:
+						$type = 'Boolean';
+						break;
+					case Observations::INTEGER:
+						$type = 'Integer';
+						break;
+					case Observations::STRING:
+						$type = 'String';
+						break;
+					case Observations::FLOAT:
+						$type = 'Float';
+						break;
+				}
+
+				if(!IPS_VariableProfileExists($observation['Profile'])) {
+					if(isset($observation['Assoc'])) {
+						$this->{'RegisterProfile'.$type.'Ex'}($observation['Profile'], $observation['Icon'], '', '', $observation['Assoc']);	
+					} else {
+						$this->{'RegisterProfile'.$type}($observation['Profile'], $observation['Icon'], '', '');	
+					}
+				}
+				
+				$this->{'RegisterVariable'.$type}($observation['Ident'], $observation['Caption'], $observation['Profile'], $observation['Position']);
+				if($observation['Enable']) {
+					$this->EnableAction($observation['Ident']);
+				}
+			}
+		}
+
+		/*$this->RegisterProfileIntegerEx('EHCH.ChargerOpMode', 'Electricity', '', '', [
 			[0, 'Offline', '', -1],
 			[1, 'Disconnected', '', -1],
 			[2, 'Awaiting Start... ', '', -1],
@@ -76,10 +108,13 @@ class EaseeHomeCharger extends IPSModule {
 		
 		$this->RegisterVariableBoolean('ProtectAccess', 'Enabled', 'EHCH.ProtectAccess', 8);
 		$this->EnableAction('ProtectAccess');
-
+*/
 		$this->RegisterTimer('EaseeChargerRefresh' . (string)$this->InstanceID, 0, 'IPS_RequestAction(' . (string)$this->InstanceID . ', "Refresh", 0);'); 
 
 		$this->RegisterMessage(0, IPS_KERNELMESSAGE);
+
+		
+		
 
 	}
 
