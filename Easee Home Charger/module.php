@@ -231,7 +231,7 @@ include __DIR__ . "/../libs/traits.php";
 
 									switch($observation->id) {
 										case 109:
-											$idSetChargingState = IPS_GetObjectIDByIdent('SetChargingState', $this->InstanceID);
+											$idSetChargingState = IPS_GetObjectIDByIdent('StartCharging', $this->InstanceID);
 
 											$idStatus = IPS_GetObjectIDByIdent('Status', $this->InstanceID);
 											$properties = IPS_GetVariable($idStatus);
