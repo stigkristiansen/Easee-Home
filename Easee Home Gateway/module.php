@@ -500,7 +500,6 @@ class EaseeHomeGateway extends IPSModule {
 		$token = $this->GetTokenFromBuffer();
 		if($token==null) {
 			$easee = $this->InitEasee();
-			
 		} else {
 			$username = $this->ReadPropertyString('Username');
 			$password = $this->ReadPropertyString('Password');
@@ -512,7 +511,7 @@ class EaseeHomeGateway extends IPSModule {
 		$return['Function'] = $Function;
 
 		try{ 
-			if(!$easee instanceof Easee)) {
+			if(!$easee instanceof Easee) {
 				throw new Exception('Unable to initialize the Easee class');
 			}
 
