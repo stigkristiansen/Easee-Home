@@ -500,6 +500,7 @@ class EaseeHomeGateway extends IPSModule {
 		$token = $this->GetTokenFromBuffer();
 		if($token==null) {
 			$easee = $this->InitEasee();
+			
 		} else {
 			$username = $this->ReadPropertyString('Username');
 			$password = $this->ReadPropertyString('Password');
