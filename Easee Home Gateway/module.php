@@ -511,7 +511,7 @@ class EaseeHomeGateway extends IPSModule {
 		$return['Function'] = $Function;
 
 		try{ 
-			if(empty((array)$easee)) {
+			if(!$easee instanceof Easee)) {
 				throw new Exception('Unable to initialize the Easee class');
 			}
 
