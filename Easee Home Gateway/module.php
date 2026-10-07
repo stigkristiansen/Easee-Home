@@ -316,7 +316,7 @@ class EaseeHomeGateway extends IPSModule {
 			$this->LogMessage(sprintf('InitEasee(): Missing property "Username" and/or "API Key" in module "%s"', __FUNCTION__), KL_ERROR);
 			$this->SendDebug(__FUNCTION__, sprintf('InitEasee(): Missing property "Username" in module "%s"', IPS_GetName($this->InstanceID)), 0);
 			
-			return null;
+			return (object) [];
 		}
 
 		$easee = new Easee($username, $password, $apiKey);
@@ -510,8 +510,8 @@ class EaseeHomeGateway extends IPSModule {
 
 		$return['Function'] = $Function;
 
-		try{
-			if($easee==null) {
+		try{ 
+			if(empty((array)$easee)) {
 				throw new Exception('Unable to initialize the Easee class');
 			}
 
