@@ -332,8 +332,8 @@ class Charger extends Observations {
             'Position' => 7,
             'Icon' => 'Lock',
             'Assoc' => [
-                [true, 'Locking...', '', -1],
-                [false, 'Unlocking', '', -1]
+                [true, 'In progress...', '', -1],
+                [false, 'In progress', '', -1]
             ]
         ],
         31 => [
@@ -347,8 +347,8 @@ class Charger extends Observations {
             'Position' => 8,
             'Icon' => 'Lock',
             'Assoc' => [
-				[true, 'Enabling...', '', -1],
-				[false, 'Disabling...', '', -1]
+				[true, 'In progress...', '', -1],
+				[false, 'In progress...', '', -1]
 			]
         ],
         33 => [
