@@ -407,7 +407,7 @@ class EaseeHomeGateway extends IPSModule {
 						throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "State" is missing or is a invalid type. The request was "%s"', $Request));
 					}
 					
-					IPS_Sleep(1000);
+					IPS_Sleep(1000); // If you toggle the switch to quick, the new cloud timestamp may be stamped earlier than the last local timestamp.
 					$this->ExecuteEaseeRequest($childId, 'SetChargerLockState', array($request->ChargerId, $request->State), $request->Ident);
 					break;
 				case 'setchargeraccesslevel':
