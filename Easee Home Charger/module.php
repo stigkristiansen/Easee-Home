@@ -192,18 +192,25 @@ class EaseeHomeCharger extends IPSModule {
 
 					break;
 				case 'startcharging':
-					$this->SetValueEx($Ident, $Value);
+					$status = $this->GetValue('Status');
+					if (!in_array($status, [0, 1, 5])) { // Offline, disconnected, error
+						if($status==7 && $Value!=99) {
+							break;
+						}
 
-					if($Value==99) {
-						$Value = 1;
+						$this->SetValueEx($Ident, $Value);
+
+						if($Value==99) {
+							$Value = 1;
+						}
+
+						if($Value>0){
+							$this->DisableAction($Ident); // Disable variable in visualization until command has finished
+
+							$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargingState', 'Ident'=> $Ident, 'ChargerId'=>$chargerId, 'State' => $Value];
+						}
 					}
-
-					if($Value>0){
-						$this->DisableAction($Ident); // Disable variable in visualization until command has finished
-
-						$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargingState', 'Ident'=> $Ident, 'ChargerId'=>$chargerId, 'State' => $Value];
-					}
-
+					
 					break;
 				default:
 					throw new Exception(sprintf('ReqestAction called for unkown Ident "%s"', $Ident));
