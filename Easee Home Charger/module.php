@@ -314,6 +314,8 @@ class EaseeHomeCharger extends IPSModule {
 			$this->SendDebug(__FUNCTION__, 'Setting EnableAction to True for StartCharging, ProtectAccess and LockCable', 0);
 
 			$this->EnableAction('StartCharging');
+			$this->SetValueEx('StartCharging', 0);
+
 			$this->EnableAction('ProtectAccess');
 			$this->EnableAction('LockCable');
 																			
