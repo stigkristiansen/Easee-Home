@@ -406,7 +406,8 @@ class EaseeHomeGateway extends IPSModule {
 					if(!(isset($request->State) && is_bool($request->State))) {
 						throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "State" is missing or is a invalid type. The request was "%s"', $Request));
 					}
-
+					
+					IPS_Sleep(1000);
 					$this->ExecuteEaseeRequest($childId, 'SetChargerLockState', array($request->ChargerId, $request->State), $request->Ident);
 					break;
 				case 'setchargeraccesslevel':
@@ -418,6 +419,7 @@ class EaseeHomeGateway extends IPSModule {
 						throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "UseKey" is missing or is a invalid type. The request was "%s"', $Request));
 					}
 
+					IPS_Sleep(1000);
 					$this->ExecuteEaseeRequest($childId, 'SetChargerAccessLevel', array($request->ChargerId, $request->UseKey), $request->Ident);
 					break;
 				case 'enablecharger';
@@ -425,10 +427,12 @@ class EaseeHomeGateway extends IPSModule {
 						throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "ChargerId" and/or "Ident" is missing. The request was "%s"', $Request));
 					}
 
+					
 					if(!(isset($request->State) && is_bool($request->State))) {
 						throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "State" is missing or is a invalid type. The request was "%s"', $Request));
 					}
 
+					IPS_Sleep(1000);
 					$this->ExecuteEaseeRequest($childId, 'EnableCharger', array($request->ChargerId, $request->State), $request->Ident);
 					break;
 				case 'setchargerconfig':
@@ -442,6 +446,7 @@ class EaseeHomeGateway extends IPSModule {
 
 					$config = json_decode(json_encode($request->Config), true);
 
+					IPS_Sleep(1000);
 					$this->ExecuteEaseeRequest($childId, 'SetChargerConfig', array($request->ChargerId, $config), $request->Ident);
 					break;
 				case 'setchargingstate':
@@ -453,6 +458,7 @@ class EaseeHomeGateway extends IPSModule {
 						throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "Status" is missing or is a invalid type. The request was "%s"', $Request));
 					}
 
+					IPS_Sleep(1000);
 					switch($request->State) {
 						case 1:
 							$state = ChargingState::AUTHORIZE;
@@ -495,8 +501,6 @@ class EaseeHomeGateway extends IPSModule {
 		
 		$this->SendDebug(__FUNCTION__, sprintf('Executing Easee::%s() for component with id %s...', $Function, isset($Args[0])?$Args[0]:'N/A'), 0);
 
-		//$easee = [];
-				
 		$token = $this->GetTokenFromBuffer();
 		if($token==null) {
 			$easee = $this->InitEasee();
