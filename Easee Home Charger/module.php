@@ -195,7 +195,7 @@ class EaseeHomeCharger extends IPSModule {
 					$status = $this->GetValue('Status');
 					if (!in_array($status, [0, 1, 5])) { // Offline, disconnected, error
 						if($status==7 && $Value!=99) {
-							break;
+							throw new Exception(sprintf('ReqestAction called for Ident "%s" with invalid value for the Status %d', $Ident, $status));	
 						}
 
 						$this->SetValueEx($Ident, $Value);
@@ -209,6 +209,8 @@ class EaseeHomeCharger extends IPSModule {
 
 							$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargingState', 'Ident'=> $Ident, 'ChargerId'=>$chargerId, 'State' => $Value];
 						}
+					} else {
+						throw new Exception(sprintf('ReqestAction called for Ident "%s" with invalid value for the Status %d', $Ident, $status));	
 					}
 					
 					break;
