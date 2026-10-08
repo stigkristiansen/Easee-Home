@@ -278,7 +278,7 @@ class EaseeHomeGateway extends IPSModule {
 		}
 
 		try {
-			if($easee==null) {
+			if(!$easee instanceof Easee) {
 				throw new Exception('Unable to refresh the Easee class');
 			}
 
@@ -495,7 +495,7 @@ class EaseeHomeGateway extends IPSModule {
 		
 		$this->SendDebug(__FUNCTION__, sprintf('Executing Easee::%s() for component with id %s...', $Function, isset($Args[0])?$Args[0]:'N/A'), 0);
 
-		$easee = [];
+		//$easee = [];
 				
 		$token = $this->GetTokenFromBuffer();
 		if($token==null) {
