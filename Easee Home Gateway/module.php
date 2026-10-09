@@ -278,7 +278,7 @@ class EaseeHomeGateway extends IPSModule {
 		}
 
 		try {
-			if(!$easee instanceof Easee) {
+			if($easee==null) {
 				throw new Exception('Unable to refresh the Easee class');
 			}
 
@@ -303,7 +303,7 @@ class EaseeHomeGateway extends IPSModule {
 		}
 	}
 
-	private function InitEasee() : object {
+	private function InitEasee() : object | null{
 		$this->SendDebug(__FUNCTION__, 'Initializing the Easee Class...', 0);
 
 		$this->SetTimerInterval('EaseeHomeRefreshToken' . (string)$this->InstanceID, 0); // Disable the timer
@@ -316,7 +316,7 @@ class EaseeHomeGateway extends IPSModule {
 			$this->LogMessage(sprintf('InitEasee(): Missing property "Username" and/or "API Key" in module "%s"', __FUNCTION__), KL_ERROR);
 			$this->SendDebug(__FUNCTION__, sprintf('InitEasee(): Missing property "Username" in module "%s"', IPS_GetName($this->InstanceID)), 0);
 			
-			return (object) [];
+			return null; //(object) [];
 		}
 
 		$easee = new Easee($username, $password, $apiKey);
@@ -344,7 +344,7 @@ class EaseeHomeGateway extends IPSModule {
 			$this->LogMessage(sprintf('Failed to connect to Easee Cloud API. The error was "%s"',  $e->getMessage()), KL_ERROR);
 			$this->SendDebug(__FUNCTION__, sprintf('Failed to connec to Easee Cloud API. The error was "%s"', $e->getMessage()), 0);
 			
-			return (object) [];
+			return null //(object) [];
 		}
 
 		return $easee;
@@ -515,7 +515,7 @@ class EaseeHomeGateway extends IPSModule {
 		$return['Function'] = $Function;
 
 		try{ 
-			if(!$easee instanceof Easee) {
+			if($easee==null) {
 				throw new Exception('Unable to initialize the Easee class');
 			}
 
