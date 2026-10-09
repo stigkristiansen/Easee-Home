@@ -157,7 +157,7 @@ class EaseeHomeGateway extends IPSModule {
 		$this->SendDataToParent(json_encode(['DataID' => '{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}', 'Buffer' => SignalR::Subscribe($Serial, $WithCurrentStage)]));
 	}
 
-	private function GetConnectionId() : integer {
+	private function GetConnectionId() : int {
 		$config = IPS_GetInstance($this->InstanceID);
 		return $config['ConnectionID'];
 	}
@@ -222,7 +222,7 @@ class EaseeHomeGateway extends IPSModule {
 		}
 	}
 
-	public function ForwardData($JSONString) : boolean {
+	public function ForwardData($JSONString) : bool {
 		$this->SendDebug(__FUNCTION__, sprintf('Received a request from a child. The request was "%s"', $JSONString), 0);
 
 		$data = json_decode($JSONString);
