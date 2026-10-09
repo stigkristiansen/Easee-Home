@@ -94,7 +94,7 @@ class EaseeHomeGateway extends IPSModule {
 		
 	}
 
-	public function GetConfigurationForParent() {
+	public function GetConfigurationForParent() : string {
 		$config['Type'] = 0;
 		$config['VerifyCertificate'] = !$this->ReadPropertyBoolean('SkipSSLCheck');
 		
@@ -157,7 +157,7 @@ class EaseeHomeGateway extends IPSModule {
 		$this->SendDataToParent(json_encode(['DataID' => '{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}', 'Buffer' => SignalR::Subscribe($Serial, $WithCurrentStage)]));
 	}
 
-	private function GetConnectionId() {
+	private function GetConnectionId() : integer {
 		$config = IPS_GetInstance($this->InstanceID);
 		return $config['ConnectionID'];
 	}
@@ -222,7 +222,7 @@ class EaseeHomeGateway extends IPSModule {
 		}
 	}
 
-	public function ForwardData($JSONString) {
+	public function ForwardData($JSONString) : boolean {
 		$this->SendDebug(__FUNCTION__, sprintf('Received a request from a child. The request was "%s"', $JSONString), 0);
 
 		$data = json_decode($JSONString);
@@ -303,7 +303,7 @@ class EaseeHomeGateway extends IPSModule {
 		}
 	}
 
-	private function InitEasee() : object | null{
+	private function InitEasee() : object | null {
 		$this->SendDebug(__FUNCTION__, 'Initializing the Easee Class...', 0);
 
 		$this->SetTimerInterval('EaseeHomeRefreshToken' . (string)$this->InstanceID, 0); // Disable the timer
@@ -569,7 +569,7 @@ class EaseeHomeGateway extends IPSModule {
 		$this->SendDataToChildren(json_encode(["DataID" => "{47508B62-3B4E-67BE-0F29-0B82A2C62B58}", "ChildId" => $ChildId, "Buffer" => $return]));
 	}
 
-	private function GetTokenFromBuffer() {
+	private function GetTokenFromBuffer() : object | null {
 		if($this->Lock('Token')) {
 			$jsonToken = $this->GetBuffer('Token');
 			
