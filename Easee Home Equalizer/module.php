@@ -58,9 +58,9 @@ include __DIR__ . "/../libs/observations.php";
 				$filter .= sprintf('|.*"SerialNumber":"%s".*', $serialNumber);
 			}
 			
-			//$this->SetReceiveDataFilter($filter);
+			$this->SetReceiveDataFilter($filter);
 
-			$this->SetReceiveDataFilter('.*"ChildId":"' . (string)$this->InstanceID .'".*');
+			//$this->SetReceiveDataFilter('.*"ChildId":"' . (string)$this->InstanceID .'".*');
 
 			if (IPS_GetKernelRunlevel() == KR_READY) {
 				$this->InitTimer();
@@ -158,7 +158,7 @@ include __DIR__ . "/../libs/observations.php";
 							$chargerId = $this->ReadPropertyString('ProductId');
 							$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'Subscribe','ChargerId'=>$chargerId, 'WithCurrentState' => true];
 							
-
+							
 							//$this->SendDataToParent(json_encode(['DataID' => '{B62C0F65-7B59-0CD8-8C92-5DA32FBBD317}', 'Buffer' => $request]));
 							break;
 						default:
