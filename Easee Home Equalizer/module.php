@@ -51,7 +51,16 @@ include __DIR__ . "/../libs/observations.php";
 			//Never delete this line!
 			parent::ApplyChanges();
 
-			$this->SetReceiveDataFilter('.*"ChildId":"' . (string)$this->InstanceID .'".*');
+			$filter = sprintf('.*"ChildId":"%s".*|.*##AllChildren##.*', (string)$this->InstanceID);
+		
+			$serialNumber = $this->ReadPropertyString('ProductId');
+			if($serialNumber!='') {
+				$filter .= sprintf('|.*"SerialNumber":"%s".*', $serialNumber);
+			}
+			
+			$this->SetReceiveDataFilter($filter);
+
+			//$this->SetReceiveDataFilter('.*"ChildId":"' . (string)$this->InstanceID .'".*');
 
 			if (IPS_GetKernelRunlevel() == KR_READY) {
 				$this->InitTimer();
