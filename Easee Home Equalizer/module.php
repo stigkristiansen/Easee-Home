@@ -154,6 +154,12 @@ include __DIR__ . "/../libs/observations.php";
 								}
 							}
 							break;
+						case 'subscribe':
+							$chargerId = $this->ReadPropertyString('ProductId');
+							$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'Subscribe','ChargerId'=>$chargerId, 'WithCurrentState' => true];
+							
+							$this->SendDataToParent(json_encode(['DataID' => '{B62C0F65-7B59-0CD8-8C92-5DA32FBBD317}', 'Buffer' => $request]));
+							break;
 						default:
 							throw new Exception(sprintf('Unknown function "%s()" receeived in repsponse from gateway', $function));
 					}
