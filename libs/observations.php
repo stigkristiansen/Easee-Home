@@ -275,6 +275,14 @@ class Equalizer extends Observations {
             'IsVariable' => false,
             'Description' => 'ClockAndDateMeter'
         ],
+        5 => [
+            'IsVariable' => false,
+            'Description' => 'UNDEFINED'
+        ],
+        57 => [
+            'IsVariable' => false,
+            'Description' => 'UNDEFINED'
+        ],
         51 => [
             'IsVariable' => false,
             'Description' => 'SSID'
@@ -287,7 +295,63 @@ class Equalizer extends Observations {
             'IsVariable' => false,
             'Description' => 'EqualizerlD'
         ],
-        99 => [
+        70 => [
+            'IsVariable' => false,
+            'Description' => 'UNDEFINED'
+        ],
+        86 => [
+            'IsVariable' => false,
+            'Description' => 'UNDEFINED'
+        ],
+        87 => [
+            'IsVariable' => false,
+            'Description' => 'UNDEFINED'
+        ],
+        88 => [
+            'IsVariable' => false,
+            'Description' => 'UNDEFINED'
+        ],
+        89 => [
+            'IsVariable' => false,
+            'Description' => 'UNDEFINED'
+        ],
+        100 => [
+            'IsVariable' => false,
+            'Description' => 'UNDEFINED'
+        ],
+        105 => [
+            'IsVariable' => false,
+            'Description' => 'UNDEFINED'
+        ],
+        106 => [
+            'IsVariable' => false,
+            'Description' => 'UNDEFINED'
+        ],
+        107 => [
+            'IsVariable' => false,
+            'Description' => 'UNDEFINED'
+        ],
+        110 => [
+            'IsVariable' => false,
+            'Description' => 'UNDEFINED'
+        ],
+        111 => [
+            'IsVariable' => false,
+            'Description' => 'UNDEFINED'
+        ],
+        115 => [
+            'IsVariable' => false,
+            'Description' => 'UNDEFINED'
+        ],
+        250 => [
+            'IsVariable' => false,
+            'Description' => 'UNDEFINED'
+        ],
+        251 => [
+            'IsVariable' => false,
+            'Description' => 'UNDEFINED'
+        ],
+        900 => [
             'IsVariable' => true,
             'Description' => 'Current Available (W)',
             'Ident' => 'CurrentAvailable',
