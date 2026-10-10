@@ -154,6 +154,8 @@ include __DIR__ . "/../libs/observations.php";
 								}
 							}
 							break;
+						case 'subscribe':
+							break;
 						default:
 							throw new Exception(sprintf('Unknown function "%s()" receeived in repsponse from gateway', $function));
 					}
