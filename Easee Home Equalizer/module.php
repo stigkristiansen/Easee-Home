@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 include __DIR__ . "/../libs/traits.php";
+include __DIR__ . "/../libs/observations.php";
 
 	class EaseeHomeEqualizer extends IPSModule {
 		use Profiles;
