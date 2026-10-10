@@ -139,7 +139,7 @@ include __DIR__ . "/../libs/traits.php";
 									}
 								}
 
-								if(isset($activePower[40] && $activePower[44])) {
+								if(isset($activePower[40]) && isset($activePower[44])) {
 									$this->SetValueEx('CurrentAvailable', ($activePower[44] - $activePower[40]));
 								}
 							}
