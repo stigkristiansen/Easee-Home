@@ -365,7 +365,7 @@ class Easee {
     }
 
 
-    public function GetChargerObservations(string $ChargerId, string $ObservationIds) {
+    public function GetDeviceObservations(string $ChargerId, string $ObservationIds) {
         try{
             $this->Connect();
         

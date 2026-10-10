@@ -164,28 +164,64 @@ class Equalizer extends Observations {
             'Description' => 'NumPhases'
         ],
         31 => [
-            'IsVariable' => false,
-            'Description' => 'Current_L1'
+            'IsVariable' => true,
+            'Description' => 'Current_L1',
+            'Ident' => 'CurrentL1',
+            'Caption' => 'Phase 1 (A)',
+            'Type' => Observations::FLOAT,
+            'Enable' => false,
+            'Profile' => '~Ampere',
+            'Position' => 4
         ],
         32 => [
-            'IsVariable' => false,
-            'Description' => 'Current_L2'
+            'IsVariable' => true,
+            'Description' => 'Current_L2',
+            'Ident' => 'CurrentL2',
+            'Caption' => 'Phase 2 (A)',
+            'Type' => Observations::FLOAT,
+            'Enable' => false,
+            'Profile' => '~Ampere',
+            'Position' => 6
         ],
         33 => [
-            'IsVariable' => false,
-            'Description' => 'Current_L3'
+            'IsVariable' => true,
+            'Description' => 'Current_L3',
+            'Ident' => 'CurrentL3',
+            'Caption' => 'Phase 3 (A)',
+            'Type' => Observations::FLOAT,
+            'Enable' => false,
+            'Profile' => '~Ampere',
+            'Position' => 8
         ],
         34 => [
-            'IsVariable' => false,
-            'Description' => 'Voltage_N_L1'
+            'IsVariable' => true,
+            'Description' => 'Voltage_N_L1',
+            'Ident' => 'VoltageNL1',
+            'Caption' => 'Phase 1 (V)',
+            'Type' => Observations::FLOAT,
+            'Enable' => false,
+            'Profile' => '~Volt',
+            'Position' => 3
         ],
         35 => [
-            'IsVariable' => false,
-            'Description' => 'Voltage_N_L2'
+            'IsVariable' => true,
+            'Description' => 'Voltage_N_L2',
+            'Ident' => 'VoltageNL2',
+            'Caption' => 'Phase 2 (V)',
+            'Type' => Observations::FLOAT,
+            'Enable' => false,
+            'Profile' => '~Volt',
+            'Position' => 5
         ],
         36 => [
-            'IsVariable' => false,
-            'Description' => 'Voltage_N_L3'
+            'IsVariable' => true,
+            'Description' => 'Voltage_N_L3',
+            'Ident' => 'VoltageNL3',
+            'Caption' => 'Phase 3 (V)',
+            'Type' => Observations::FLOAT,
+            'Enable' => false,
+            'Profile' => '~Volt',
+            'Position' => 7
         ],
         37 => [
             'IsVariable' => false,
@@ -217,7 +253,7 @@ class Equalizer extends Observations {
         ],
         44 => [
             'IsVariable' => false,
-            'Description' => 'MaxPowerlmport'
+            'Description' => 'MaxPowerlmport',
         ],
         45 => [
             'IsVariable' => false,
@@ -250,8 +286,18 @@ class Equalizer extends Observations {
         56 => [
             'IsVariable' => false,
             'Description' => 'EqualizerlD'
+        ],
+        99 => [
+            'IsVariable' => true,
+            'Description' => 'Current Available (W)',
+            'Ident' => 'CurrentAvailable',
+            'Caption' => 'Available (W)',
+            'Type' => Observations::FLOAT,
+            'Enable' => false,
+            'Profile' => '~Power',
+            'Position' => 1
         ]
-        ];
+    ];
 }
 
 

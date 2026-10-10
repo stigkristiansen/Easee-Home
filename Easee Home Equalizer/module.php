@@ -126,32 +126,23 @@ include __DIR__ . "/../libs/traits.php";
 				if($success) {
 					$function = strtolower($data->Buffer->Function);
 					switch($function) {
-						case 'getequalizerstate':  
-							if(isset($result->activePowerImport)) {
-								$this->SetValueEx('CurrentUsage', $result->activePowerImport*1000);
-								if(isset($result->maxPowerImport)) {
-									$this->SetValueEx('CurrentAvailable', ($result->maxPowerImport-$result->activePowerImport)*1000);
+						case 'getdeviceobservations':  
+							if(isset($result->observations)) {
+								$mid = $this->ReadPropertyString('ProductId');  // GetDeviceObservations returns without the mid-propery.  Add it to all returned observations
+								$activePower = [];
+								foreach($result->observations as $observation) {
+									if(in_array($observation->id, [40,44])) {
+										$activePower[$observation->id] = $observation->value;
+									} else {
+										$observation->mid = $mid; 
+										$this->HandleProductUpdate($observation);
+									}
+								}
+
+								if(isset($activePower[40] && $activePower[44])) {
+									$this->SetValueEx('CurrentAvailable', ($activePower[44] - $activePower[40]));
 								}
 							}
-							if(isset($result->voltageNL1)) {
-								$this->SetValueEx('VoltageNL1', $result->voltageNL1);
-							}
-							if(isset($result->voltageNL2)) {
-								$this->SetValueEx('VoltageNL2', $result->voltageNL2);
-							}
-							if(isset($result->voltageNL3)) {
-								$this->SetValueEx('VoltageNL3', $result->voltageNL3);
-							}
-							if(isset($result->currentL1)) {
-								$this->SetValueEx('CurrentL1', $result->currentL1);
-							}
-							if(isset($result->currentL2)) {
-								$this->SetValueEx('CurrentL2', $result->currentL2);
-							}
-							if(isset($result->currentL3)) {
-								$this->SetValueEx('CurrentL3', $result->currentL3);
-							}
-
 							break;
 						default:
 							throw new Exception(sprintf('Unknown function "%s()" receeived in repsponse from gateway', $function));
@@ -168,16 +159,53 @@ include __DIR__ . "/../libs/traits.php";
 			}
 		}
 
+			private function HandleProductUpdate($Data) {
+		$this->SendDebug(__FUNCTION__, sprintf('Processing Product Update: %s...', json_encode($Data)), 0);
+
+		try{
+			$change = Equalizer::GetObservation($Data);
+
+			$this->SendDebug(__FUNCTION__, sprintf('GetObservation returned %s', json_encode($change)), 0);
+
+			if($change!==false) {
+				$this->SendDebug(__FUNCTION__, sprintf('Observation Id %d is an Id that corresponds to Ident "%s"', $Data->id, $change['Ident']), 0);
+				
+				$variableId = IPS_GetObjectIDByIdent($change['Ident'], $this->InstanceID);
+				$variableProperties = IPS_GetVariable($variableId);
+				
+				$this->SendDebug(__FUNCTION__, sprintf('The cloud change occured on %d', $change['Timestamp']), 0);
+				$this->SendDebug(__FUNCTION__, sprintf('The local change occured on %d', $variableProperties['VariableChanged']), 0);
+
+				if(isset($change['CustomHandling']) && strlen($change['CustomHandling'])>0) {
+					$this->SendDebug(__FUNCTION__, sprintf('Updating "%s" through custom handler...', $change['Ident']), 0);
+					self::{$change['CustomHandling']}($change['Ident'], $change['Value']);
+				} else {
+					$this->SendDebug(__FUNCTION__, sprintf('Updating "%s"...', $change['Ident']), 0);
+					$this->SetValueEx($change['Ident'], $change['Value']);
+				}
+			} else {
+				$this->SendDebug(__FUNCTION__, sprintf('Observation Id %d is not corresponding to an Ident. There is nothing to update', $Data->id), 0);
+			}
+		} catch(Exception $e) {
+			IPS_LogMessage(IPS_GetInstance($this->InstanceID)['ModuleInfo']['ModuleName'], $e->getMessage());
+			$this->SendDebug(__FUNCTION__, $e->getMessage(), 0);
+		}	
+	}
+
 		private function InitTimer(){
 			$this->SetTimerInterval('EaseeEqualizerRefresh' . (string)$this->InstanceID, $this->ReadPropertyInteger('UpdateInterval')*1000); 
 		}
 
 		private function Refresh(string $EqualizerId) : array {
 			if(strlen($EqualizerId)>0) {
-				$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetEqualizerState','EqualizerId'=>$EqualizerId];
+				$ids = Equalizer::GetObservationIdsWithVariable().',40,44';
+
+				$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetDeviceObservations','EqualizerId'=>$EqualizerId, 'ObserationIds'=>$ids];
 				
 				return $request;
 			}
+
+			return [];
 		}
 
 		private function SetValueEx(string $Ident, $Value) {

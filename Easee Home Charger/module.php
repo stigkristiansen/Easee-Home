@@ -282,9 +282,9 @@ class EaseeHomeCharger extends IPSModule {
 						$this->SendDataToParent(json_encode(['DataID' => '{B62C0F65-7B59-0CD8-8C92-5DA32FBBD317}', 'Buffer' => $request]));
 						
 						break;
-					case 'getchargerobservations':
+					case 'getdeviceobservations':
 						if(isset($result->observations)) {
-							$mid = $this->ReadPropertyString('ProductId');  // GetChargerObservations returns without the mid-propery.  Add it to all returned observations
+							$mid = $this->ReadPropertyString('ProductId');  // GetDeviceObservations returns without the mid-propery.  Add it to all returned observations
 							foreach($result->observations as $observation) {
 								$observation->mid = $mid; 
 								$this->HandleProductUpdate($observation);
@@ -349,7 +349,7 @@ class EaseeHomeCharger extends IPSModule {
 			$ids = Charger::GetObservationIdsWithVariable();
 
 			if($ids!==false) {
-				$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetChargerObservations','ChargerId'=>$ChargerId, 'ObserationIds'=>$ids];
+				$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetDeviceObservations','ChargerId'=>$ChargerId, 'ObserationIds'=>$ids];
 			}
 
 			return $request;
