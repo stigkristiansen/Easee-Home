@@ -275,7 +275,7 @@ class Equalizer extends Observations {
             'IsVariable' => false,
             'Description' => 'ClockAndDateMeter'
         ],
-        5 => [
+        50 => [
             'IsVariable' => false,
             'Description' => 'UNDEFINED'
         ],

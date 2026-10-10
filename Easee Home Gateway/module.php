@@ -67,7 +67,8 @@ class EaseeHomeGateway extends IPSModule {
 					$this->SendDebug(__FUNCTION__, 'The gateway can only connect to a WebSocket client instance', 0);
 					IPS_DisconnectInstance($this->InstanceID);
 					return;
-				} 
+				}
+				break; 
 			case IM_CHANGESTATUS:
 				$this->StartSignalR();
 		}		
