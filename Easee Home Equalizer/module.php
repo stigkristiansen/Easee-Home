@@ -154,6 +154,9 @@ include __DIR__ . "/../libs/observations.php";
 								}
 							}
 							break;
+						case 'productupdate':
+							$this->HandleProductUpdate($result);
+							break;
 						case 'subscribe':
 							$chargerId = $this->ReadPropertyString('ProductId');
 							$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'Subscribe','ChargerId'=>$chargerId, 'WithCurrentState' => true];
@@ -175,7 +178,7 @@ include __DIR__ . "/../libs/observations.php";
 			}
 		}
 
-			private function HandleProductUpdate($Data) {
+	private function HandleProductUpdate($Data) {
 		$this->SendDebug(__FUNCTION__, sprintf('Processing Product Update: %s...', json_encode($Data)), 0);
 
 		try{
