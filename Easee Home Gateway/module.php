@@ -380,7 +380,7 @@ class EaseeHomeGateway extends IPSModule {
 					$this->ExecuteEaseeRequest($childId, 'GetProducts');
 					break;
 				case 'getdeviceobservations':
-					if(!isset($request->ChargerId) || !isset($request->ObserationIds)) {
+					if(!isset($request->DeviceId) || !isset($request->ObserationIds)) {
 						throw new Exception(sprintf('HandleAsyncRequest: Invalid formated request. Key "ChargerId" and/or "ObservationIds" is missing. The request was "%s"', $Request));
 					}
 					

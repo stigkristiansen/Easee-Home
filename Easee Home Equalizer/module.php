@@ -201,7 +201,7 @@ include __DIR__ . "/../libs/observations.php";
 			if(strlen($EqualizerId)>0) {
 				$ids = Equalizer::GetObservationIdsWithVariable().',40,44';
 
-				$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetDeviceObservations','EqualizerId'=>$EqualizerId, 'ObserationIds'=>$ids];
+				$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetDeviceObservations','DeviceId'=>$EqualizerId, 'ObserationIds'=>$ids];
 				
 				return $request;
 			}
