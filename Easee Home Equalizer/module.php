@@ -18,7 +18,39 @@ include __DIR__ . "/../libs/observations.php";
 			$this->RegisterPropertyString('ProductId', '');
 			$this->RegisterPropertyString('Site', '');
 
-			$this->RegisterProfileFloat('EHEQ.Watt', 'IPS', '', ' W');
+			foreach(Equalizer::Observations as $observation) {
+			if($observation['IsVariable']) {
+				switch($observation['Type']) {
+					case Observations::BOOLEAN:
+						$type = 'Boolean';
+						break;
+					case Observations::INTEGER:
+						$type = 'Integer';
+						break;
+					case Observations::STRING:
+						$type = 'String';
+						break;
+					case Observations::FLOAT:
+						$type = 'Float';
+						break;
+				}
+
+				if(!IPS_VariableProfileExists($observation['Profile'])) {
+					if(isset($observation['Assoc'])) {
+						$this->{'RegisterProfile'.$type.'Ex'}($observation['Profile'], $observation['Icon'], '', '', $observation['Assoc']);	
+					} else {
+						$this->{'RegisterProfile'.$type}($observation['Profile'], $observation['Icon'], '', '');	
+					}
+				}
+				
+				$this->{'RegisterVariable'.$type}($observation['Ident'], $observation['Caption'], $observation['Profile'], $observation['Position']);
+				if($observation['Enable']) {
+					$this->EnableAction($observation['Ident']);
+				}
+			}
+		}
+
+			/*$this->RegisterProfileFloat('EHEQ.Watt', 'IPS', '', ' W');
 
 			$this->RegisterVariableFloat('CurrentUsage', 'Usage', 'EHEQ.Watt', 1);
 			$this->RegisterVariableFloat('CurrentAvailable', 'Available', '~Power', 2);
@@ -30,7 +62,7 @@ include __DIR__ . "/../libs/observations.php";
 			$this->RegisterVariableFloat('CurrentL2', 'Phase 2 (A)', '~Ampere', 6);
 
 			$this->RegisterVariableFloat('VoltageNL3', 'Phase 3 (V)', '~Volt', 7);
-			$this->RegisterVariableFloat('CurrentL3', 'Phase 3 (A)', '~Ampere', 8);
+			$this->RegisterVariableFloat('CurrentL3', 'Phase 3 (A)', '~Ampere', 8); */
 
 			$this->RegisterTimer('EaseeEqualizerRefresh' . (string)$this->InstanceID, 0, 'IPS_RequestAction(' . (string)$this->InstanceID . ', "Refresh", 0);'); 
 

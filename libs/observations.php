@@ -295,6 +295,10 @@ class Equalizer extends Observations {
             'IsVariable' => false,
             'Description' => 'EqualizerlD'
         ],
+        68 => [
+            'IsVariable' => false,
+            'Description' => 'UNDEFINED'
+        ],
         70 => [
             'IsVariable' => false,
             'Description' => 'UNDEFINED'
