@@ -61,6 +61,7 @@ class EaseeHomeGateway extends IPSModule {
 		
 		switch ($Message) {
 			case FM_CONNECT:
+				$this->SendDebug(__FUNCTION__, 'Received Message: FM_CONNECT from parent', 0);
 				$localConfig = IPS_GetInstance($this->InstanceID);
 				$parentConfig = IPS_GetInstance($localConfig['ConnectionID']);
 				if($parentConfig['ModuleInfo']['ModuleID']!='{D68FD31F-0E90-7019-F16C-1949BD3079EF}') {
@@ -70,6 +71,7 @@ class EaseeHomeGateway extends IPSModule {
 				}
 				break; 
 			case IM_CHANGESTATUS:
+				$this->SendDebug(__FUNCTION__, 'Received Message: IM_CHANGESTATUS from parent', 0);
 				$this->StartSignalR();
 		}		
 	}
@@ -144,7 +146,7 @@ class EaseeHomeGateway extends IPSModule {
 				return;
 			}
 
-			$this->SendDebug(__FUNCTION__, 'Sending ' . SignalR::Handshake() . '...', 0);
+			$this->SendDebug(__FUNCTION__, 'Sending handshake ' . SignalR::Handshake() . '...', 0);
 			
 			$this->SendDataToParent(json_encode(['DataID' => '{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}', 'Buffer' => SignalR::Handshake()]));
 
