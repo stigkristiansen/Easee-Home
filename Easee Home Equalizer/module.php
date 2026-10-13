@@ -21,7 +21,7 @@ include __DIR__ . "/../libs/observations.php";
 			$this->RegisterProfileFloat('EHEQ.Watt', 'IPS', '', ' W');
 
 			$this->RegisterVariableFloat('CurrentUsage', 'Usage', 'EHEQ.Watt', 1);
-			$this->RegisterVariableFloat('CurrentAvailable', 'Available', 'EHEQ.Watt', 2);
+			$this->RegisterVariableFloat('CurrentAvailable', 'Available', '~Power', 2);
 			
 			$this->RegisterVariableFloat('VoltageNL1', 'Phase 1 (V)', '~Volt', 3);
 			$this->RegisterVariableFloat('CurrentL1', 'Phase 1 (A)', '~Ampere', 4);
