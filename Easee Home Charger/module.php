@@ -210,7 +210,7 @@ class EaseeHomeCharger extends IPSModule {
 							$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'SetChargingState', 'Ident'=> $Ident, 'ChargerId'=>$chargerId, 'State' => $Value];
 						}
 					} else {
-						throw new Exception(sprintf('ReqestAction called for Ident "%s" with invalid value for the Status %d', $Ident, $status));	
+						throw new Exception(sprintf('ReqestAction called for Ident "%s" with invalid value when the Status is %d', $Ident, $status));	
 					}
 					
 					break;

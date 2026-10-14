@@ -359,7 +359,7 @@ class Equalizer extends Observations {
             'IsVariable' => true,
             'Description' => 'Current Available (W)',
             'Ident' => 'CurrentAvailable',
-            'Caption' => 'Available (W)',
+            'Caption' => 'Available (KW)',
             'Type' => Observations::FLOAT,
             'Enable' => false,
             'Profile' => '~Power',

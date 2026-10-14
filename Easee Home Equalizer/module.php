@@ -70,10 +70,10 @@ include __DIR__ . "/../libs/observations.php";
 		}
 
 		public function Destroy(){
-			$module = json_decode(file_get_contents(__DIR__ . '/module.json'));
+			/*$module = json_decode(file_get_contents(__DIR__ . '/module.json'));
 			if(count(IPS_GetInstanceListByModuleID($module->id))==0) {
 				$this->DeleteProfile('EHEQ.Watt');
-			}
+			}*/
 			
 			//Never delete this line!
 			parent::Destroy();
@@ -249,7 +249,7 @@ include __DIR__ . "/../libs/observations.php";
 
 		private function Refresh(string $EqualizerId) : array {
 			if(strlen($EqualizerId)>0) {
-				$ids = Equalizer::GetObservationIdsWithVariable().',40,44';
+				$ids = Equalizer::GetObservationIdsWithVariable().',40,44'; // 40  and 44 are used for calculation of Available power
 
 				$request[] = ['ChildId'=>(string)$this->InstanceID,'Function'=>'GetDeviceObservations','DeviceId'=>$EqualizerId, 'ObserationIds'=>$ids];
 				
