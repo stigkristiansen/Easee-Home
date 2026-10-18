@@ -444,7 +444,7 @@ class EaseeHomeCharger extends IPSModule {
 
 		// Set Variable for Charging back to blank
 		$this->SetValueEx('StartCharging', 0);
-		$this->EnableAction('StartCharging', true);
+		$this->EnableAction('StartCharging');
 
 		// Handle Variable "Autorize" according to value of Op Mode
 		switch($Value) {
