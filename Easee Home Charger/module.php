@@ -367,6 +367,10 @@ class EaseeHomeCharger extends IPSModule {
 			$this->SendDebug(__FUNCTION__, sprintf('GetObservation returned %s', json_encode($change)), 0);
 
 			if($change!==false) {
+				if($change['Linked']) {
+					$this->SendDebug(__FUNCTION__, 'The Observation Id is linked to another Observation Id', 0);
+				}
+
 				$this->SendDebug(__FUNCTION__, sprintf('Observation Id %d is an Id that corresponds to Ident "%s"', $Data->id, $change['Ident']), 0);
 				
 				$variableId = IPS_GetObjectIDByIdent($change['Ident'], $this->InstanceID);
@@ -442,9 +446,9 @@ class EaseeHomeCharger extends IPSModule {
 	private function HandleChargerOpMode(string $Ident, $Value) {
 		$this->SendDebug(__FUNCTION__, 'Executing custom handler for ChargerOpMode', 0);
 
-		// Set Variable for Charging back to blank
-		$this->SetValueEx('StartCharging', 0);
-		$this->EnableAction('StartCharging');
+		// Set Variable for Charging back to blank. Check if EnableAction is handled by HandleProductUpdate
+		//$this->SetValueEx('StartCharging', 0);
+		//$this->EnableAction('StartCharging');
 
 		// Handle Variable "Autorize" according to value of Op Mode
 		switch($Value) {
