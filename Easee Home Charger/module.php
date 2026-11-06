@@ -198,8 +198,13 @@ class EaseeHomeCharger extends IPSModule {
 							throw new Exception(sprintf('ReqestAction called for Ident "%s" with invalid value for the Status %d', $Ident, $status));	
 						}
 
+						if($status==2 && $Value!=2) {
+							throw new Exception(sprintf('ReqestAction called for Ident "%s" with invalid value for the Status %d', $Ident, $status));	
+						}
+
 						$this->SetValueEx($Ident, $Value);
 
+						// Autorize and Start us same value in call to API
 						if($Value==99) {
 							$Value = 1;
 						}
