@@ -387,6 +387,7 @@ class EaseeHomeCharger extends IPSModule {
 				if(isset($change['CustomHandling']) && strlen($change['CustomHandling'])>0) {
 					$this->SendDebug(__FUNCTION__, sprintf('Updating "%s" through custom handler...', $change['Ident']), 0);
 					self::{$change['CustomHandling']}($change['Ident'], $change['Value']);
+					$this->SendDebug(__FUNCTION__, sprintf('Finnished custom handler for %s...', $change['Ident']), 0);
 				} else {
 					$this->SendDebug(__FUNCTION__, sprintf('Updating "%s"...', $change['Ident']), 0);
 					$this->SetValueEx($change['Ident'], $change['Value']);
@@ -446,9 +447,8 @@ class EaseeHomeCharger extends IPSModule {
 	private function HandleChargerOpMode(string $Ident, $Value) {
 		$this->SendDebug(__FUNCTION__, 'Executing custom handler for ChargerOpMode', 0);
 
-		// Set Variable for Charging back to blank. Check if EnableAction is handled by HandleProductUpdate
-		//$this->SetValueEx('StartCharging', 0);
-		//$this->EnableAction('StartCharging');
+		$this->SetValueEx('StartCharging', 0);
+		$this->EnableAction('StartCharging');
 
 		// Handle Variable "Autorize" according to value of Op Mode
 		switch($Value) {
